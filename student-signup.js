@@ -181,16 +181,20 @@ panel2Form.addEventListener('submit', async (e) => {
             return;
         }
 
-        const signupEmail = `${username}@sciquest-student.temp`;
+        // Use a valid-looking email domain for student accounts
+        // Students authenticate with username, but Supabase requires email format
+        const signupEmail = `${username}@student.sciquest.app`;
 
         const { data: authData, error: authError } = await supabase.auth.signUp({
             email: signupEmail,
             password: password,
             options: {
-                emailRedirectTo: window.location.origin + '/avatar-selection.html',
+                // Email confirmation should be disabled in Supabase Dashboard
+                // Navigate to: Authentication > Email > Confirm email (turn OFF)
                 data: {
                     username: username,
-                    account_type: 'student'
+                    account_type: 'student',
+                    first_name: firstName
                 }
             }
         });
@@ -231,6 +235,9 @@ panel2Form.addEventListener('submit', async (e) => {
             showError('This username is already taken. Please choose another one.');
         } else if (error.message.includes('duplicate key')) {
             showError('Username is already taken. Please choose another one.');
+        } else if (error.message.includes('invalid') && error.message.includes('email')) {
+            showError('Unable to create account. Please contact support or try again later.');
+            console.error('Email validation error - Supabase email confirmation may need to be disabled');
         } else {
             showError(error.message || 'An error occurred. Please try again.');
         }

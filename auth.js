@@ -144,7 +144,7 @@ authForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     hideMessages();
 
-    const email = document.getElementById('email').value.trim();
+    let email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
 
     if (!email || !password) {
@@ -155,6 +155,13 @@ authForm.addEventListener('submit', async (e) => {
     if (password.length < 6) {
         showError('Password must be at least 6 characters long');
         return;
+    }
+
+    // If user enters a username without @ symbol, assume it's a student account
+    // and append the student email domain
+    if (!email.includes('@')) {
+        email = `${email}@student.sciquest.app`;
+        console.log('Converted username to student email format:', email);
     }
 
     setLoading(true);
