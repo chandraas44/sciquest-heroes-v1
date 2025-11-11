@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your Science Story with Stella | SciQuest Heroes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fredoka:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            color: #1e293b;
+        }
+
+        .font-fredoka { font-family: 'Fredoka', sans-serif; }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            transition: all 0.4s ease;
+        }
+
+        .grade-card {
+            background: white;
+            border: 4px solid #e5e7eb;
+            border-radius: 20px;
+            padding: 32px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .grade-card:hover {
+            transform: translateY(-8px);
+            border-color: #ec4899;
+            box-shadow: 0 12px 30px rgba(236, 72, 153, 0.3);
+        }
+
+        .grade-card.selected {
+            background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%);
+            border-color: #ec4899;
+            border-width: 6px;
+        }
+
+        .topic-card {
+            background: white;
+            border: 3px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .topic-card:hover {
+            transform: translateX(8px);
+            border-color: #8b5cf6;
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+        }
+
+        .topic-card.selected {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-color: #3b82f6;
+            border-width: 4px;
+        }
+
+        .topic-card.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .guide-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+
+        .badge-chloro {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .badge-rex {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+
+        .badge-aqua {
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            color: white;
+        }
+
+        .btn-3d {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            border: 4px solid #1e293b;
+            border-radius: 60px;
+            padding: 20px 40px;
+            font-weight: 800;
+            font-size: 20px;
+            color: #1e293b;
+            box-shadow: 0 8px 0 #92400e, 0 12px 30px rgba(0,0,0,0.3);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            font-family: 'Fredoka', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-3d:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 13px 0 #92400e, 0 17px 40px rgba(0,0,0,0.4);
+        }
+
+        .btn-3d:active {
+            transform: translateY(4px);
+            box-shadow: 0 4px 0 #92400e, 0 6px 15px rgba(0,0,0,0.3);
+        }
+
+        .btn-3d:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .stella-float {
+            animation: stellaFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes stellaFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <nav class="fixed w-full z-50 backdrop-blur-xl bg-white/90 border-b border-white/20 shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="index.html" class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-gradient-to-br from-pink-400 to-purple-600 rounded-2xl flex items-center justify-center border-3 border-white shadow-lg">
+                        <span class="text-3xl">🚀</span>
+                    </div>
+                    <span class="font-fredoka text-2xl font-bold text-slate-800">Create with Stella</span>
+                </a>
+                <a href="index.html" class="px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold rounded-xl hover:shadow-lg transition">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Home
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="pt-32 pb-20 min-h-screen">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Step 1: Grade Selection -->
+            <div id="gradeSelection" class="glass-card p-12 mb-8">
+                <div class="text-center mb-8">
+                    <div class="stella-float inline-block mb-6">
+                        <img src="/assets/Stella_flora-DPlJwTe4.png" alt="Captain Stella Flora" class="w-48 h-48 mx-auto">
+                    </div>
+                    <h1 class="font-fredoka text-5xl font-black text-slate-800 mb-4">
+                        Hi There, Young Scientist! 🚀
+                    </h1>
+                    <p class="text-2xl text-slate-600 font-bold">
+                        I'm Captain Stella Flora! Let's create an amazing science story together.
+                    </p>
+                    <p class="text-xl text-slate-500 font-semibold mt-4">
+                        First, tell me... What grade are you in?
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-6xl mx-auto">
+                    <div class="grade-card" onclick="selectGrade(1)">
+                        <div class="text-6xl mb-4">1️⃣</div>
+                        <div class="font-fredoka text-2xl font-bold text-slate-800">Grade 1</div>
+                    </div>
+                    <div class="grade-card" onclick="selectGrade(2)">
+                        <div class="text-6xl mb-4">2️⃣</div>
+                        <div class="font-fredoka text-2xl font-bold text-slate-800">Grade 2</div>
+                    </div>
+                    <div class="grade-card" onclick="selectGrade(3)">
+                        <div class="text-6xl mb-4">3️⃣</div>
+                        <div class="font-fredoka text-2xl font-bold text-slate-800">Grade 3</div>
+                    </div>
+                    <div class="grade-card" onclick="selectGrade(4)">
+                        <div class="text-6xl mb-4">4️⃣</div>
+                        <div class="font-fredoka text-2xl font-bold text-slate-800">Grade 4</div>
+                    </div>
+                    <div class="grade-card" onclick="selectGrade(5)">
+                        <div class="text-6xl mb-4">5️⃣</div>
+                        <div class="font-fredoka text-2xl font-bold text-slate-800">Grade 5</div>
+                    </div>
+                    <div class="grade-card" onclick="selectGrade(6)">
+                        <div class="text-6xl mb-4">6️⃣</div>
+                        <div class="font-fredoka text-2xl font-bold text-slate-800">Grade 6</div>
+                    </div>
+                    <div class="grade-card" onclick="selectGrade(7)">
+                        <div class="text-6xl mb-4">7️⃣</div>
+                        <div class="font-fredoka text-2xl font-bold text-slate-800">Grade 7</div>
+                    </div>
+                    <div class="grade-card" onclick="selectGrade(8)">
+                        <div class="text-6xl mb-4">8️⃣</div>
+                        <div class="font-fredoka text-2xl font-bold text-slate-800">Grade 8</div>
+                    </div>
+                    <div class="grade-card" onclick="selectGrade(9)">
+                        <div class="text-6xl mb-4">9️⃣</div>
+                        <div class="font-fredoka text-2xl font-bold text-slate-800">Grade 9</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Topic Selection with Guide Characters -->
+            <div id="topicSelection" class="glass-card p-12 hidden">
+                <div class="text-center mb-8">
+                    <div class="stella-float inline-block mb-6">
+                        <img src="/assets/Stella_flora-DPlJwTe4.png" alt="Captain Stella Flora" class="w-32 h-32 mx-auto">
+                    </div>
+                    <h2 class="font-fredoka text-4xl font-black text-slate-800 mb-4">
+                        Awesome! Now pick a science topic! ⚡
+                    </h2>
+                    <p class="text-xl text-slate-600 font-bold">
+                        I'll introduce you to an expert guide for your topic!
+                    </p>
+                </div>
+
+                <div id="topicList" class="space-y-4 max-w-4xl mx-auto mb-8">
+                    <!-- Topics will be dynamically loaded here -->
+                </div>
+
+                <div class="text-center">
+                    <button id="startAdventureBtn" class="btn-3d" disabled onclick="startAdventure()">
+                        <i class="fas fa-rocket mr-3"></i>Start My Adventure!
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <script>
+        // Map topics to guide characters
+        const topicsByGrade = {
+            5: [
+                { 
+                    icon: "🌿", 
+                    title: "Photosynthesis: How Plants Make Food", 
+                    key: "photosynthesis",
+                    guide: "chloro",
+                    guideName: "Mr. Chloro",
+                    guideRole: "Plant Wizard",
+                    guideEmoji: "🌱"
+                },
+                { 
+                    icon: "🔬", 
+                    title: "Structure and Properties of Matter", 
+                    key: "matter-structure",
+                    guide: "stella",
+                    guideName: "Captain Stella",
+                    guideRole: "Space Captain",
+                    guideEmoji: "🚀"
+                },
+                { 
+                    icon: "🌱", 
+                    title: "Matter and Energy in Organisms and Ecosystems", 
+                    key: "organisms-energy",
+                    guide: "stella",
+                    guideName: "Captain Stella",
+                    guideRole: "Space Captain",
+                    guideEmoji: "🚀"
+                },
+                { 
+                    icon: "🌍", 
+                    title: "Earth's Systems", 
+                    key: "earth-systems",
+                    guide: "stella",
+                    guideName: "Captain Stella",
+                    guideRole: "Space Captain",
+                    guideEmoji: "🚀"
+                },
+                { 
+                    icon: "🪐", 
+                    title: "Earth and Space Science", 
+                    key: "space-science",
+                    guide: "stella",
+                    guideName: "Captain Stella",
+                    guideRole: "Space Captain",
+                    guideEmoji: "🚀"
+                }
+            ],
+            1: [
+                { icon: "💡", title: "Waves: Light and Sound", key: "light-sound", guide: "stella", guideName: "Captain Stella", guideRole: "Space Captain", guideEmoji: "🚀" },
+                { icon: "🔬", title: "Structure, Function, and Information Processing", key: "structure-function", guide: "stella", guideName: "Captain Stella", guideRole: "Space Captain", guideEmoji: "🚀" },
+                { icon: "🪐", title: "Space Systems: Patterns and Cycles", key: "space-patterns", guide: "stella", guideName: "Captain Stella", guideRole: "Space Captain", guideEmoji: "🚀" }
+            ],
+            2: [
+                { icon: "⚛️", title: "Structure and Properties of Matter", key: "matter-properties", guide: "stella", guideName: "Captain Stella", guideRole: "Space Captain", guideEmoji: "🚀" },
+                { icon: "🌿", title: "Interdependent Relationships in Ecosystems", key: "ecosystems", guide: "stella", guideName: "Captain Stella", guideRole: "Space Captain", guideEmoji: "🚀" },
+                { icon: "🌍", title: "Earth's Systems: Processes that Shape the Earth", key: "earth-processes", guide: "stella", guideName: "Captain Stella", guideRole: "Space Captain", guideEmoji: "🚀" }
+            ]
+        };
+
+        let selectedGrade = null;
+        let selectedTopic = null;
+
+        function selectGrade(grade) {
+            selectedGrade = grade;
+            
+            document.querySelectorAll('.grade-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.target.closest('.grade-card').classList.add('selected');
+
+            setTimeout(() => {
+                loadTopics(grade);
+                document.getElementById('gradeSelection').classList.add('hidden');
+                document.getElementById('topicSelection').classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 300);
+        }
+
+        function loadTopics(grade) {
+            const topicList = document.getElementById('topicList');
+            topicList.innerHTML = '';
+            
+            const topics = topicsByGrade[grade] || [];
+            topics.forEach((topic, index) => {
+                const badgeClass = topic.guide === 'chloro' ? 'badge-chloro' : 
+                                   topic.guide === 'rex' ? 'badge-rex' : 
+                                   topic.guide === 'aqua' ? 'badge-aqua' : 'badge-chloro';
+                
+                const topicCard = document.createElement('div');
+                topicCard.className = 'topic-card';
+                topicCard.onclick = () => selectTopic(index);
+                topicCard.innerHTML = `
+                    <div class="flex items-center gap-6">
+                        <div class="text-6xl">${topic.icon}</div>
+                        <div class="flex-1">
+                            <h3 class="font-fredoka text-2xl font-bold text-slate-800 mb-2">${topic.title}</h3>
+                            <p class="text-slate-600 font-semibold">Grade ${grade} Science Topic</p>
+                            <div class="guide-badge ${badgeClass}">
+                                <span>${topic.guideEmoji}</span>
+                                <span>With ${topic.guideName}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                topicList.appendChild(topicCard);
+            });
+        }
+
+        function selectTopic(index) {
+            selectedTopic = index;
+            
+            document.querySelectorAll('.topic-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.target.closest('.topic-card').classList.add('selected');
+
+            document.getElementById('startAdventureBtn').disabled = false;
+        }
+
+        function startAdventure() {
+            if (!selectedGrade || selectedTopic === null) return;
+
+            const topic = topicsByGrade[selectedGrade][selectedTopic];
+            
+            sessionStorage.setItem('selectedGrade', selectedGrade);
+            sessionStorage.setItem('selectedTopic', JSON.stringify(topic));
+
+            if (topic.key === 'photosynthesis' && topic.guide === 'chloro') {
+                window.location.href = 'stella-photosynthesis-adventure.html';
+            } else {
+                window.location.href = `stella-guide-generator.html?grade=${selectedGrade}&topic=${topic.key}`;
+            }
+        }
+    </script>
+</body>
+</html>

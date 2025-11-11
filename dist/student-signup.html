@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Student signup - Join SciQuest Heroes">
+    <title>Student Signup - SciQuest Heroes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f0f1e;
+            color: #1e293b;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .font-fredoka {
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            position: relative;
+            overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-gradient::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -100px;
+            left: -100px;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .hero-gradient::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: -150px;
+            right: -100px;
+            animation: float 15s infinite ease-in-out reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(100px, -100px) scale(1.1); }
+            66% { transform: translate(-100px, 100px) scale(0.9); }
+        }
+
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 50%;
+            animation: particleFloat 15s infinite;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(0) translateX(0) scale(1);
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% {
+                transform: translateY(-100vh) translateX(100px) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        .auth-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(30px) saturate(180%);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 32px;
+            padding: 40px 36px;
+            box-shadow:
+                0 25px 50px rgba(0,0,0,0.4),
+                0 10px 30px rgba(0,0,0,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.5);
+            max-width: 520px;
+            width: 100%;
+            position: relative;
+            z-index: 10;
+            margin: 20px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            background: white;
+            color: #1e293b;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #a855f7;
+            box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.1);
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 700;
+            font-size: 14px;
+            color: #475569;
+            margin-bottom: 8px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-3d {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            border-radius: 60px;
+            padding: 16px 36px;
+            font-weight: 800;
+            font-size: 18px;
+            color: #1e293b;
+            box-shadow:
+                0 8px 0 #92400e,
+                0 12px 30px rgba(0,0,0,0.3);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            font-family: 'Fredoka', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 100%;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-3d:hover {
+            transform: translateY(-3px);
+            box-shadow:
+                0 11px 0 #92400e,
+                0 15px 35px rgba(0,0,0,0.4);
+        }
+
+        .btn-3d:active {
+            transform: translateY(4px);
+            box-shadow:
+                0 4px 0 #92400e,
+                0 6px 15px rgba(0,0,0,0.3);
+        }
+
+        .btn-3d:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 14px 20px;
+            font-weight: 700;
+            font-size: 16px;
+            color: #1e293b;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .btn-secondary:hover {
+            border-color: #a855f7;
+            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            background: #fef2f2;
+            border: 2px solid #ef4444;
+            color: #b91c1c;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .success-message {
+            background: #f0fdf4;
+            border: 2px solid #22c55e;
+            color: #15803d;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .back-link {
+            position: absolute;
+            top: 32px;
+            left: 32px;
+            z-index: 20;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-5px);
+        }
+
+        .loading-spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #1e293b;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .panel {
+            display: none;
+        }
+
+        .panel.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .progress-indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .progress-step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(226, 232, 240, 0.5);
+            border: 3px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 16px;
+            color: #64748b;
+            font-family: 'Fredoka', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active {
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            border-color: #a855f7;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .progress-step.completed {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            border-color: #22c55e;
+            color: white;
+        }
+
+        .progress-line {
+            width: 60px;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .progress-line.completed {
+            background: linear-gradient(90deg, #22c55e, #16a34a);
+        }
+
+        @media (max-width: 640px) {
+            .auth-container {
+                padding: 32px 24px;
+                margin: 16px;
+            }
+
+            .back-link {
+                top: 20px;
+                left: 20px;
+                width: 48px;
+                height: 48px;
+                font-size: 20px;
+            }
+
+            .progress-step {
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
+            }
+
+            .progress-line {
+                width: 40px;
+            }
+        }
+    </style>
+  <script type="module" crossorigin src="/assets/studentSignup-CLEgyy4I.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/config-4EZbmldV.js">
+</head>
+<body>
+    <section class="hero-gradient">
+        <div class="particles"></div>
+
+        <a href="account-type-selection.html" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+
+        <div class="auth-container">
+            <div class="progress-indicator">
+                <div class="progress-step active" id="step1Indicator">1</div>
+                <div class="progress-line" id="progressLine"></div>
+                <div class="progress-step" id="step2Indicator">2</div>
+            </div>
+
+            <div class="text-center mb-6">
+                <h1 class="font-fredoka text-4xl font-black text-slate-800 mb-2" id="panelTitle">
+                    Let's Get Started!
+                </h1>
+                <p class="text-slate-600 font-bold text-base" id="panelSubtitle">
+                    Tell us a bit about yourself
+                </p>
+            </div>
+
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
+
+            <div class="panel active" id="panel1">
+                <form id="panel1Form">
+                    <div class="mb-5">
+                        <label for="studentAge" class="form-label">Student's Age</label>
+                        <select id="studentAge" class="form-input" required>
+                            <option value="">Select age...</option>
+                            <option value="5">5 years old</option>
+                            <option value="6">6 years old</option>
+                            <option value="7">7 years old</option>
+                            <option value="8">8 years old</option>
+                            <option value="9">9 years old</option>
+                            <option value="10">10 years old</option>
+                            <option value="11">11 years old</option>
+                            <option value="12">12 years old</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="parentEmail" class="form-label">Parent's Email</label>
+                        <input
+                            type="email"
+                            id="parentEmail"
+                            class="form-input"
+                            placeholder="parent@email.com"
+                            required
+                        >
+                        <p class="text-xs text-slate-500 font-semibold mt-2">
+                            We'll send updates to your parent about your progress
+                        </p>
+                    </div>
+
+                    <button type="submit" class="btn-3d">
+                        <span>Next Step</span>
+                    </button>
+                </form>
+            </div>
+
+            <div class="panel" id="panel2">
+                <form id="panel2Form">
+                    <div class="mb-4">
+                        <label for="firstName" class="form-label">Student's First Name</label>
+                        <input
+                            type="text"
+                            id="firstName"
+                            class="form-input"
+                            placeholder="Enter your first name"
+                            required
+                        >
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="email" class="form-label">Student's Email Address</label>
+                        <input
+                            type="email"
+                            id="email"
+                            class="form-input"
+                            placeholder="student@email.com"
+                            required
+                        >
+                        <p class="text-xs text-slate-500 font-semibold mt-2">
+                            This email will be used to sign in to your account
+                        </p>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label">Create a Password</label>
+                        <input
+                            type="password"
+                            id="password"
+                            class="form-input"
+                            placeholder="Create a secure password"
+                            required
+                            minlength="6"
+                        >
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="captcha" class="form-label">What is 5 + 3?</label>
+                        <input
+                            type="number"
+                            id="captcha"
+                            class="form-input"
+                            placeholder="Enter the answer"
+                            required
+                        >
+                        <p class="text-xs text-slate-500 font-semibold mt-2">
+                            This helps us make sure you're a real person
+                        </p>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button type="button" class="btn-secondary flex-1" id="backBtn">
+                            Back
+                        </button>
+                        <button type="submit" class="btn-3d flex-1" id="signupBtn">
+                            <span id="signupBtnText">Sign Up</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+
+    <script>
+        const particlesContainer = document.querySelector('.particles');
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+            particlesContainer.appendChild(particle);
+        }
+    </script>
+</body>
+</html>

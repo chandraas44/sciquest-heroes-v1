@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-powered storytelling platform that turns science into personalized voice-narrated comics for kids">
+    <title>SciQuest Heroes - Your Child Becomes the Hero of Science Stories</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fredoka:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --accent: #ec4899;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f0f1e;
+            color: #1e293b;
+            overflow-x: hidden;
+        }
+
+        .font-fredoka {
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .font-space {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-gradient::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -100px;
+            left: -100px;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .hero-gradient::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: -150px;
+            right: -100px;
+            animation: float 15s infinite ease-in-out reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(100px, -100px) scale(1.1); }
+            66% { transform: translate(-100px, 100px) scale(0.9); }
+        }
+
+        .avatar-3d-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            padding: 32px;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            transform-style: preserve-3d;
+            box-shadow: 
+                0 15px 35px rgba(0,0,0,0.3),
+                0 5px 15px rgba(0,0,0,0.2),
+                inset 0 1px 0 rgba(255,255,255,0.3);
+        }
+
+        .avatar-3d-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 30px;
+            padding: 2px;
+            background: linear-gradient(145deg, rgba(255,255,255,0.4), transparent);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .avatar-3d-card:hover {
+            transform: translateY(-20px) rotateX(10deg);
+            box-shadow: 
+                0 25px 50px rgba(0,0,0,0.4),
+                0 10px 30px rgba(0,0,0,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.4);
+            border-color: rgba(255,255,255,0.4);
+        }
+
+        .avatar-3d-card.selected {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.3), rgba(245, 158, 11, 0.3));
+            border: 3px solid #fbbf24;
+            transform: translateY(-25px) rotateX(10deg) scale(1.05);
+        }
+
+        .avatar-3d-card.selected::after {
+            content: '✓';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            border: 4px solid rgba(255,255,255,0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.5);
+            animation: checkPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes checkPop {
+            0% { transform: scale(0) rotate(-180deg); }
+            50% { transform: scale(1.2) rotate(10deg); }
+            100% { transform: scale(1) rotate(0); }
+        }
+
+        .character-avatar-wrapper {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 24px;
+            position: relative;
+            transition: all 0.4s ease;
+            transform-style: preserve-3d;
+        }
+
+        .avatar-3d-card:hover .character-avatar-wrapper {
+            transform: scale(1.1) rotate(-5deg);
+            animation: wiggle 0.5s ease-in-out;
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: scale(1.1) rotate(-5deg); }
+            25% { transform: scale(1.1) rotate(-8deg); }
+            75% { transform: scale(1.1) rotate(-2deg); }
+        }
+
+        .character-main-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 6px solid rgba(255,255,255,0.3);
+            box-shadow: 
+                0 10px 40px rgba(0,0,0,0.3),
+                inset 0 -10px 20px rgba(0,0,0,0.1),
+                inset 0 10px 20px rgba(255,255,255,0.2);
+            overflow: hidden;
+        }
+
+        .character-main-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .specialty-badge-3d {
+            position: absolute;
+            bottom: -15px;
+            right: -15px;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            border: 4px solid rgba(255,255,255,0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+            box-shadow: 
+                0 10px 30px rgba(251, 191, 36, 0.5),
+                inset 0 -5px 10px rgba(0,0,0,0.2),
+                inset 0 5px 10px rgba(255,255,255,0.3);
+            animation: pulse 3s ease-in-out infinite;
+            z-index: 10;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            box-shadow: 
+                0 20px 40px rgba(0,0,0,0.2),
+                inset 0 1px 0 rgba(255,255,255,0.2);
+            transition: all 0.4s ease;
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-10px);
+            box-shadow: 
+                0 30px 60px rgba(0,0,0,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.3);
+        }
+
+        .comic-panel-3d {
+            background: white;
+            border: 5px solid #1e293b;
+            border-radius: 20px;
+            padding: 24px;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 
+                10px 10px 0 rgba(30, 41, 59, 0.3),
+                15px 15px 30px rgba(0,0,0,0.2);
+            transform-style: preserve-3d;
+        }
+
+        .comic-panel-3d:hover {
+            transform: translateY(-15px) rotateX(5deg) rotateY(-5deg);
+            box-shadow: 
+                15px 15px 0 rgba(30, 41, 59, 0.4),
+                20px 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .btn-3d {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            border: 4px solid #1e293b;
+            border-radius: 60px;
+            padding: 20px 40px;
+            font-weight: 800;
+            font-size: 20px;
+            color: #1e293b;
+            box-shadow: 
+                0 8px 0 #92400e,
+                0 12px 30px rgba(0,0,0,0.3);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            font-family: 'Fredoka', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-3d::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-3d:hover::before {
+            left: 100%;
+        }
+
+        .btn-3d:hover {
+            transform: translateY(-5px);
+            box-shadow: 
+                0 13px 0 #92400e,
+                0 17px 40px rgba(0,0,0,0.4);
+        }
+
+        .btn-3d:active {
+            transform: translateY(4px);
+            box-shadow: 
+                0 4px 0 #92400e,
+                0 6px 15px rgba(0,0,0,0.3);
+        }
+
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 50%;
+            animation: particleFloat 15s infinite;
+        }
+
+        @keyframes particleFloat {
+            0% { 
+                transform: translateY(0) translateX(0) scale(1);
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { 
+                transform: translateY(-100vh) translateX(100px) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        .feature-icon-3d {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 45px;
+            margin: 0 auto 24px;
+            box-shadow: 
+                0 15px 30px rgba(102, 126, 234, 0.4),
+                inset 0 -5px 10px rgba(0,0,0,0.2),
+                inset 0 5px 10px rgba(255,255,255,0.2);
+            transition: all 0.4s ease;
+            transform-style: preserve-3d;
+        }
+
+        .feature-icon-3d:hover {
+            transform: rotateY(180deg);
+        }
+
+        @keyframes morph {
+            0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+            25% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+            50% { border-radius: 50% 60% 30% 60% / 30% 60% 70% 40%; }
+            75% { border-radius: 60% 40% 60% 40% / 70% 30% 50% 60%; }
+        }
+
+        .blob-bg {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.15) 0%, transparent 70%);
+            animation: morph 20s ease-in-out infinite, float 25s ease-in-out infinite;
+            filter: blur(40px);
+        }
+
+        .speech-bubble-3d {
+            position: relative;
+            background: white;
+            border: 4px solid #1e293b;
+            border-radius: 25px;
+            padding: 24px;
+            box-shadow: 
+                5px 5px 0 rgba(30, 41, 59, 0.3),
+                8px 8px 20px rgba(0,0,0,0.2);
+            transform-style: preserve-3d;
+            transition: all 0.3s ease;
+        }
+
+        .speech-bubble-3d:hover {
+            transform: translateY(-5px);
+            box-shadow: 
+                7px 7px 0 rgba(30, 41, 59, 0.4),
+                12px 12px 30px rgba(0,0,0,0.3);
+        }
+
+        .speech-bubble-3d::after {
+            content: '';
+            position: absolute;
+            bottom: -24px;
+            left: 40px;
+            width: 0;
+            height: 0;
+            border: 24px solid transparent;
+            border-top-color: #1e293b;
+        }
+
+        .speech-bubble-3d::before {
+            content: '';
+            position: absolute;
+            bottom: -16px;
+            left: 44px;
+            width: 0;
+            height: 0;
+            border: 20px solid transparent;
+            border-top-color: white;
+            z-index: 1;
+        }
+
+        .parallax-section {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(100px);
+            transition: all 1s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .premium-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 30px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .premium-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s;
+        }
+
+        .premium-card:hover::before {
+            left: 100%;
+        }
+
+        .premium-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255,255,255,0.4);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+        }
+
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+
+        /* Comic Preview Section Styles */
+        .comic-preview-container {
+            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+            border-radius: 40px 40px 0 0;
+        }
+
+        .comic-sample-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            background: white;
+            padding: 24px;
+            border-radius: 24px;
+            border: 4px solid #1e293b;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .comic-mini-panel {
+            aspect-ratio: 1;
+            border: 3px solid #1e293b;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #f8f9fa;
+        }
+
+        .comic-mini-panel img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .feature-badge {
+            background: white;
+            border: 3px solid;
+            border-radius: 20px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-badge:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .feature-badge.green {
+            border-color: #22c55e;
+        }
+
+        .feature-badge.blue {
+            border-color: #3b82f6;
+        }
+
+        .feature-badge.purple {
+            border-color: #a855f7;
+        }
+
+        .feature-badge.orange {
+            border-color: #f97316;
+        }
+
+        .audio-player-box {
+            background: white;
+            border: 4px solid #1e293b;
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+        }
+
+        .audio-player-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+        }
+
+        .play-button {
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .play-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6);
+        }
+
+        .download-sample-btn {
+            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+            border: 4px solid #1e293b;
+            border-radius: 50px;
+            padding: 24px 48px;
+            font-weight: 800;
+            font-size: 22px;
+            color: white;
+            box-shadow: 
+                0 8px 0 #701a75,
+                0 12px 30px rgba(0,0,0,0.3);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .download-sample-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 
+        0 13px 0 #701a75,    /* ✅ NEW PURPLE */
+        0 17px 40px rgba(0,0,0,0.4);
+}
+
+.download-sample-btn:active {
+    transform: translateY(4px);
+    box-shadow: 
+        0 4px 0 #701a75,     /* ✅ NEW PURPLE */
+        0 6px 15px rgba(0,0,0,0.3);
+}
+    </style>
+  <script type="module" crossorigin src="/assets/main-DdpHXfxU.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/config-4EZbmldV.js">
+</head>
+<body>
+    
+    <nav class="fixed w-full z-50 backdrop-blur-xl bg-white/80 border-b border-white/20 shadow-2xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-24">
+                <div class="flex items-center space-x-4">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-500 via-pink-500 to-pink-600 rounded-3xl flex items-center justify-center border-4 border-white shadow-2xl transform hover:scale-110 transition-transform">
+                        <span class="text-4xl">🚀</span>
+                    </div>
+                    <span class="font-fredoka text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">SciQuest Heroes</span>
+                </div>
+                
+                <div class="hidden lg:flex items-center space-x-8">
+                    <a href="#how-it-works" class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold text-lg">How It Works</a>
+                    <a href="#avatars" class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold text-lg">Choose Avatar</a>
+                    <a href="#topics" class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold text-lg">Topics</a>
+                    <a href="#for-parents" class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold text-lg">For Parents</a>
+                    <button class="btn-3d" onclick="window.location.href='account-type-selection.html'">
+                        Start Free Trial
+                    </button>
+                </div>
+
+                <button class="lg:hidden border-4 border-slate-800 p-3 rounded-2xl bg-yellow-400 shadow-lg hover:scale-110 transition-transform" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars text-2xl text-slate-800"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="mobile-menu fixed top-0 right-0 h-full w-80 bg-white/95 backdrop-blur-xl border-l-4 border-slate-800 z-50 p-8 lg:hidden shadow-2xl" id="mobileMenu">
+        <button onclick="toggleMobileMenu()" class="absolute top-6 right-6 text-4xl text-slate-800 hover:scale-110 transition-transform">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="flex flex-col space-y-8 mt-20 font-fredoka text-xl font-bold">
+            <a href="#how-it-works" onclick="toggleMobileMenu()" class="text-slate-700 hover:text-purple-600 transition">How It Works</a>
+            <a href="#avatars" onclick="toggleMobileMenu()" class="text-slate-700 hover:text-purple-600 transition">Choose Avatar</a>
+            <a href="#topics" onclick="toggleMobileMenu()" class="text-slate-700 hover:text-purple-600 transition">Topics</a>
+            <a href="#for-parents" onclick="toggleMobileMenu()" class="text-slate-700 hover:text-purple-600 transition">For Parents</a>
+            <button class="btn-3d w-full mt-4" onclick="window.location.href='account-type-selection.html'">Start Free Trial</button>
+        </div>
+    </div>
+
+    <section class="hero-gradient min-h-screen flex items-center relative overflow-hidden pt-32 pb-20">
+        <div class="particles"></div>
+        <div class="blob-bg" style="top: 10%; left: 5%;"></div>
+        <div class="blob-bg" style="bottom: 10%; right: 5%; animation-delay: -10s;"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16">
+                <div class="inline-block glass-card px-8 py-3 mb-8 animate-bounce">
+                    <span class="font-fredoka font-bold text-white text-xl">🎉 AI-Powered Voice Comics for Kids!</span>
+                </div>
+                
+                <h1 class="font-fredoka text-6xl md:text-8xl font-black text-white leading-tight mb-8 drop-shadow-2xl">
+                    Your Child Becomes<br>
+                    <span class="bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-300 bg-clip-text text-transparent animate-pulse">The Hero</span><br>
+                    of Science Stories!
+                </h1>
+                
+                <p class="text-3xl md:text-4xl text-white font-bold mb-12 max-w-4xl mx-auto leading-relaxed drop-shadow-lg">
+                    Personalized 6-panel comics where <span class="text-yellow-300">YOUR CHILD</span> stars with science guides like <span class="text-pink-300">Mr. Chloro</span>!
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
+                    <button class="btn-3d text-2xl transform hover:scale-105" onclick="window.location.href='account-type-selection.html'">
+                        <i class="fas fa-rocket mr-3"></i>Create My Story FREE
+                    </button>
+                    <button class="glass-card px-10 py-5 font-fredoka font-bold text-white text-xl hover:bg-white/20 transition">
+                        <i class="fas fa-play-circle mr-3"></i>Watch Magic
+                    </button>
+                </div>
+
+                <div class="flex items-center justify-center gap-12 text-white flex-wrap">
+                    <div class="glass-card px-6 py-3 flex items-center gap-3">
+                        <i class="fas fa-star text-yellow-300 text-3xl"></i>
+                        <span class="font-fredoka font-bold text-xl">Ages 5-12</span>
+                    </div>
+                    <div class="glass-card px-6 py-3 flex items-center gap-3">
+                        <i class="fas fa-shield-alt text-green-300 text-3xl"></i>
+                        <span class="font-fredoka font-bold text-xl">100% Safe</span>
+                    </div>
+                    <div class="glass-card px-6 py-3 flex items-center gap-3">
+                        <i class="fas fa-headphones text-pink-300 text-3xl"></i>
+                        <span class="font-fredoka font-bold text-xl">Voice AI</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto reveal">
+                <div class="comic-panel-3d">
+                    <div class="text-8xl text-center mb-6">🌿</div>
+                    <div class="speech-bubble-3d mb-16">
+                        <p class="font-fredoka font-bold text-slate-800 text-xl leading-relaxed">"Hi! I'm Mr. Chloro, and plants have MAGICAL powers!"</p>
+                    </div>
+                    <p class="text-center font-fredoka font-black text-slate-600 text-lg">🎬 Panel 1</p>
+                </div>
+
+                <div class="comic-panel-3d">
+                    <div class="text-8xl text-center mb-6">👧✨</div>
+                    <div class="speech-bubble-3d mb-16">
+                        <p class="font-fredoka font-bold text-slate-800 text-xl leading-relaxed">"Wow! You mean plants can EAT SUNLIGHT?!"</p>
+                    </div>
+                    <p class="text-center font-fredoka font-black text-slate-600 text-lg">🎬 Panel 2</p>
+                </div>
+
+                <div class="comic-panel-3d">
+                    <div class="text-8xl text-center mb-6">☀️💧🍃</div>
+                    <div class="speech-bubble-3d mb-16">
+                        <p class="font-fredoka font-bold text-slate-800 text-xl leading-relaxed">"Sun + Water + Air = My SECRET RECIPE!"</p>
+                    </div>
+                    <p class="text-center font-fredoka font-black text-slate-600 text-lg">🎬 Panel 3</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="avatars" class="relative py-32 overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900"></div>
+        <div class="particles"></div>
+        <div class="blob-bg" style="top: 20%; right: 10%;"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-20 reveal">
+                <div class="inline-block glass-card px-8 py-4 mb-8">
+                    <span class="font-fredoka font-black text-white text-2xl">✨ CHOOSE YOUR HERO AVATAR ✨</span>
+                </div>
+                <h2 class="font-fredoka text-6xl md:text-7xl font-black text-white mb-8 drop-shadow-2xl">
+                    Pick Your<br>
+                    <span class="bg-gradient-to-r from-yellow-300 to-pink-300 bg-clip-text text-transparent">Adventure Buddy</span>
+                </h2>
+                <p class="text-3xl text-white font-bold max-w-4xl mx-auto leading-relaxed">
+                    Every hero needs an awesome avatar! Which one is YOU?
+                </p>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 max-w-7xl mx-auto mb-16">
+                
+                <div class="avatar-3d-card" onclick="selectAvatar(this, 'Bolt', 'Speed Hero', '⚡')">
+                    <div class="character-avatar-wrapper">
+                        <div class="character-main-circle" style="background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);">
+                            <img src="/assets/Bolt-DkPBhCt7.png" alt="Bolt" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
+                        </div>
+                    </div>
+                    <h4 class="font-fredoka text-3xl font-black text-white text-center mb-2">Bolt</h4>
+                    <p class="font-fredoka text-white/80 font-bold text-center text-lg">Speed Hero</p>
+                    <div class="specialty-badge-3d">⚡</div>
+                </div>
+
+                <div class="avatar-3d-card" onclick="selectAvatar(this, 'Echo', 'Sound Master', '🎵')">
+                    <div class="character-avatar-wrapper">
+                        <div class="character-main-circle" style="background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);">
+                            <img src="/assets/Echo-NmqxDfM-.png" alt="Echo" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
+                        </div>
+                    </div>
+                    <h4 class="font-fredoka text-3xl font-black text-white text-center mb-2">Echo</h4>
+                    <p class="font-fredoka text-white/80 font-bold text-center text-lg">Sound Master</p>
+                    <div class="specialty-badge-3d">🎵</div>
+                </div>
+
+                <div class="avatar-3d-card" onclick="selectAvatar(this, 'Finn', 'Ocean Explorer', '🌊')">
+                    <div class="character-avatar-wrapper">
+                        <div class="character-main-circle" style="background: linear-gradient(135deg, #06b6d4 0%, #22d3ee 100%);">
+                            <img src="/assets/Finn-D-VjAMqJ.png" alt="Finn" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
+                        </div>
+                    </div>
+                    <h4 class="font-fredoka text-3xl font-black text-white text-center mb-2">Finn</h4>
+                    <p class="font-fredoka text-white/80 font-bold text-center text-lg">Ocean Explorer</p>
+                    <div class="specialty-badge-3d">🌊</div>
+                </div>
+
+                <div class="avatar-3d-card" onclick="selectAvatar(this, 'Kira', 'Star Seeker', '⭐')">
+                    <div class="character-avatar-wrapper">
+                        <div class="character-main-circle" style="background: linear-gradient(135deg, #f43f5e 0%, #fb7185 100%);">
+                            <img src="/assets/Kira-COfQkqm3.png" alt="Kira" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
+                        </div>
+                    </div>
+                    <h4 class="font-fredoka text-3xl font-black text-white text-center mb-2">Kira</h4>
+                    <p class="font-fredoka text-white/80 font-bold text-center text-lg">Star Seeker</p>
+                    <div class="specialty-badge-3d">⭐</div>
+                </div>
+
+                <div class="avatar-3d-card" onclick="selectAvatar(this, 'Leo', 'Nature Guardian', '🌿')">
+                    <div class="character-avatar-wrapper">
+                        <div class="character-main-circle" style="background: linear-gradient(135deg, #22c55e 0%, #4ade80 100%);">
+                            <img src="/assets/Leo-CQ7X1yxD.png" alt="Leo" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
+                        </div>
+                    </div>
+                    <h4 class="font-fredoka text-3xl font-black text-white text-center mb-2">Leo</h4>
+                    <p class="font-fredoka text-white/80 font-bold text-center text-lg">Nature Guardian</p>
+                    <div class="specialty-badge-3d">🌿</div>
+                </div>
+
+                <div class="avatar-3d-card" onclick="selectAvatar(this, 'Max', 'Tech Genius', '🤖')">
+                    <div class="character-avatar-wrapper">
+                        <div class="character-main-circle" style="background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);">
+                            <img src="/assets/Max-kQIpHCdN.png" alt="Max" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
+                        </div>
+                    </div>
+                    <h4 class="font-fredoka text-3xl font-black text-white text-center mb-2">Max</h4>
+                    <p class="font-fredoka text-white/80 font-bold text-center text-lg">Tech Genius</p>
+                    <div class="specialty-badge-3d">🤖</div>
+                </div>
+
+                <div class="avatar-3d-card" onclick="selectAvatar(this, 'Ruby', 'Fire Spirit', '🔥')">
+                    <div class="character-avatar-wrapper">
+                        <div class="character-main-circle" style="background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);">
+                            <img src="/assets/Ruby-uIkLEprA.png" alt="Ruby" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
+                        </div>
+                    </div>
+                    <h4 class="font-fredoka text-3xl font-black text-white text-center mb-2">Ruby</h4>
+                    <p class="font-fredoka text-white/80 font-bold text-center text-lg">Fire Spirit</p>
+                    <div class="specialty-badge-3d">🔥</div>
+                </div>
+
+     <div class="avatar-3d-card" onclick="window.location.href='stella-grade-selector.html';">
+        <div class="character-avatar-wrapper">
+            <div class="character-main-circle" style="background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);">
+                <img src="/assets/Stella-BRSEjthP.png" alt="Stella" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
+                    </div>
+                    </div>
+                    <h4 class="font-fredoka text-3xl font-black text-white text-center mb-2">Stella</h4>
+                    <p class="font-fredoka text-white/80 font-bold text-center text-lg">Space Captain</p>
+                    <div class="specialty-badge-3d">🚀</div>
+                </div>
+
+                <div class="avatar-3d-card" onclick="selectAvatar(this, 'Gale', 'Wind Rider', '💨')">
+                    <div class="character-avatar-wrapper">
+                        <div class="character-main-circle" style="background: linear-gradient(135deg, #14b8a6 0%, #2dd4bf 100%);">
+                            <img src="/assets/gale-CF_8TjOg.png" alt="Gale" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
+                        </div>
+                    </div>
+                    <h4 class="font-fredoka text-3xl font-black text-white text-center mb-2">Gale</h4>
+                    <p class="font-fredoka text-white/80 font-bold text-center text-lg">Wind Rider</p>
+                    <div class="specialty-badge-3d">💨</div>
+                </div>
+
+                <div class="avatar-3d-card" onclick="selectAvatar(this, 'Rex', 'Dino Detective', '🦖')">
+                    <div class="character-avatar-wrapper">
+                        <div class="character-main-circle" style="background: linear-gradient(135deg, #ea580c 0%, #fb923c 100%);">
+                            <img src="/assets/rex-BmfU6D55.png" alt="Rex" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
+                        </div>
+                    </div>
+                    <h4 class="font-fredoka text-3xl font-black text-white text-center mb-2">Rex</h4>
+                    <p class="font-fredoka text-white/80 font-bold text-center text-lg">Dino Detective</p>
+                    <div class="specialty-badge-3d">🦖</div>
+                </div>
+            </div>
+
+            <div class="text-center reveal">
+                <div id="avatarFeedback" class="premium-card max-w-4xl mx-auto" style="display: none;">
+                    <div class="text-9xl mb-8" id="selectedEmoji">⚡</div>
+                    <h3 class="font-fredoka text-6xl font-black text-white mb-6">
+                        AWESOME CHOICE,<br>
+                        <span class="bg-gradient-to-r from-yellow-300 to-pink-300 bg-clip-text text-transparent" id="selectedName">HERO</span>!
+                    </h3>
+                    <p class="font-fredoka text-3xl text-white/90 font-bold mb-10" id="selectedRole">Explorer</p>
+                    <button class="btn-3d text-2xl" onclick="window.location.href='account-type-selection.html'">
+                        <i class="fas fa-book-open mr-3"></i>CREATE MY FIRST STORY!
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works" class="relative py-32 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-20 reveal">
+                <h2 class="font-fredoka text-6xl font-black text-slate-800 mb-6">How The Magic Works</h2>
+                <p class="text-3xl text-slate-600 font-bold">3 Super Easy Steps to Start!</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-12">
+                <div class="premium-card bg-gradient-to-br from-purple-500 to-pink-500 text-center reveal">
+                    <div class="feature-icon-3d">
+                        <span>👨‍👩‍👧</span>
+                    </div>
+                    <h3 class="font-fredoka text-4xl font-black text-white mb-6">1. Parent Setup</h3>
+                    <p class="text-xl text-white font-bold leading-relaxed">
+                        Quick signup, add your child, choose grade level. You control everything!
+                    </p>
+                </div>
+
+                <div class="premium-card bg-gradient-to-br from-blue-500 to-cyan-500 text-center reveal">
+                    <div class="feature-icon-3d">
+                        <span>🦸‍♀️</span>
+                    </div>
+                    <h3 class="font-fredoka text-4xl font-black text-white mb-6">2. Kid Picks Hero</h3>
+                    <p class="text-xl text-white font-bold leading-relaxed">
+                        Choose avatar & topic. AI creates a custom 6-panel comic with THEIR NAME!
+                    </p>
+                </div>
+
+                <div class="premium-card bg-gradient-to-br from-orange-500 to-red-500 text-center reveal">
+                    <div class="feature-icon-3d">
+                        <span>📖</span>
+                    </div>
+                    <h3 class="font-fredoka text-4xl font-black text-white mb-6">3. Read & Learn</h3>
+                    <p class="text-xl text-white font-bold leading-relaxed">
+                        Voice narration calls their name! Chat, earn badges, print comics!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW: See It In Action Section -->
+    <section id="comic-preview" class="relative py-32 overflow-hidden">
+        <div class="comic-preview-container">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center mb-12 reveal">
+                    <h2 class="font-fredoka text-6xl md:text-7xl font-black text-white mb-4 drop-shadow-2xl">
+                        See It In Action!
+                    </h2>
+                    <p class="font-fredoka text-3xl text-white/90 font-bold drop-shadow-lg">
+                        Sample Episode: Magnetism Adventure
+                    </p>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
+                    <!-- Left: Comic Preview -->
+                    <div class="reveal">
+                        <div class="bg-white border-4 border-slate-800 rounded-3xl p-8 shadow-2xl">
+                            <div class="flex items-center gap-3 mb-6">
+                                <span class="text-4xl">✨</span>
+                                <h3 class="font-fredoka text-3xl font-black text-purple-600">Preview: Comic Story Example</h3>
+                            </div>
+                            
+                            <!-- Comic Grid - 6 panel placeholder -->
+                            <div class="comic-sample-grid mb-6">
+                                <div class="comic-mini-panel">
+                                    <div class="w-full h-full flex flex-col items-center justify-center p-2">
+                                        <div class="text-3xl mb-1">👧</div>
+                                        <div class="text-xs font-fredoka font-bold text-slate-600 text-center">What's in your hand?</div>
+                                    </div>
+                                </div>
+                                <div class="comic-mini-panel">
+                                    <div class="w-full h-full flex flex-col items-center justify-center p-2">
+                                        <div class="text-3xl mb-1">🔴</div>
+                                        <div class="text-xs font-fredoka font-bold text-slate-600 text-center">I can pick up metal!</div>
+                                    </div>
+                                </div>
+                                <div class="comic-mini-panel">
+                                    <div class="w-full h-full flex flex-col items-center justify-center p-2">
+                                        <div class="text-3xl mb-1">☀️</div>
+                                        <div class="text-xs font-fredoka font-bold text-slate-600 text-center">Sunlight, water, photosynthesis!</div>
+                                    </div>
+                                </div>
+                                <div class="comic-mini-panel">
+                                    <div class="w-full h-full flex flex-col items-center justify-center p-2">
+                                        <div class="text-3xl mb-1">🧲</div>
+                                        <div class="text-xs font-fredoka font-bold text-slate-600 text-center">THE RECIPE!</div>
+                                    </div>
+                                </div>
+                                <div class="comic-mini-panel">
+                                    <div class="w-full h-full flex flex-col items-center justify-center p-2">
+                                        <div class="text-3xl mb-1">🧠</div>
+                                        <div class="text-xs font-fredoka font-bold text-slate-600 text-center">This is so cool!</div>
+                                    </div>
+                                </div>
+                                <div class="comic-mini-panel">
+                                    <div class="w-full h-full flex flex-col items-center justify-center p-2">
+                                        <div class="text-3xl mb-1">🏆</div>
+                                        <div class="text-xs font-fredoka font-bold text-slate-600 text-center">Energy is created!</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Audio Player -->
+                            <div class="audio-player-box">
+                                <div class="flex items-center gap-4">
+                                    <i class="fas fa-volume-up text-blue-500 text-2xl"></i>
+                                    <span class="font-fredoka text-lg font-bold text-slate-800">Audio Narration Sample</span>
+                                </div>
+                                <button class="play-button">
+                                    <i class="fas fa-play text-white text-2xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: What You'll Get -->
+                    <div class="reveal">
+                        <div class="space-y-6">
+                            <div class="flex items-center gap-3 mb-8">
+                                <span class="text-4xl">✅</span>
+                                <h3 class="font-fredoka text-3xl font-black text-white drop-shadow-lg">What You'll Get</h3>
+                            </div>
+
+                            <!-- Feature Badges -->
+                            <div class="feature-badge green">
+                                <div class="flex items-start gap-4">
+                                    <i class="fas fa-check-circle text-green-500 text-3xl mt-1"></i>
+                                    <div>
+                                        <h4 class="font-fredoka text-xl font-black text-slate-800 mb-2">Personalized Comic Story</h4>
+                                        <p class="text-slate-600 font-bold">6-8 interactive panels featuring your child as the hero</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="feature-badge blue">
+                                <div class="flex items-start gap-4">
+                                    <i class="fas fa-check-circle text-blue-500 text-3xl mt-1"></i>
+                                    <div>
+                                        <h4 class="font-fredoka text-xl font-black text-slate-800 mb-2">Full Audio Narration</h4>
+                                        <p class="text-slate-600 font-bold">Professional voice acting brings the story to life</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="feature-badge purple">
+                                <div class="flex items-start gap-4">
+                                    <i class="fas fa-check-circle text-purple-500 text-3xl mt-1"></i>
+                                    <div>
+                                        <h4 class="font-fredoka text-xl font-black text-slate-800 mb-2">3-Question Quiz</h4>
+                                        <p class="text-slate-600 font-bold">Test comprehension and reinforce learning</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="feature-badge orange">
+                                <div class="flex items-start gap-4">
+                                    <i class="fas fa-check-circle text-orange-500 text-3xl mt-1"></i>
+                                    <div>
+                                        <h4 class="font-fredoka text-xl font-black text-slate-800 mb-2">Printable PDF</h4>
+                                        <p class="text-slate-600 font-bold">Keep a physical copy or share with friends</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- CTA Box -->
+                            <div class="bg-yellow-300 border-4 border-slate-800 rounded-3xl p-8 text-center mt-8 shadow-2xl">
+                                <p class="font-fredoka text-xl font-black text-slate-800 mb-6">Try before you commit!</p>
+                                <button class="download-sample-btn w-full justify-center">
+                                    <i class="fas fa-download text-2xl"></i>
+                                    <span>Download Sample PDF</span>
+                                </button>
+                                <p class="text-slate-600 font-bold mt-4">Full episode • No signup required</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="topics" class="relative py-32 overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-purple-600 via-purple-500 to-pink-600"></div>
+        <div class="particles"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-20 reveal">
+                <h2 class="font-fredoka text-6xl font-black text-white mb-6 drop-shadow-2xl">Meet Your Science Guides!</h2>
+                <p class="text-3xl text-white font-bold">Friendly characters who make learning FUN!</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-12">
+                <div class="comic-panel-3d text-center reveal" style="cursor: pointer;" onclick="window.location.href='mr-chloro-guide.html'">
+                    <div class="text-9xl mb-6">🌱</div>
+                    <h3 class="font-fredoka text-4xl font-black text-slate-800 mb-4">Mr. Chloro</h3>
+                    <p class="font-fredoka text-2xl text-purple-600 font-black mb-4">Plant Wizard</p>
+                    <p class="text-slate-600 font-bold text-lg leading-relaxed mb-4">
+                        "I know how plants eat sunlight! Ready to learn photosynthesis?"
+                    </p>
+                    <div class="mt-4">
+                        <span class="inline-block bg-gradient-to-r from-green-500 to-emerald-500 text-white font-fredoka font-bold px-6 py-3 rounded-full text-lg shadow-lg hover:shadow-xl transition-all">
+                            Click to Explore! 🌿
+                        </span>
+                    </div>
+                </div>
+
+                <div class="comic-panel-3d text-center reveal">
+                    <div class="text-9xl mb-6">🦖</div>
+                    <h3 class="font-fredoka text-4xl font-black text-slate-800 mb-4">Rex Explorer</h3>
+                    <p class="font-fredoka text-2xl text-purple-600 font-black mb-4">Dino Detective</p>
+                    <p class="text-slate-600 font-bold text-lg leading-relaxed">
+                        "Let's travel back millions of years and meet REAL dinosaurs!"
+                    </p>
+                </div>
+
+                <div class="comic-panel-3d text-center reveal">
+                    <div class="text-9xl mb-6">🌊</div>
+                    <h3 class="font-fredoka text-4xl font-black text-slate-800 mb-4">Captain Aqua</h3>
+                    <p class="font-fredoka text-2xl text-purple-600 font-black mb-4">Ocean Hero</p>
+                    <p class="text-slate-600 font-bold text-lg leading-relaxed">
+                        "Dive deep with me to discover mysterious sea creatures!"
+                    </p>
+                </div>
+            </div>
+
+            <div class="text-center mt-16 reveal">
+                <button class="btn-3d text-2xl" onclick="window.location.href='account-type-selection.html'">
+                    Explore 50+ Topics <i class="fas fa-arrow-right ml-3"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section id="for-parents" class="relative py-32 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-20 reveal">
+                <div class="inline-block glass-card bg-gradient-to-r from-green-500 to-emerald-500 px-8 py-4 mb-8">
+                    <span class="font-fredoka font-black text-white text-2xl">🛡️ 100% SAFE & SECURE</span>
+                </div>
+                <h2 class="font-fredoka text-6xl font-black text-slate-800 mb-6">
+                    Built for Parents<br>Who Care
+                </h2>
+                <p class="text-3xl text-slate-600 font-bold">
+                    Complete control + transparency + COPPA compliant
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="premium-card bg-gradient-to-br from-green-400 to-emerald-500 text-center reveal">
+                    <div class="text-7xl mb-6">🔒</div>
+                    <h4 class="font-fredoka text-3xl font-black text-white mb-4">COPPA Safe</h4>
+                    <p class="text-white font-bold text-lg">Full protection for kids under 13</p>
+                </div>
+
+                <div class="premium-card bg-gradient-to-br from-blue-400 to-cyan-500 text-center reveal">
+                    <div class="text-7xl mb-6">📊</div>
+                    <h4 class="font-fredoka text-3xl font-black text-white mb-4">Track Progress</h4>
+                    <p class="text-white font-bold text-lg">See every story & milestone</p>
+                </div>
+
+                <div class="premium-card bg-gradient-to-br from-purple-400 to-pink-500 text-center reveal">
+                    <div class="text-7xl mb-6">💬</div>
+                    <h4 class="font-fredoka text-3xl font-black text-white mb-4">Review Chats</h4>
+                    <p class="text-white font-bold text-lg">Monitor all conversations</p>
+                </div>
+
+                <div class="premium-card bg-gradient-to-br from-orange-400 to-red-500 text-center reveal">
+                    <div class="text-7xl mb-6">🖨️</div>
+                    <h4 class="font-fredoka text-3xl font-black text-white mb-4">Print Comics</h4>
+                    <p class="text-white font-bold text-lg">Download every story PDF</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="relative py-32 overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-purple-900 via-pink-900 to-orange-900"></div>
+        <div class="particles"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-20 reveal">
+                <h2 class="font-fredoka text-6xl font-black text-white mb-6 drop-shadow-2xl">Simple Pricing</h2>
+                <p class="text-3xl text-white font-bold">Start FREE, upgrade when ready!</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
+                <div class="comic-panel-3d text-center reveal">
+                    <div class="text-6xl mb-6">🆓</div>
+                    <h3 class="font-fredoka text-4xl font-black text-slate-800 mb-4">Free Trial</h3>
+                    <div class="my-8">
+                        <span class="font-fredoka text-6xl font-black text-slate-800">$0</span>
+                        <span class="text-slate-600 text-2xl font-bold">/14 days</span>
+                    </div>
+                    <ul class="text-left space-y-4 mb-10">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mr-3 mt-1 text-2xl"></i>
+                            <span class="text-slate-600 font-bold text-lg">3 Free Stories</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mr-3 mt-1 text-2xl"></i>
+                            <span class="text-slate-600 font-bold text-lg">Voice Narration</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mr-3 mt-1 text-2xl"></i>
+                            <span class="text-slate-600 font-bold text-lg">Basic Chat</span>
+                        </li>
+                    </ul>
+                    <button class="btn-3d w-full" onclick="window.location.href='account-type-selection.html'">START FREE</button>
+                </div>
+
+                <div class="comic-panel-3d text-center reveal border-yellow-400 border-8 relative transform scale-110">
+                    <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-yellow-400 border-4 border-slate-800 rounded-full px-6 py-2 shadow-2xl">
+                        <span class="font-fredoka font-black text-slate-800 text-lg">⭐ BEST VALUE</span>
+                    </div>
+                    <div class="text-6xl mb-6 mt-6">🚀</div>
+                    <h3 class="font-fredoka text-4xl font-black text-slate-800 mb-4">Monthly</h3>
+                    <div class="my-8">
+                        <span class="font-fredoka text-6xl font-black text-slate-800">$19</span>
+                        <span class="text-slate-600 text-2xl font-bold">/month</span>
+                    </div>
+                    <ul class="text-left space-y-4 mb-10">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mr-3 mt-1 text-2xl"></i>
+                            <span class="text-slate-600 font-bold text-lg">UNLIMITED Stories</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mr-3 mt-1 text-2xl"></i>
+                            <span class="text-slate-600 font-bold text-lg">ALL Topics</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mr-3 mt-1 text-2xl"></i>
+                            <span class="text-slate-600 font-bold text-lg">Advanced Chat</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mr-3 mt-1 text-2xl"></i>
+                            <span class="text-slate-600 font-bold text-lg">PDF Downloads</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mr-3 mt-1 text-2xl"></i>
+                            <span class="text-slate-600 font-bold text-lg">Up to 3 Kids</span>
+                        </li>
+                    </ul>
+                    <button class="btn-3d w-full" onclick="window.location.href='account-type-selection.html'">GET STARTED</button>
+                </div>
+
+                <div class="comic-panel-3d text-center reveal">
+                    <div class="text-6xl mb-6">👨‍👩‍👧‍👦</div>
+                    <h3 class="font-fredoka text-4xl font-black text-slate-800 mb-4">Family</h3>
+                    <div class="my-8">
+                        <span class="font-fredoka text-6xl font-black text-slate-800">$29</span>
+                        <span class="text-slate-600 text-2xl font-bold">/month</span>
+                    </div>
+                    <ul class="text-left space-y-4 mb-10">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mr-3 mt-1 text-2xl"></i>
+                            <span class="text-slate-600 font-bold text-lg">Everything in Monthly</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mr-3 mt-1 text-2xl"></i>
+                            <span class="text-slate-600 font-bold text-lg">UNLIMITED Kids</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mr-3 mt-1 text-2xl"></i>
+                            <span class="text-slate-600 font-bold text-lg">Priority Support</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mr-3 mt-1 text-2xl"></i>
+                            <span class="text-slate-600 font-bold text-lg">Early Access</span>
+                        </li>
+                    </ul>
+                    <button class="btn-3d w-full" onclick="window.location.href='account-type-selection.html'">GET STARTED</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="relative py-32 overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600"></div>
+        <div class="particles"></div>
+        
+        <div class="max-w-5xl mx-auto text-center px-4 relative z-10 reveal">
+            <h2 class="font-fredoka text-7xl md:text-8xl font-black text-white mb-8 drop-shadow-2xl leading-tight">
+                Ready to Make<br>Science AMAZING?
+            </h2>
+            <p class="text-4xl text-white font-bold mb-12">
+                Start your FREE trial today. No credit card needed!
+            </p>
+            <button class="btn-3d text-3xl mb-8" onclick="window.location.href='account-type-selection.html'">
+                <i class="fas fa-rocket mr-3"></i>START FREE TRIAL NOW
+            </button>
+            <div class="flex items-center justify-center gap-8 text-white font-fredoka font-bold text-xl flex-wrap">
+                <span>✓ 14 Days Free</span>
+                <span>•</span>
+                <span>✓ Cancel Anytime</span>
+                <span>•</span>
+                <span>✓ 100% Safe</span>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-slate-900 py-16 border-t-4 border-yellow-400">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <div>
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-14 h-14 bg-yellow-400 rounded-2xl flex items-center justify-center border-4 border-white shadow-xl">
+                            <span class="text-3xl">🚀</span>
+                        </div>
+                        <span class="font-fredoka text-2xl font-black text-white">SciQuest</span>
+                    </div>
+                    <p class="text-white/70 text-lg font-bold">
+                        Making science magical for every child.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-fredoka font-black text-white mb-6 text-xl">Product</h4>
+                    <ul class="space-y-3 text-white/70 font-bold text-lg">
+                        <li><a href="#" class="hover:text-white transition">How It Works</a></li>
+                        <li><a href="#" class="hover:text-white transition">Topics</a></li>
+                        <li><a href="#" class="hover:text-white transition">Pricing</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-fredoka font-black text-white mb-6 text-xl">Company</h4>
+                    <ul class="space-y-3 text-white/70 font-bold text-lg">
+                        <li><a href="#" class="hover:text-white transition">About</a></li>
+                        <li><a href="#" class="hover:text-white transition">Blog</a></li>
+                        <li><a href="#" class="hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-fredoka font-black text-white mb-6 text-xl">Legal</h4>
+                    <ul class="space-y-3 text-white/70 font-bold text-lg">
+                        <li><a href="#" class="hover:text-white transition">Privacy</a></li>
+                        <li><a href="#" class="hover:text-white transition">Terms</a></li>
+                        <li><a href="#" class="hover:text-white transition">COPPA</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-white/10 pt-8 text-center text-white/70 font-bold text-lg">
+                <p>© 2025 SciQuest Heroes. Where every child becomes a science superhero! 🚀✨</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const particlesContainers = document.querySelectorAll('.particles');
+        particlesContainers.forEach(container => {
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+                container.appendChild(particle);
+            }
+        });
+
+        let selectedAvatar = null;
+
+function selectAvatar(element, name, role, emoji) {
+    // Stella redirects immediately, no feedback needed
+    if (name === 'Stella') {
+        window.location.href = 'stella-grade-selector.html';
+        return;
+    }
+    
+    if (selectedAvatar) {
+        selectedAvatar.classList.remove('selected');
+    }
+    element.classList.add('selected');
+    selectedAvatar = element;
+    
+    document.getElementById('selectedEmoji').textContent = emoji;
+    document.getElementById('selectedName').textContent = name.toUpperCase();
+    document.getElementById('selectedRole').textContent = role;
+    document.getElementById('avatarFeedback').style.display = 'block';
+    
+    setTimeout(() => {
+        document.getElementById('avatarFeedback').scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+        });
+    }, 300);
+}
+
+        function toggleMobileMenu() {
+            document.getElementById('mobileMenu').classList.toggle('active');
+        }
+
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealOnScroll = () => {
+            revealElements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                if (elementTop < windowHeight - 150) {
+                    element.classList.add('active');
+                }
+            });
+        };
+        window.addEventListener('scroll', revealOnScroll);
+        revealOnScroll();
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+            
+            document.querySelectorAll('.blob-bg').forEach((blob, index) => {
+                const speed = (index + 1) * 20;
+                const x = (mouseX - 0.5) * speed;
+                const y = (mouseY - 0.5) * speed;
+                blob.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+    </script>
+
+</body>
+</html>

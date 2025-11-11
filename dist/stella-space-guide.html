@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Captain Stella - Solar System Adventure | SciQuest Heroes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fredoka:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: Inter, sans-serif;
+            background: linear-gradient(135deg, #0f0527 0%, #1a0b3e 100%);
+            color: #1e293b;
+        }
+
+        .font-fredoka { font-family: Fredoka, sans-serif; }
+
+        .hero-section {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -100px;
+            right: -100px;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(50px, -50px) scale(1.1); }
+        }
+
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            transition: all 0.4s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+        }
+
+        .section-card {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border-left: 6px solid #ec4899;
+        }
+
+        .section-card:hover {
+            box-shadow: 0 8px 30px rgba(236, 72, 153, 0.3);
+            transform: translateX(8px);
+        }
+
+        .accordion-button {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            color: white;
+            padding: 20px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            width: 100%;
+            text-align: left;
+            font-weight: 700;
+            font-size: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .accordion-button:hover {
+            background: linear-gradient(135deg, #db2777 0%, #7c3aed 100%);
+            transform: scale(1.02);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            background: #fdf4ff;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .accordion-content.active {
+            max-height: 3000px;
+            padding: 24px;
+        }
+
+        .progress-bar {
+            background: #e5e7eb;
+            height: 8px;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #ec4899 0%, #8b5cf6 100%);
+            height: 100%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #cbd5e1;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-dot.active {
+            background: #ec4899;
+            transform: scale(1.5);
+        }
+
+        .interactive-box {
+            background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%);
+            border: 3px solid #ec4899;
+            border-radius: 16px;
+            padding: 24px;
+            margin: 16px 0;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 14px;
+            margin: 4px;
+        }
+
+        .badge-primary {
+            background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+            color: white;
+        }
+
+        .badge-secondary {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+        }
+
+        .badge-accent {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+        }
+
+        .stella-character {
+            width: 400px;
+            height: 400px;
+            margin: 0 auto;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 20px 60px rgba(236, 72, 153, 0.4);
+            animation: pulse 3s ease-in-out infinite;
+            overflow: hidden;
+        }
+
+        .stella-character img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 30px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .concept-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border-top: 4px solid #ec4899;
+        }
+
+        .concept-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(236, 72, 153, 0.3);
+        }
+
+        .activity-card {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border: 3px solid #3b82f6;
+            border-radius: 16px;
+            padding: 24px;
+            margin: 16px 0;
+        }
+
+        .sticky-nav {
+            position: fixed;
+            top: 100px;
+            right: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+
+        .quiz-option {
+            background: white;
+            border: 3px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin: 8px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .quiz-option:hover {
+            border-color: #ec4899;
+            background: #fdf4ff;
+            transform: translateX(8px);
+        }
+
+        .quiz-option.correct {
+            background: #fce7f3;
+            border-color: #ec4899;
+        }
+
+        .quiz-option.wrong {
+            background: #fee2e2;
+            border-color: #ef4444;
+        }
+
+        .planet-card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .planet-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #ec4899, #8b5cf6, #3b82f6);
+        }
+
+        .planet-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(236, 72, 153, 0.3);
+        }
+
+        .planet-icon {
+            font-size: 80px;
+            margin-bottom: 16px;
+            display: block;
+            text-align: center;
+            animation: orbit 10s linear infinite;
+        }
+
+        @keyframes orbit {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .space-fact {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+            color: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 16px 0;
+            border: 2px solid #8b5cf6;
+        }
+
+        .pose-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 24px 0;
+        }
+
+        .pose-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .pose-card:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(236, 72, 153, 0.4);
+        }
+
+        .pose-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .sticky-nav { display: none; }
+            .stella-character { width: 300px; height: 300px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="fixed w-full z-50 backdrop-blur-xl bg-white/90 border-b border-white/20 shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="index.html" class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-gradient-to-br from-pink-400 to-purple-600 rounded-2xl flex items-center justify-center border-3 border-white shadow-lg">
+                        <span class="text-3xl">🚀</span>
+                    </div>
+                    <span class="font-fredoka text-2xl font-bold text-slate-800">Captain Stella's Guide</span>
+                </a>
+                <a href="index.html" class="px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold rounded-xl hover:shadow-lg transition">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Home
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="sticky-nav hidden lg:block">
+        <div class="text-sm font-bold text-slate-600 mb-3">Mission Progress</div>
+        <div class="flex flex-col gap-3" id="stickyNav">
+            <div class="nav-dot active" data-section="intro"></div>
+            <div class="nav-dot" data-section="story"></div>
+            <div class="nav-dot" data-section="planets"></div>
+            <div class="nav-dot" data-section="concepts"></div>
+            <div class="nav-dot" data-section="activities"></div>
+            <div class="nav-dot" data-section="quiz"></div>
+        </div>
+        <div class="mt-4 text-xs font-bold text-pink-600" id="progressText">0% Complete</div>
+    </div>
+
+    <section class="hero-section min-h-screen flex items-center pt-32 pb-20">
+        <div class="stars" id="starfield"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-12">
+                <div class="stella-character mb-8">
+                    <img src="/assets/Stella-BRSEjthP.png" alt="Captain Stella - Space Explorer" />
+                </div>
+                <h1 class="font-fredoka text-6xl md:text-7xl font-black text-white mb-6 drop-shadow-2xl">
+                    Captain Stella
+                </h1>
+                <p class="text-3xl text-white font-bold mb-4">
+                    Space Captain & Explorer
+                </p>
+                <div class="inline-block glass-card px-8 py-4 mb-8">
+                    <p class="font-fredoka text-2xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+                        "To infinity and beyond our Solar System!"
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                <div class="glass-card p-8 text-center">
+                    <div class="text-5xl mb-4">🪐</div>
+                    <h3 class="font-fredoka text-xl font-bold text-slate-800 mb-2">Topic</h3>
+                    <p class="text-slate-600 font-semibold">Solar System & Space</p>
+                </div>
+                <div class="glass-card p-8 text-center">
+                    <div class="text-5xl mb-4">⏱️</div>
+                    <h3 class="font-fredoka text-xl font-bold text-slate-800 mb-2">Duration</h3>
+                    <p class="text-slate-600 font-semibold">50-70 Minutes</p>
+                </div>
+                <div class="glass-card p-8 text-center">
+                    <div class="text-5xl mb-4">🎯</div>
+                    <h3 class="font-fredoka text-xl font-bold text-slate-800 mb-2">Grade Level</h3>
+                    <p class="text-slate-600 font-semibold">Ages 7-12</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="intro" class="py-20 bg-white">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="font-fredoka text-5xl font-black text-slate-800 mb-4">Mission Briefing</h2>
+                <div class="progress-bar max-w-md mx-auto">
+                    <div class="progress-fill" id="mainProgress" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h3 class="font-fredoka text-3xl font-bold text-slate-800 mb-4">Meet Captain Stella</h3>
+                <div class="pose-showcase">
+                    <div class="pose-card">
+                        <img src="/assets/stella-pose1-DouN-7-R.png" alt="Stella Pose 1" />
+                        <p class="text-center text-sm font-bold text-slate-600 mt-2">Ready for Launch</p>
+                    </div>
+                    <div class="pose-card">
+                        <img src="/assets/Stella-pose2-BqRgDLkD.png" alt="Stella Pose 2" />
+                        <p class="text-center text-sm font-bold text-slate-600 mt-2">Exploring Space</p>
+                    </div>
+                    <div class="pose-card">
+                        <img src="/assets/Stella-Pose3-Cck3jonb.png" alt="Stella Pose 3" />
+                        <p class="text-center text-sm font-bold text-slate-600 mt-2">Mission Briefing</p>
+                    </div>
+                    <div class="pose-card">
+                        <img src="/assets/Stella-Pose4-FdBKilv2.png" alt="Stella Pose 4" />
+                        <p class="text-center text-sm font-bold text-slate-600 mt-2">Stellar Discovery</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h3 class="font-fredoka text-3xl font-bold text-slate-800 mb-4">Character Profile</h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="text-3xl">👤</span>
+                            <div>
+                                <div class="text-sm font-bold text-slate-500">Name</div>
+                                <div class="text-lg font-bold text-slate-800">Captain Stella</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="text-3xl">⚡</span>
+                            <div>
+                                <div class="text-sm font-bold text-slate-500">Role</div>
+                                <div class="text-lg font-bold text-slate-800">Space Captain</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="text-3xl">🎭</span>
+                            <div>
+                                <div class="text-sm font-bold text-slate-500">Personality</div>
+                                <div class="text-lg font-bold text-slate-800">Brave, Curious, Adventurous</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="text-3xl">🎨</span>
+                            <div>
+                                <div class="text-sm font-bold text-slate-500">Appearance</div>
+                                <div class="text-lg font-bold text-slate-800">Space Suit, Helmet with Stars</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="text-3xl">💬</span>
+                            <div>
+                                <div class="text-sm font-bold text-slate-500">Catchphrase</div>
+                                <div class="text-lg font-bold text-pink-600">"To infinity and beyond!"</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="text-3xl">🔬</span>
+                            <div>
+                                <div class="text-sm font-bold text-slate-500">Specialty</div>
+                                <div class="text-lg font-bold text-slate-800">Astronomy & Space Exploration</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h3 class="font-fredoka text-3xl font-bold text-slate-800 mb-4">Mission Objectives</h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-check-circle text-pink-500 text-2xl mt-1"></i>
+                        <div>
+                            <div class="font-bold text-slate-800">Explore the 8 planets of our Solar System</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-check-circle text-pink-500 text-2xl mt-1"></i>
+                        <div>
+                            <div class="font-bold text-slate-800">Understand what makes each planet unique</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-check-circle text-pink-500 text-2xl mt-1"></i>
+                        <div>
+                            <div class="font-bold text-slate-800">Learn about the Sun and its importance</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-check-circle text-pink-500 text-2xl mt-1"></i>
+                        <div>
+                            <div class="font-bold text-slate-800">Discover how planets orbit and rotate</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="story" class="py-20 bg-gradient-to-br from-purple-50 to-pink-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="font-fredoka text-5xl font-black text-slate-800 mb-4 text-center">🚀 Journey Through the Solar System</h2>
+            <p class="text-xl text-slate-600 font-bold text-center mb-12">An Epic Space Adventure</p>
+
+            <div class="section-card">
+                <h3 class="font-fredoka text-3xl font-bold text-slate-800 mb-4">📖 Chapter 1: Blast Off!</h3>
+                <div class="space-y-4 text-slate-700 leading-relaxed">
+                    <p class="font-semibold text-lg">Emma stared up at the night sky from her backyard, her eyes wide with wonder. She was 10 years old and had always dreamed of becoming an astronaut. Tonight, something magical was about to happen.</p>
+                    
+                    <p class="font-semibold">Suddenly, a brilliant pink spacecraft descended from the stars, landing softly on her lawn. The hatch opened, and out stepped Captain Stella, wearing a gleaming space suit with constellation patterns.</p>
+                    
+                    <div class="bg-purple-50 border-l-4 border-purple-400 p-4 my-4">
+                        <p class="font-bold text-purple-900">Captain Stella: "Greetings, Emma! I'm Captain Stella, and I've been searching for a brave explorer to join me on a tour of our Solar System!"</p>
+                    </div>
+                    
+                    <div class="bg-pink-50 border-l-4 border-pink-400 p-4 my-4">
+                        <p class="font-bold text-pink-900">Emma: "Really?! You mean... we're going to see the planets? All of them?"</p>
+                    </div>
+                    
+                    <div class="bg-purple-50 border-l-4 border-purple-400 p-4 my-4">
+                        <p class="font-bold text-purple-900">Captain Stella: "All eight planets! Plus, we'll visit the Sun, explore asteroid belts, and maybe even wave to some passing comets. Are you ready for the adventure of a lifetime?"</p>
+                    </div>
+                    
+                    <p class="font-semibold text-lg">Emma's heart raced with excitement. She grabbed her telescope and notebook. "I'm ready, Captain! Let's explore space!"</p>
+                    
+                    <p class="font-semibold text-lg">Together, they climbed aboard the Starship Discovery. The engines hummed to life, and with a brilliant flash of light, they zoomed up, up, up—past the clouds, through Earth's atmosphere, and into the vast darkness of space.</p>
+                    
+                    <div class="space-fact mt-6">
+                        <div class="flex items-start gap-3">
+                            <span class="text-4xl">⭐</span>
+                            <div>
+                                <h4 class="font-fredoka text-xl font-bold mb-2">Stella's Space Fact</h4>
+                                <p class="text-white/90">Did you know? Our Solar System is 4.6 billion years old! It formed from a giant cloud of gas and dust called the solar nebula.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="interactive-box">
+                <h4 class="font-fredoka text-2xl font-bold text-purple-800 mb-4">🎯 What You'll Discover</h4>
+                <ul class="space-y-3">
+                    <li class="flex items-start gap-3">
+                        <span class="text-2xl">☀️</span>
+                        <div>
+                            <strong class="text-slate-800">The Sun:</strong>
+                            <span class="text-slate-700"> Our star that provides light and heat</span>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-2xl">🪐</span>
+                        <div>
+                            <strong class="text-slate-800">8 Planets:</strong>
+                            <span class="text-slate-700"> Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune</span>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-2xl">🌙</span>
+                        <div>
+                            <strong class="text-slate-800">Moons:</strong>
+                            <span class="text-slate-700"> Natural satellites orbiting planets</span>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-2xl">⚡</span>
+                        <div>
+                            <strong class="text-slate-800">Orbits:</strong>
+                            <span class="text-slate-700"> How planets travel around the Sun</span>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-2xl">🌌</span>
+                        <div>
+                            <strong class="text-slate-800">Space Facts:</strong>
+                            <span class="text-slate-700"> Mind-blowing discoveries about our cosmic neighborhood</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="planets" class="py-20 bg-white">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="font-fredoka text-5xl font-black text-slate-800 mb-12 text-center">The 8 Planets</h2>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="planet-card">
+                    <span class="planet-icon">☿️</span>
+                    <h3 class="font-fredoka text-2xl font-bold text-slate-800 mb-2 text-center">Mercury</h3>
+                    <p class="text-sm text-slate-600 text-center mb-3 font-bold">The Swift Planet</p>
+                    <ul class="text-sm text-slate-700 space-y-2">
+                        <li>🔥 <strong>Temperature:</strong> 800°F day, -290°F night</li>
+                        <li>📏 <strong>Size:</strong> Smallest planet</li>
+                        <li>⏱️ <strong>Day:</strong> 59 Earth days</li>
+                        <li>🔄 <strong>Year:</strong> 88 Earth days</li>
+                        <li>🌑 <strong>Moons:</strong> 0</li>
+                    </ul>
+                </div>
+
+                <div class="planet-card">
+                    <span class="planet-icon">♀️</span>
+                    <h3 class="font-fredoka text-2xl font-bold text-slate-800 mb-2 text-center">Venus</h3>
+                    <p class="text-sm text-slate-600 text-center mb-3 font-bold">The Bright Planet</p>
+                    <ul class="text-sm text-slate-700 space-y-2">
+                        <li>🔥 <strong>Temperature:</strong> 900°F (hottest!)</li>
+                        <li>📏 <strong>Size:</strong> Similar to Earth</li>
+                        <li>⏱️ <strong>Day:</strong> 243 Earth days</li>
+                        <li>🔄 <strong>Year:</strong> 225 Earth days</li>
+                        <li>🌑 <strong>Moons:</strong> 0</li>
+                    </ul>
+                </div>
+
+                <div class="planet-card">
+                    <span class="planet-icon">🌍</span>
+                    <h3 class="font-fredoka text-2xl font-bold text-slate-800 mb-2 text-center">Earth</h3>
+                    <p class="text-sm text-slate-600 text-center mb-3 font-bold">Our Home Planet</p>
+                    <ul class="text-sm text-slate-700 space-y-2">
+                        <li>💧 <strong>Water:</strong> 71% covered!</li>
+                        <li>📏 <strong>Size:</strong> 7,917 miles diameter</li>
+                        <li>⏱️ <strong>Day:</strong> 24 hours</li>
+                        <li>🔄 <strong>Year:</strong> 365.25 days</li>
+                        <li>🌑 <strong>Moons:</strong> 1 (The Moon)</li>
+                    </ul>
+                </div>
+
+                <div class="planet-card">
+                    <span class="planet-icon">♂️</span>
+                    <h3 class="font-fredoka text-2xl font-bold text-slate-800 mb-2 text-center">Mars</h3>
+                    <p class="text-sm text-slate-600 text-center mb-3 font-bold">The Red Planet</p>
+                    <ul class="text-sm text-slate-700 space-y-2">
+                        <li>🔴 <strong>Color:</strong> Red from iron oxide</li>
+                        <li>📏 <strong>Size:</strong> Half Earth's size</li>
+                        <li>⏱️ <strong>Day:</strong> 24.6 hours</li>
+                        <li>🔄 <strong>Year:</strong> 687 Earth days</li>
+                        <li>🌑 <strong>Moons:</strong> 2 (Phobos & Deimos)</li>
+                    </ul>
+                </div>
+
+                <div class="planet-card">
+                    <span class="planet-icon">♃</span>
+                    <h3 class="font-fredoka text-2xl font-bold text-slate-800 mb-2 text-center">Jupiter</h3>
+                    <p class="text-sm text-slate-600 text-center mb-3 font-bold">The Giant Planet</p>
+                    <ul class="text-sm text-slate-700 space-y-2">
+                        <li>🎯 <strong>Size:</strong> BIGGEST planet!</li>
+                        <li>🌀 <strong>Storm:</strong> Great Red Spot</li>
+                        <li>⏱️ <strong>Day:</strong> 10 hours</li>
+                        <li>🔄 <strong>Year:</strong> 12 Earth years</li>
+                        <li>🌑 <strong>Moons:</strong> 95+ known moons!</li>
+                    </ul>
+                </div>
+
+                <div class="planet-card">
+                    <span class="planet-icon">♄</span>
+                    <h3 class="font-fredoka text-2xl font-bold text-slate-800 mb-2 text-center">Saturn</h3>
+                    <p class="text-sm text-slate-600 text-center mb-3 font-bold">The Ringed Planet</p>
+                    <ul class="text-sm text-slate-700 space-y-2">
+                        <li>💫 <strong>Rings:</strong> Made of ice & rock</li>
+                        <li>📏 <strong>Size:</strong> 2nd largest</li>
+                        <li>⏱️ <strong>Day:</strong> 10.7 hours</li>
+                        <li>🔄 <strong>Year:</strong> 29 Earth years</li>
+                        <li>🌑 <strong>Moons:</strong> 146+ known moons!</li>
+                    </ul>
+                </div>
+
+                <div class="planet-card">
+                    <span class="planet-icon">♅</span>
+                    <h3 class="font-fredoka text-2xl font-bold text-slate-800 mb-2 text-center">Uranus</h3>
+                    <p class="text-sm text-slate-600 text-center mb-3 font-bold">The Tilted Planet</p>
+                    <ul class="text-sm text-slate-700 space-y-2">
+                        <li>🔵 <strong>Color:</strong> Blue-green</li>
+                        <li>📐 <strong>Tilt:</strong> Rotates sideways!</li>
+                        <li>⏱️ <strong>Day:</strong> 17 hours</li>
+                        <li>🔄 <strong>Year:</strong> 84 Earth years</li>
+                        <li>🌑 <strong>Moons:</strong> 27 known moons</li>
+                    </ul>
+                </div>
+
+                <div class="planet-card">
+                    <span class="planet-icon">♆</span>
+                    <h3 class="font-fredoka text-2xl font-bold text-slate-800 mb-2 text-center">Neptune</h3>
+                    <p class="text-sm text-slate-600 text-center mb-3 font-bold">The Windy Planet</p>
+                    <ul class="text-sm text-slate-700 space-y-2">
+                        <li>💨 <strong>Winds:</strong> 1,200 mph!</li>
+                        <li>📏 <strong>Position:</strong> Farthest from Sun</li>
+                        <li>⏱️ <strong>Day:</strong> 16 hours</li>
+                        <li>🔄 <strong>Year:</strong> 165 Earth years</li>
+                        <li>🌑 <strong>Moons:</strong> 14 known moons</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="space-fact">
+                <h4 class="font-fredoka text-2xl font-bold mb-4">🌟 Memory Trick: Planet Order</h4>
+                <p class="text-xl mb-2"><strong>M</strong>y <strong>V</strong>ery <strong>E</strong>ducated <strong>M</strong>other <strong>J</strong>ust <strong>S</strong>erved <strong>U</strong>s <strong>N</strong>achos</p>
+                <p class="text-white/80">Mercury - Venus - Earth - Mars - Jupiter - Saturn - Uranus - Neptune</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="concepts" class="py-20 bg-gradient-to-br from-slate-50 to-purple-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="font-fredoka text-5xl font-black text-slate-800 mb-12 text-center">Space Concepts</h2>
+
+            <div class="mb-6">
+                <button class="accordion-button" onclick="toggleAccordion(0)">
+                    <span>1. The Sun: Our Star</span>
+                    <i class="fas fa-chevron-down transition-transform" id="icon0"></i>
+                </button>
+                <div class="accordion-content" id="content0">
+                    <h4 class="font-bold text-xl text-slate-800 mb-3">What Is the Sun?</h4>
+                    <div class="interactive-box">
+                        <p class="text-lg font-bold text-center mb-4">The Sun is a giant ball of hot gas (mostly hydrogen and helium) that provides light and heat to our entire Solar System!</p>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-6 mt-4">
+                        <div>
+                            <h5 class="font-bold text-lg text-slate-800 mb-2">Key Facts:</h5>
+                            <ul class="space-y-2 text-slate-700">
+                                <li>☀️ Temperature: 27 million°F at core</li>
+                                <li>📏 Size: 109 times wider than Earth</li>
+                                <li>⚡ Energy: Nuclear fusion reactions</li>
+                                <li>💡 Age: 4.6 billion years old</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5 class="font-bold text-lg text-slate-800 mb-2">Why It Matters:</h5>
+                            <ul class="space-y-2 text-slate-700">
+                                <li>🌍 Provides warmth for life on Earth</li>
+                                <li>🌱 Powers plant growth (photosynthesis)</li>
+                                <li>🌊 Drives Earth's weather and water cycle</li>
+                                <li>🪐 Gravity holds all planets in orbit</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <button class="accordion-button" onclick="toggleAccordion(1)">
+                    <span>2. Orbits: How Planets Move</span>
+                    <i class="fas fa-chevron-down transition-transform" id="icon1"></i>
+                </button>
+                <div class="accordion-content" id="content1">
+                    <div class="space-y-4">
+                        <div>
+                            <h5 class="font-bold text-lg text-slate-800 mb-2">What is an Orbit?</h5>
+                            <p class="text-slate-700">An orbit is the curved path a planet takes around the Sun, caused by the Sun's gravity pulling on the planet.</p>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="bg-white p-4 rounded-lg border-2 border-purple-200">
+                                <h5 class="font-bold text-lg text-purple-600 mb-2">🌍 Revolution</h5>
+                                <p class="text-slate-700 text-sm">When a planet travels around the Sun (makes one complete orbit = one year for that planet)</p>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg border-2 border-pink-200">
+                                <h5 class="font-bold text-lg text-pink-600 mb-2">🔄 Rotation</h5>
+                                <p class="text-slate-700 text-sm">When a planet spins on its axis (one complete spin = one day for that planet)</p>
+                            </div>
+                        </div>
+                        <div class="space-fact">
+                            <p><strong>Fun Fact:</strong> Neptune takes 165 Earth years to orbit the Sun once! Since it was discovered in 1846, it hasn't even completed two full orbits yet!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <button class="accordion-button" onclick="toggleAccordion(2)">
+                    <span>3. Inner vs Outer Planets</span>
+                    <i class="fas fa-chevron-down transition-transform" id="icon2"></i>
+                </button>
+                <div class="accordion-content" id="content2">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="concept-card">
+                            <h4 class="font-bold text-2xl text-pink-600 mb-3">Inner Planets (Terrestrial)</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <div class="text-sm font-bold text-slate-500">Members</div>
+                                    <div class="font-bold text-slate-800">Mercury, Venus, Earth, Mars</div>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-bold text-slate-500">Made Of</div>
+                                    <div class="font-bold text-slate-800">Rock and metal (solid surfaces)</div>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-bold text-slate-500">Size</div>
+                                    <div class="font-bold text-slate-800">Smaller planets</div>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-bold text-slate-500">Features</div>
+                                    <div class="font-bold text-slate-800">Few or no moons, no rings</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="concept-card">
+                            <h4 class="font-bold text-2xl text-purple-600 mb-3">Outer Planets (Gas Giants)</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <div class="text-sm font-bold text-slate-500">Members</div>
+                                    <div class="font-bold text-slate-800">Jupiter, Saturn, Uranus, Neptune</div>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-bold text-slate-500">Made Of</div>
+                                    <div class="font-bold text-slate-800">Gas and liquid (no solid surface!)</div>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-bold text-slate-500">Size</div>
+                                    <div class="font-bold text-slate-800">MUCH larger planets</div>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-bold text-slate-500">Features</div>
+                                    <div class="font-bold text-slate-800">Many moons, ring systems</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <button class="accordion-button" onclick="toggleAccordion(3)">
+                    <span>4. Amazing Space Facts</span>
+                    <i class="fas fa-chevron-down transition-transform" id="icon3"></i>
+                </button>
+                <div class="accordion-content" id="content3">
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="space-fact">
+                            <h5 class="font-bold text-xl mb-2">🌍 On Earth</h5>
+                            <p>If you weigh 100 pounds on Earth, you'd weigh only 38 pounds on Mars and 236 pounds on Jupiter!</p>
+                        </div>
+                        <div class="space-fact">
+                            <h5 class="font-bold text-xl mb-2">🚀 Space Travel</h5>
+                            <p>It would take about 7 months to travel from Earth to Mars using current technology!</p>
+                        </div>
+                        <div class="space-fact">
+                            <h5 class="font-bold text-xl mb-2">🪐 Saturn's Rings</h5>
+                            <p>Saturn's rings are made of billions of pieces of ice and rock. Some pieces are as small as a grain of sand!</p>
+                        </div>
+                        <div class="space-fact">
+                            <h5 class="font-bold text-xl mb-2">☄️ Asteroids</h5>
+                            <p>Between Mars and Jupiter is the asteroid belt with millions of rocky objects left over from the Solar System's formation!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="activities" class="py-20 bg-white">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="font-fredoka text-5xl font-black text-slate-800 mb-12 text-center">Space Missions (Activities)</h2>
+
+            <div class="activity-card mb-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="text-4xl">🎨</span>
+                    <h3 class="font-fredoka text-2xl font-bold text-slate-800">Mission 1: Build a Solar System Model</h3>
+                </div>
+                <div class="bg-white p-4 rounded-lg mb-4">
+                    <h4 class="font-bold text-lg text-slate-800 mb-2">Materials Needed</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="badge badge-primary">Styrofoam balls (various sizes)</span>
+                        <span class="badge badge-primary">Paint</span>
+                        <span class="badge badge-primary">Wire or string</span>
+                        <span class="badge badge-primary">Cardboard base</span>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-lg">
+                    <h4 class="font-bold text-lg text-slate-800 mb-3">Procedure</h4>
+                    <ol class="list-decimal list-inside space-y-2 text-slate-700">
+                        <li>Choose appropriate ball sizes (Jupiter biggest, Mercury smallest)</li>
+                        <li>Paint each planet with accurate colors</li>
+                        <li>Arrange planets in correct order from the Sun</li>
+                        <li>Label each planet with fun facts</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="activity-card mb-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="text-4xl">📏</span>
+                    <h3 class="font-fredoka text-2xl font-bold text-slate-800">Mission 2: Scale Distance Activity</h3>
+                </div>
+                <div class="bg-white p-4 rounded-lg mb-4">
+                    <h4 class="font-bold text-lg text-slate-800 mb-2">Materials Needed</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="badge badge-secondary">Measuring tape</span>
+                        <span class="badge badge-secondary">Markers or flags</span>
+                        <span class="badge badge-secondary">Large outdoor space</span>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-lg">
+                    <h4 class="font-bold text-lg text-slate-800 mb-3">Procedure</h4>
+                    <ol class="list-decimal list-inside space-y-2 text-slate-700">
+                        <li>Mark the Sun position (starting point)</li>
+                        <li>Use scale: 1 meter = 10 million km</li>
+                        <li>Place planet markers at scaled distances</li>
+                        <li>Walk the "orbit" to understand vastness of space!</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="activity-card">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="text-4xl">🔭</span>
+                    <h3 class="font-fredoka text-2xl font-bold text-slate-800">Mission 3: Planet Observation Journal</h3>
+                </div>
+                <div class="bg-white p-4 rounded-lg mb-4">
+                    <h4 class="font-bold text-lg text-slate-800 mb-2">Materials Needed</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="badge badge-accent">Notebook</span>
+                        <span class="badge badge-accent">Binoculars or telescope (optional)</span>
+                        <span class="badge badge-accent">Star chart or app</span>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-lg">
+                    <h4 class="font-bold text-lg text-slate-800 mb-3">Procedure</h4>
+                    <ol class="list-decimal list-inside space-y-2 text-slate-700">
+                        <li>Find visible planets in night sky (Venus, Mars, Jupiter, Saturn)</li>
+                        <li>Record date, time, and location of observation</li>
+                        <li>Draw what you see and note brightness/color</li>
+                        <li>Track how planets move over several nights</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="quiz" class="py-20 bg-gradient-to-br from-purple-50 to-pink-50">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="font-fredoka text-5xl font-black text-slate-800 mb-4 text-center">Space Cadet Quiz</h2>
+            <p class="text-center text-slate-600 font-bold mb-12">Test your knowledge of the Solar System!</p>
+
+            <div class="glass-card p-8 mb-6">
+                <h3 class="font-bold text-xl text-slate-800 mb-4">Question 1: Which is the largest planet in our Solar System?</h3>
+                <div class="quiz-option" onclick="checkAnswer(this, false)">A. Saturn</div>
+                <div class="quiz-option" onclick="checkAnswer(this, true)">B. Jupiter</div>
+                <div class="quiz-option" onclick="checkAnswer(this, false)">C. Neptune</div>
+                <div class="quiz-option" onclick="checkAnswer(this, false)">D. Uranus</div>
+            </div>
+
+            <div class="glass-card p-8 mb-6">
+                <h3 class="font-bold text-xl text-slate-800 mb-4">Question 2: Which planet is known as the Red Planet?</h3>
+                <div class="quiz-option" onclick="checkAnswer(this, false)">A. Venus</div>
+                <div class="quiz-option" onclick="checkAnswer(this, true)">B. Mars</div>
+                <div class="quiz-option" onclick="checkAnswer(this, false)">C. Mercury</div>
+                <div class="quiz-option" onclick="checkAnswer(this, false)">D. Jupiter</div>
+            </div>
+
+            <div class="glass-card p-8 mb-6">
+                <h3 class="font-bold text-xl text-slate-800 mb-4">Question 3: Which planet has the most spectacular ring system?</h3>
+                <div class="quiz-option" onclick="checkAnswer(this, false)">A. Jupiter</div>
+                <div class="quiz-option" onclick="checkAnswer(this, false)">B. Uranus</div>
+                <div class="quiz-option" onclick="checkAnswer(this, true)">C. Saturn</div>
+                <div class="quiz-option" onclick="checkAnswer(this, false)">D. Neptune</div>
+            </div>
+
+            <div class="glass-card p-8">
+                <h3 class="font-bold text-xl text-slate-800 mb-4">Question 4: How long does it take Earth to orbit the Sun once?</h3>
+                <div class="quiz-option" onclick="checkAnswer(this, false)">A. 24 hours</div>
+                <div class="quiz-option" onclick="checkAnswer(this, false)">B. 30 days</div>
+                <div class="quiz-option" onclick="checkAnswer(this, true)">C. 365 days</div>
+                <div class="quiz-option" onclick="checkAnswer(this, false)">D. 1 month</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600">
+        <div class="max-w-4xl mx-auto text-center px-4">
+            <div class="text-8xl mb-6">🚀</div>
+            <h2 class="font-fredoka text-5xl font-black text-white mb-6">Mission Complete!</h2>
+            <p class="text-2xl text-white font-bold mb-8">
+                You've successfully explored the Solar System with Captain Stella!
+            </p>
+            <a href="index.html" class="inline-block px-10 py-5 bg-white text-purple-600 font-fredoka font-black text-xl rounded-2xl hover:shadow-2xl transition transform hover:scale-105">
+                <i class="fas fa-home mr-3"></i>Return to Base
+            </a>
+        </div>
+    </section>
+
+    <footer class="bg-slate-900 py-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-white/70 font-bold">
+                © 2025 SciQuest Heroes. Making science magical for every child. 🚀✨
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Create starfield
+        const starfield = document.getElementById('starfield');
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            starfield.appendChild(star);
+        }
+
+        let openAccordion = null;
+        const totalSections = 6;
+        let completedSections = new Set();
+
+        function toggleAccordion(index) {
+            const content = document.getElementById('content' + index);
+            const icon = document.getElementById('icon' + index);
+            
+            if (openAccordion === index) {
+                content.classList.remove('active');
+                icon.style.transform = 'rotate(0deg)';
+                openAccordion = null;
+            } else {
+                if (openAccordion !== null) {
+                    document.getElementById('content' + openAccordion).classList.remove('active');
+                    document.getElementById('icon' + openAccordion).style.transform = 'rotate(0deg)';
+                }
+                content.classList.add('active');
+                icon.style.transform = 'rotate(180deg)';
+                openAccordion = index;
+                
+                completedSections.add('concepts');
+                updateProgress();
+            }
+        }
+
+        function checkAnswer(element, isCorrect) {
+            const options = element.parentElement.querySelectorAll('.quiz-option');
+            options.forEach(opt => opt.style.pointerEvents = 'none');
+            
+            if (isCorrect) {
+                element.classList.add('correct');
+                setTimeout(() => {
+                    alert('Correct! You\'re a true Space Cadet! 🚀');
+                }, 300);
+            } else {
+                element.classList.add('wrong');
+                setTimeout(() => {
+                    alert('Not quite! Try again, Explorer! 💪');
+                    options.forEach(opt => {
+                        opt.style.pointerEvents = 'auto';
+                        opt.classList.remove('wrong');
+                    });
+                }, 1000);
+            }
+            
+            completedSections.add('quiz');
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const progress = (completedSections.size / totalSections) * 100;
+            document.getElementById('mainProgress').style.width = progress + '%';
+            document.getElementById('progressText').textContent = Math.round(progress) + '% Complete';
+        }
+
+        // Scroll-based nav dot activation
+        const sections = ['intro', 'story', 'planets', 'concepts', 'activities', 'quiz'];
+        const navDots = document.querySelectorAll('.nav-dot');
+
+        window.addEventListener('scroll', () => {
+            let currentSection = '';
+            sections.forEach(section => {
+                const element = document.getElementById(section);
+                if (element) {
+                    const rect = element.getBoundingClientRect();
+                    if (rect.top <= 200 && rect.bottom >= 200) {
+                        currentSection = section;
+                    }
+                }
+            });
+
+            navDots.forEach(dot => {
+                dot.classList.remove('active');
+                if (dot.dataset.section === currentSection) {
+                    dot.classList.add('active');
+                    completedSections.add(currentSection);
+                    updateProgress();
+                }
+            });
+        });
+
+        // Track scroll completion
+        window.addEventListener('scroll', () => {
+            sections.forEach(section => {
+                const element = document.getElementById(section);
+                if (element) {
+                    const rect = element.getBoundingClientRect();
+                    if (rect.top < window.innerHeight && rect.bottom > 0) {
+                        completedSections.add(section);
+                    }
+                }
+            });
+            updateProgress();
+        });
+    </script>
+</body>
+</html>
