@@ -56,6 +56,17 @@ async function checkAuth() {
         return;
     }
 
+    const { data: profile } = await supabase
+        .from('user_profiles')
+        .select('account_type')
+        .eq('id', session.user.id)
+        .maybeSingle();
+
+    if (profile && profile.account_type !== 'student') {
+        window.location.href = 'index.html';
+        return;
+    }
+
     loadUserProfile(session.user.id);
 }
 
@@ -133,7 +144,7 @@ logoutBtn.addEventListener('click', async () => {
         localStorage.clear();
         sessionStorage.clear();
 
-        window.location.href = 'index.html';
+        window.location.href = 'auth.html';
     } catch (error) {
         console.error('Logout error:', error);
         alert('Failed to logout. Please try again.');

@@ -91,6 +91,7 @@ function addUserMenuToNavbar(profile) {
                     <i class="fas fa-th-large" style="width: 20px;"></i>
                     <span>Dashboard</span>
                 </a>
+                ${profile.account_type === 'student' ? `
                 <a href="profile.html" class="dropdown-item" style="
                     padding: 14px 20px;
                     display: flex;
@@ -105,6 +106,21 @@ function addUserMenuToNavbar(profile) {
                     <i class="fas fa-user" style="width: 20px;"></i>
                     <span>Profile</span>
                 </a>
+                <a href="avatar-selection.html" class="dropdown-item" style="
+                    padding: 14px 20px;
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    color: #475569;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    text-decoration: none;
+                ">
+                    <i class="fas fa-user-circle" style="width: 20px;"></i>
+                    <span>Change Avatar</span>
+                </a>
+                ` : ''}
                 <div style="height: 1px; background: #e2e8f0; margin: 8px 0;"></div>
                 <div class="dropdown-item" id="navLogoutBtn" style="
                     padding: 14px 20px;

@@ -128,8 +128,13 @@ async function checkAuth() {
         return;
     }
 
-    const isNewSignup = localStorage.getItem('newStudentSignup');
-    if (!isNewSignup) {
+    const { data: profile } = await supabase
+        .from('user_profiles')
+        .select('account_type')
+        .eq('id', session.user.id)
+        .maybeSingle();
+
+    if (profile && profile.account_type !== 'student') {
         window.location.href = 'index.html';
         return;
     }

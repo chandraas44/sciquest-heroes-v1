@@ -171,10 +171,17 @@ authForm.addEventListener('submit', async (e) => {
             if (data.user) {
                 await createUserProfile(data.user.id, email, accountType);
                 showSuccess('Account created successfully! Redirecting...');
+                const userAccountType = accountType || 'student';
                 localStorage.removeItem('accountType');
 
                 setTimeout(() => {
-                    window.location.href = 'index.html';
+                    if (userAccountType === 'parent') {
+                        window.location.href = 'parent-dashboard.html';
+                    } else if (userAccountType === 'teacher') {
+                        window.location.href = 'teacher-dashboard.html';
+                    } else {
+                        window.location.href = 'index.html';
+                    }
                 }, 1500);
             }
         } else {

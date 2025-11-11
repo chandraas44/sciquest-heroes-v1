@@ -187,6 +187,7 @@ panel2Form.addEventListener('submit', async (e) => {
             email: signupEmail,
             password: password,
             options: {
+                emailRedirectTo: window.location.origin + '/avatar-selection.html',
                 data: {
                     username: username,
                     account_type: 'student'

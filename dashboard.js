@@ -72,7 +72,7 @@ logoutBtn.addEventListener('click', async () => {
         localStorage.clear();
         sessionStorage.clear();
 
-        window.location.href = 'index.html';
+        window.location.href = 'auth.html';
     } catch (error) {
         console.error('Logout error:', error);
         alert('Failed to logout. Please try again.');
