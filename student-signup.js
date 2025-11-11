@@ -81,17 +81,16 @@ function goToPanel(panelNumber) {
 
 async function checkEmailAvailability(email) {
     try {
-        const { data, error } = await supabase
-            .from('user_profiles')
-            .select('email')
-            .eq('email', email)
-            .maybeSingle();
+        const { data, error } = await supabase.rpc('check_email_availability', {
+            check_email: email
+        });
 
-        if (error && error.code !== 'PGRST116') {
-            throw error;
+        if (error) {
+            console.error('Error checking email availability:', error);
+            return false;
         }
 
-        return !data;
+        return data === true;
     } catch (error) {
         console.error('Error checking email:', error);
         return false;
@@ -175,7 +174,7 @@ panel2Form.addEventListener('submit', async (e) => {
     try {
         const isEmailAvailable = await checkEmailAvailability(email);
         if (!isEmailAvailable) {
-            showError('This email is already registered. Please use a different email or log in.');
+            showError('This email is already registered. Please use a different email or try logging in.');
             signupBtn.disabled = false;
             signupBtnText.textContent = 'Sign Up';
             return;
@@ -208,7 +207,12 @@ panel2Form.addEventListener('submit', async (e) => {
             }
         });
 
-        if (authError) throw authError;
+        if (authError) {
+            if (authError.message && authError.message.toLowerCase().includes('already registered')) {
+                throw new Error('This email is already registered. Please use a different email or try logging in.');
+            }
+            throw authError;
+        }
 
         if (authData.user) {
             const profileData = {
@@ -245,14 +249,18 @@ panel2Form.addEventListener('submit', async (e) => {
     } catch (error) {
         console.error('Signup error:', error);
 
-        if (error.message.includes('User already registered')) {
-            showError('This email is already registered. Please use a different email or log in.');
-        } else if (error.message.includes('duplicate key')) {
-            showError('This email is already registered. Please use a different email or log in.');
-        } else if (error.message.includes('violates check constraint')) {
-            showError('Unable to create student account. Please ensure your parent has registered first.');
+        const errorMsg = error.message || '';
+
+        if (errorMsg.toLowerCase().includes('already registered') || errorMsg.toLowerCase().includes('already exists')) {
+            showError('This email is already registered. Please use a different email or try logging in at auth.html');
+        } else if (errorMsg.includes('duplicate key')) {
+            showError('This email is already registered. Please use a different email or try logging in at auth.html');
+        } else if (errorMsg.includes('violates check constraint')) {
+            showError('Unable to create student account. Please check your information and try again.');
+        } else if (errorMsg.toLowerCase().includes('email') && errorMsg.toLowerCase().includes('invalid')) {
+            showError('Please enter a valid email address.');
         } else {
-            showError(error.message || 'An error occurred. Please try again.');
+            showError(errorMsg || 'An error occurred during signup. Please try again.');
         }
     } finally {
         signupBtn.disabled = false;
