@@ -62,12 +62,12 @@ function renderProgressDots() {
 function updateGlossary(terms = []) {
   glossaryList.innerHTML = '';
   if (!terms.length) {
-    glossaryList.innerHTML = '<p class="text-slate-400 text-sm">No glossary terms on this panel.</p>';
+    glossaryList.innerHTML = '<p class="text-white/60 text-sm">No glossary terms on this panel.</p>';
     return;
   }
   terms.forEach((term) => {
     const pill = document.createElement('span');
-    pill.className = 'glossary-pill px-3 py-1 rounded-full bg-slate-100 text-slate-700';
+    pill.className = 'glossary-pill px-3 py-1 rounded-full bg-indigo-600/30 border border-white/20 text-white font-semibold';
     pill.textContent = term;
     glossaryList.appendChild(pill);
   });

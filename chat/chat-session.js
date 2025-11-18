@@ -49,12 +49,16 @@ function renderTopicPicker(topics) {
   topics.forEach((topic) => {
     const card = document.createElement('div');
     card.className =
-      'bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 cursor-pointer hover:bg-white/10 transition shadow-xl';
+      'bg-gradient-to-br from-indigo-700/40 to-fuchsia-600/40 backdrop-blur-xl border border-white/20 rounded-3xl p-6 cursor-pointer hover:from-indigo-700/50 hover:to-fuchsia-600/50 transition shadow-[0_0_30px_rgba(155,55,255,0.25)]';
     card.innerHTML = `
-      <div class="text-6xl mb-4">${topic.icon}</div>
-      <h3 class="font-fredoka text-2xl text-white mb-2">${topic.name}</h3>
-      <p class="text-white/70 text-sm mb-4">${topic.description}</p>
-      <button class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-3 rounded-2xl hover:from-purple-600 hover:to-pink-600 transition">
+      <div class="flex justify-center mb-4">
+        <div class="bg-white/20 p-4 rounded-full">
+          <div class="text-6xl">${topic.icon}</div>
+        </div>
+      </div>
+      <h3 class="font-fredoka text-2xl text-white mb-2 text-center">${topic.name}</h3>
+      <p class="text-white/80 text-sm mb-4 text-center">${topic.description}</p>
+      <button class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-3 rounded-2xl hover:from-purple-600 hover:to-pink-600 transition shadow-lg">
         Start Chat
       </button>
     `;
@@ -71,20 +75,20 @@ function renderMessage(message, isLoading = false) {
   messageEl.className = `flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`;
   if (isLoading && !isUser) {
     messageEl.innerHTML = `
-      <div class="max-w-[80%] bg-white border-2 border-slate-200 text-slate-800 rounded-3xl px-5 py-3 shadow-lg">
+      <div class="max-w-[80%] bg-[#E8D9FF] border-2 border-[#C8AFFF] text-slate-800 rounded-3xl px-5 py-3 shadow-lg">
         <div class="flex items-center gap-2">
           <div class="flex gap-1">
-            <div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0s"></div>
-            <div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-            <div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+            <div class="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 0s"></div>
+            <div class="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+            <div class="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
           </div>
-          <span class="text-sm text-slate-500">Thinking...</span>
+          <span class="text-sm text-purple-700 font-semibold">Thinking...</span>
         </div>
       </div>
     `;
   } else {
     messageEl.innerHTML = `
-      <div class="max-w-[80%] ${isUser ? 'bg-gradient-to-br from-purple-500 to-pink-500 text-white' : 'bg-white border-2 border-slate-200 text-slate-800'} rounded-3xl px-5 py-3 shadow-lg">
+      <div class="max-w-[80%] ${isUser ? 'bg-gradient-to-br from-purple-500 to-pink-500 text-white font-bold' : 'bg-[#E8D9FF] border-2 border-[#C8AFFF] text-slate-800'} rounded-3xl px-5 py-3 shadow-lg">
         <p class="text-sm leading-relaxed">${message.content}</p>
       </div>
     `;
