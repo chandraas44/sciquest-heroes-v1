@@ -21,7 +21,11 @@ export default defineConfig({
         mrChloroGuide: resolve(__dirname, 'mr-chloro-guide.html'),
         stellaGradeSelector: resolve(__dirname, 'stella-grade-selector.html'),
         stellaPhotosynthesisAdventure: resolve(__dirname, 'stella-photosynthesis-adventure.html'),
-        stellaSpaceGuide: resolve(__dirname, 'stella-space-guide.html')
+        stellaSpaceGuide: resolve(__dirname, 'stella-space-guide.html'),
+        storiesHub: resolve(__dirname, 'stories/index.html'),
+        storyDetail: resolve(__dirname, 'stories/story.html'),
+        storyReader: resolve(__dirname, 'stories/reader.html'),
+        chat: resolve(__dirname, 'chat/index.html')
       }
     }
   },
@@ -29,6 +33,21 @@ export default defineConfig({
     port: 3000,
     open: true,
     cors: true
+  },
+  configureServer(server) {
+    server.middlewares.use((req, res, next) => {
+      // Rewrite /stories/{storyId}/read to /stories/reader.html with storyId in query
+      const match = req.url.match(/^\/stories\/([^/]+)\/read(\?.*)?$/);
+      if (match) {
+        const storyId = match[1];
+        const existingQuery = match[2] || '';
+        const params = new URLSearchParams(existingQuery.replace('?', ''));
+        params.set('storyId', storyId);
+        req.url = `/stories/reader.html?${params.toString()}`;
+        console.log(`[Vite] Rewrote /stories/${storyId}/read to ${req.url}`);
+      }
+      next();
+    });
   },
   preview: {
     port: 3000,

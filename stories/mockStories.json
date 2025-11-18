@@ -1,0 +1,159 @@
+{
+  "stories": [
+    {
+      "id": "mystery-moon",
+      "title": "Mystery on the Moon",
+      "coverUrl": "../images/chlorophotosynthesis.png",
+      "topicTag": "Space Science",
+      "readingLevel": "Ages 7-9",
+      "estimatedTime": "6 min",
+      "summary": "Join Luna and her robot friend Nova as they investigate strange moonlight signals coming from the silent crater.",
+      "panels": [
+        {
+          "panelId": "panel-01",
+          "imageUrl": "../images/chlorophotosynthesis.png",
+          "narration": "Luna’s moon rover screeched to a stop beside a crater glowing neon blue.",
+          "glossaryTerms": [
+            "crater",
+            "lunar dust"
+          ],
+          "chatTopicId": "moon-physics",
+          "ctaLabel": "Ask Nova why the crater glows"
+        },
+        {
+          "panelId": "panel-02",
+          "imageUrl": "../images/Plant%20Inquiry%20with%20Mr.%20Chloro.png",
+          "narration": "Nova scanned the air. “No atmosphere, but the glow matches solar flare energy!”",
+          "glossaryTerms": [
+            "atmosphere",
+            "solar flare"
+          ],
+          "chatTopicId": "solar-energy",
+          "ctaLabel": "What are solar flares?"
+        },
+        {
+          "panelId": "panel-03",
+          "imageUrl": "../images/chlorophotosynthesis.png",
+          "narration": "A cluster of smart crystals pulsed in patterns, like they were speaking to Luna.",
+          "glossaryTerms": [
+            "frequency",
+            "pattern"
+          ],
+          "chatTopicId": "wave-patterns",
+          "ctaLabel": "Decode the crystal message"
+        },
+        {
+          "panelId": "panel-04",
+          "imageUrl": "../images/Plant%20Inquiry%20with%20Mr.%20Chloro.png",
+          "narration": "Using her glove computer, Luna translated the light into musical notes.",
+          "glossaryTerms": [
+            "translate",
+            "frequency"
+          ],
+          "chatTopicId": "light-to-sound",
+          "ctaLabel": "How can light become music?"
+        },
+        {
+          "panelId": "panel-05",
+          "imageUrl": "../images/chlorophotosynthesis.png",
+          "narration": "The crystals revealed a map to hidden ice tunnels deep under the crater.",
+          "glossaryTerms": [
+            "subsurface",
+            "ice tunnel"
+          ],
+          "chatTopicId": "moon-ice",
+          "ctaLabel": "Why is moon ice special?"
+        },
+        {
+          "panelId": "panel-06",
+          "imageUrl": "../images/Plant%20Inquiry%20with%20Mr.%20Chloro.png",
+          "narration": "Luna marked the discovery and sent a victory pulse back to Earth.",
+          "glossaryTerms": [
+            "discovery",
+            "transmission"
+          ],
+          "chatTopicId": "space-signals",
+          "ctaLabel": "How do signals reach Earth?"
+        }
+      ]
+    },
+    {
+      "id": "rainforest-rescue",
+      "title": "Rainforest Rescue Patrol",
+      "coverUrl": "../images/Plant%20Inquiry%20with%20Mr.%20Chloro.png",
+      "topicTag": "Life Science",
+      "readingLevel": "Ages 8-10",
+      "estimatedTime": "7 min",
+      "summary": "Kira and Bolt race across the rainforest canopy to rescue glowing tree frogs before a thunderstorm arrives.",
+      "panels": [
+        {
+          "panelId": "panel-01",
+          "imageUrl": "../images/Plant%20Inquiry%20with%20Mr.%20Chloro.png",
+          "narration": "Rain drums on giant leaves as Kira’s hoverboard zooms between vines.",
+          "glossaryTerms": [
+            "canopy",
+            "hoverboard"
+          ],
+          "chatTopicId": "rainforest-layers",
+          "ctaLabel": "Explore canopy layers"
+        },
+        {
+          "panelId": "panel-02",
+          "imageUrl": "../images/chlorophotosynthesis.png",
+          "narration": "Bolt uses lightning scanners to spot the bio-luminescent frogs.",
+          "glossaryTerms": [
+            "bioluminescence",
+            "scanner"
+          ],
+          "chatTopicId": "animal-light",
+          "ctaLabel": "Why do animals glow?"
+        },
+        {
+          "panelId": "panel-03",
+          "imageUrl": "../images/Plant%20Inquiry%20with%20Mr.%20Chloro.png",
+          "narration": "Storm clouds roar, but a rope bridge leads to the frog nursery.",
+          "glossaryTerms": [
+            "humidity",
+            "nursery"
+          ],
+          "chatTopicId": "rain-cycle",
+          "ctaLabel": "How storms help forests"
+        },
+        {
+          "panelId": "panel-04",
+          "imageUrl": "../images/chlorophotosynthesis.png",
+          "narration": "They deploy bubble shields to keep the frogs dry and safe.",
+          "glossaryTerms": [
+            "deploy",
+            "shield"
+          ],
+          "chatTopicId": "animal-care",
+          "ctaLabel": "Protect rainforest species"
+        },
+        {
+          "panelId": "panel-05",
+          "imageUrl": "../images/Plant%20Inquiry%20with%20Mr.%20Chloro.png",
+          "narration": "Kira’s field scanner records the frogs’ glowing patterns for research.",
+          "glossaryTerms": [
+            "research",
+            "pattern"
+          ],
+          "chatTopicId": "field-notes",
+          "ctaLabel": "What is field data?"
+        },
+        {
+          "panelId": "panel-06",
+          "imageUrl": "../images/chlorophotosynthesis.png",
+          "narration": "Mission complete! They unlock a new rainforest badge.",
+          "glossaryTerms": [
+            "badge",
+            "rescue"
+          ],
+          "chatTopicId": "rainforest-badge",
+          "ctaLabel": "Celebrate rainforest heroes"
+        }
+      ]
+    }
+  ]
+}
+

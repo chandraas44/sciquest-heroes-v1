@@ -607,8 +607,8 @@
         0 6px 15px rgba(0,0,0,0.3);
 }
     </style>
-  <script type="module" crossorigin src="/assets/main-BeVUhqVj.js"></script>
-  <link rel="modulepreload" crossorigin href="/assets/config-4EZbmldV.js">
+  <script type="module" crossorigin src="/assets/main-C6z_Gx0M.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/config-ClyacVFi.js">
 </head>
 <body>
     
@@ -623,6 +623,7 @@
                 </div>
                 
                 <div class="hidden lg:flex items-center space-x-8">
+                    <a href="stories/index.html" class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold text-lg">Stories</a>
                     <a href="#how-it-works" class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold text-lg">How It Works</a>
                     <a href="#avatars" class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold text-lg">Choose Avatar</a>
                     <a href="#topics" class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold text-lg">Topics</a>
@@ -644,6 +645,7 @@
             <i class="fas fa-times"></i>
         </button>
         <div class="flex flex-col space-y-8 mt-20 font-fredoka text-xl font-bold">
+            <a href="stories/index.html" onclick="toggleMobileMenu()" class="text-slate-700 hover:text-purple-600 transition">Stories</a>
             <a href="#how-it-works" onclick="toggleMobileMenu()" class="text-slate-700 hover:text-purple-600 transition">How It Works</a>
             <a href="#avatars" onclick="toggleMobileMenu()" class="text-slate-700 hover:text-purple-600 transition">Choose Avatar</a>
             <a href="#topics" onclick="toggleMobileMenu()" class="text-slate-700 hover:text-purple-600 transition">Topics</a>
@@ -676,6 +678,9 @@
                 <div class="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
                     <button class="btn-3d text-2xl transform hover:scale-105" onclick="window.location.href='auth/account-type-selection.html'">
                         <i class="fas fa-rocket mr-3"></i>Create My Story FREE
+                    </button>
+                    <button class="btn-3d text-2xl bg-white text-purple-600" onclick="window.location.href='stories/index.html'">
+                        <i class="fas fa-book-open mr-3"></i>Read Stories
                     </button>
                     <button class="glass-card px-10 py-5 font-fredoka font-bold text-white text-xl hover:bg-white/20 transition">
                         <i class="fas fa-play-circle mr-3"></i>Watch Magic
@@ -750,7 +755,7 @@
                 <div class="avatar-3d-card" onclick="selectAvatar(this, 'Bolt', 'Speed Hero', '⚡')">
                     <div class="character-avatar-wrapper">
                         <div class="character-main-circle" style="background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);">
-                            <img src="data:image/png;base64,aHR0cHM6Ly9zdGFja2JsaXR6LmNvbS9zdG9yYWdlL2Jsb2JzL2V5SmZjbUZwYkhNaU9uc2laR0YwWVNJNk5UWTJNVFU1T0Rjc0luQjFjaUk2SW1Kc2IySmZhV1FpZlgwPS0tYjY5OTBhNTc4MDk5NTJkYmZjM2ZmMGUxY2U1NDY0NDg3MjkxNWY4NS8vQm9sdC5wbmc=" alt="Bolt" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
+                            <img src="data:image/png;base64," alt="Bolt" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
                         </div>
                     </div>
                     <h4 class="font-fredoka text-3xl font-black text-white text-center mb-2">Bolt</h4>
@@ -761,7 +766,7 @@
                 <div class="avatar-3d-card" onclick="selectAvatar(this, 'Echo', 'Sound Master', '🎵')">
                     <div class="character-avatar-wrapper">
                         <div class="character-main-circle" style="background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);">
-                            <img src="data:image/png;base64,aHR0cHM6Ly9zdGFja2JsaXR6LmNvbS9zdG9yYWdlL2Jsb2JzL2V5SmZjbUZwYkhNaU9uc2laR0YwWVNJNk5UWTJNVFU1T1RRc0luQjFjaUk2SW1Kc2IySmZhV1FpZlgwPS0tMThmYjc2ZmFlMzhmOTExOWQyMjY1NGE0ZGRhYTc5MjllYmM5Njg5ZC8vRWNoby5wbmc=" alt="Echo" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
+                            <img src="data:image/png;base64," alt="Echo" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
                         </div>
                     </div>
                     <h4 class="font-fredoka text-3xl font-black text-white text-center mb-2">Echo</h4>
@@ -772,7 +777,7 @@
                 <div class="avatar-3d-card" onclick="selectAvatar(this, 'Finn', 'Ocean Explorer', '🌊')">
                     <div class="character-avatar-wrapper">
                         <div class="character-main-circle" style="background: linear-gradient(135deg, #06b6d4 0%, #22d3ee 100%);">
-                            <img src="data:image/png;base64,aHR0cHM6Ly9zdGFja2JsaXR6LmNvbS9zdG9yYWdlL2Jsb2JzL2V5SmZjbUZwYkhNaU9uc2laR0YwWVNJNk5UWTJNVFU1T1Rjc0luQjFjaUk2SW1Kc2IySmZhV1FpZlgwPS0tZWVjNTBmY2U2YzQzYTc2NGQ3NjBmNDY5OTgzZjI2ZGI2ZGI2MzY2MC8vRmlubi5wbmc=" alt="Finn" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
+                            <img src="data:image/png;base64," alt="Finn" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
                         </div>
                     </div>
                     <h4 class="font-fredoka text-3xl font-black text-white text-center mb-2">Finn</h4>
@@ -783,7 +788,7 @@
                 <div class="avatar-3d-card" onclick="selectAvatar(this, 'Kira', 'Star Seeker', '⭐')">
                     <div class="character-avatar-wrapper">
                         <div class="character-main-circle" style="background: linear-gradient(135deg, #f43f5e 0%, #fb7185 100%);">
-                            <img src="data:image/png;base64,aHR0cHM6Ly9zdGFja2JsaXR6LmNvbS9zdG9yYWdlL2Jsb2JzL2V5SmZjbUZwYkhNaU9uc2laR0YwWVNJNk5UWTJNVFU1T1RFc0luQjFjaUk2SW1Kc2IySmZhV1FpZlgwPS0tOGFkNjY2NjAzMDdlYjBkZDFjMzdkMWQ0MjlmZjI0MTRkMzYzZGRkZS8vS2lyYS5wbmc=" alt="Kira" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
+                            <img src="data:image/png;base64," alt="Kira" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
                         </div>
                     </div>
                     <h4 class="font-fredoka text-3xl font-black text-white text-center mb-2">Kira</h4>
@@ -794,7 +799,7 @@
                 <div class="avatar-3d-card" onclick="selectAvatar(this, 'Leo', 'Nature Guardian', '🌿')">
                     <div class="character-avatar-wrapper">
                         <div class="character-main-circle" style="background: linear-gradient(135deg, #22c55e 0%, #4ade80 100%);">
-                            <img src="data:image/png;base64,aHR0cHM6Ly9zdGFja2JsaXR6LmNvbS9zdG9yYWdlL2Jsb2JzL2V5SmZjbUZwYkhNaU9uc2laR0YwWVNJNk5UWTJNVFU1T1RNc0luQjFjaUk2SW1Kc2IySmZhV1FpZlgwPS0tOGE1ZGYyZmJjNTRlOTk5YmMyYjZhMTgyNWI3OTIzNzg4NjkxM2FlZi8vTGVvLnBuZw==" alt="Leo" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
+                            <img src="data:image/png;base64," alt="Leo" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
                         </div>
                     </div>
                     <h4 class="font-fredoka text-3xl font-black text-white text-center mb-2">Leo</h4>
@@ -805,7 +810,7 @@
                 <div class="avatar-3d-card" onclick="selectAvatar(this, 'Max', 'Tech Genius', '🤖')">
                     <div class="character-avatar-wrapper">
                         <div class="character-main-circle" style="background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);">
-                            <img src="data:image/png;base64,aHR0cHM6Ly9zdGFja2JsaXR6LmNvbS9zdG9yYWdlL2Jsb2JzL2V5SmZjbUZwYkhNaU9uc2laR0YwWVNJNk5UWTJNVFU1T1RZc0luQjFjaUk2SW1Kc2IySmZhV1FpZlgwPS0tZjhmYzgzMmEwM2I1MGQ2OTI4MzM4MjEzZWZhMmMwOTQ1NmUzODdmYy8vTWF4LnBuZw==" alt="Max" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
+                            <img src="data:image/png;base64," alt="Max" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
                         </div>
                     </div>
                     <h4 class="font-fredoka text-3xl font-black text-white text-center mb-2">Max</h4>
@@ -816,7 +821,7 @@
                 <div class="avatar-3d-card" onclick="selectAvatar(this, 'Ruby', 'Fire Spirit', '🔥')">
                     <div class="character-avatar-wrapper">
                         <div class="character-main-circle" style="background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);">
-                            <img src="data:image/png;base64,aHR0cHM6Ly9zdGFja2JsaXR6LmNvbS9zdG9yYWdlL2Jsb2JzL2V5SmZjbUZwYkhNaU9uc2laR0YwWVNJNk5UWTJNVFl3TURNc0luQjFjaUk2SW1Kc2IySmZhV1FpZlgwPS0tNDBmZDM3Y2VjYjBlNGQ1NzQ3YmY0MzI2Y2RiZWNmNDIwMmM4OTk1ZS8vUnVieS5wbmc=" alt="Ruby" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
+                            <img src="data:image/png;base64," alt="Ruby" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
                         </div>
                     </div>
                     <h4 class="font-fredoka text-3xl font-black text-white text-center mb-2">Ruby</h4>
@@ -827,7 +832,7 @@
      <div class="avatar-3d-card" onclick="window.location.href='stella-grade-selector.html';">
         <div class="character-avatar-wrapper">
             <div class="character-main-circle" style="background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);">
-                <img src="data:image/png;base64,aHR0cHM6Ly9zdGFja2JsaXR6LmNvbS9zdG9yYWdlL2Jsb2JzL2V5SmZjbUZwYkhNaU9uc2laR0YwWVNJNk5UWTJNVFl3TURRc0luQjFjaUk2SW1Kc2IySmZhV1FpZlgwPS0tN2M3MGVkOWE1M2Q0N2VkYjFjN2Y0MWUwNDQ4MzZkMjc0NDc0NGE5Yy8vU3RlbGxhLnBuZw==" alt="Stella" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
+                <img src="data:image/png;base64," alt="Stella" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
                     </div>
                     </div>
                     <h4 class="font-fredoka text-3xl font-black text-white text-center mb-2">Stella</h4>
@@ -1399,6 +1404,6 @@ function selectAvatar(element, name, role, emoji) {
             });
         });
     </script>
-
+
 </body>
 </html>
