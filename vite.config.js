@@ -25,7 +25,8 @@ export default defineConfig({
         storiesHub: resolve(__dirname, 'stories/index.html'),
         storyDetail: resolve(__dirname, 'stories/story.html'),
         storyReader: resolve(__dirname, 'stories/reader.html'),
-        chat: resolve(__dirname, 'chat/index.html')
+        chat: resolve(__dirname, 'chat/index.html'),
+        parentDashboard: resolve(__dirname, 'parent/dashboard.html')
       }
     }
   },
@@ -37,15 +38,26 @@ export default defineConfig({
   configureServer(server) {
     server.middlewares.use((req, res, next) => {
       // Rewrite /stories/{storyId}/read to /stories/reader.html with storyId in query
-      const match = req.url.match(/^\/stories\/([^/]+)\/read(\?.*)?$/);
-      if (match) {
-        const storyId = match[1];
-        const existingQuery = match[2] || '';
+      const storyMatch = req.url.match(/^\/stories\/([^/]+)\/read(\?.*)?$/);
+      if (storyMatch) {
+        const storyId = storyMatch[1];
+        const existingQuery = storyMatch[2] || '';
         const params = new URLSearchParams(existingQuery.replace('?', ''));
         params.set('storyId', storyId);
         req.url = `/stories/reader.html?${params.toString()}`;
         console.log(`[Vite] Rewrote /stories/${storyId}/read to ${req.url}`);
+        next();
+        return;
       }
+      
+      // Rewrite /parent/dashboard to /parent/dashboard.html
+      const dashboardMatch = req.url.match(/^\/parent\/dashboard(\?.*)?$/);
+      if (dashboardMatch) {
+        const existingQuery = dashboardMatch[1] || '';
+        req.url = `/parent/dashboard.html${existingQuery}`;
+        console.log(`[Vite] Rewrote /parent/dashboard to ${req.url}`);
+      }
+      
       next();
     });
   },

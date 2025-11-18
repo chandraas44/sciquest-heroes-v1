@@ -1,0 +1,303 @@
+{
+  "children": [
+    {
+      "id": "child-akhil",
+      "userId": "user-akhil",
+      "parentId": "parent-001",
+      "firstName": "Akhil",
+      "lastName": "Kumar",
+      "username": "akhil_scientist",
+      "gradeLevel": "Grade 5",
+      "age": 11,
+      "avatarUrl": "../images/avatars/child1.png",
+      "lastActive": "2025-01-15T14:30:00Z",
+      "currentTopic": "Photosynthesis",
+      "status": "On Track"
+    },
+    {
+      "id": "child-maya",
+      "userId": "user-maya",
+      "parentId": "parent-001",
+      "firstName": "Maya",
+      "lastName": "Patel",
+      "username": "maya_explorer",
+      "gradeLevel": "Grade 3",
+      "age": 9,
+      "avatarUrl": "../images/avatars/child2.png",
+      "lastActive": "2025-01-15T10:15:00Z",
+      "currentTopic": "Solar System",
+      "status": "On Track"
+    },
+    {
+      "id": "child-ryan",
+      "userId": "user-ryan",
+      "parentId": "parent-001",
+      "firstName": "Ryan",
+      "lastName": "Chen",
+      "username": "ryan_astro",
+      "gradeLevel": "Grade 4",
+      "age": 10,
+      "avatarUrl": "../images/avatars/child3.png",
+      "lastActive": "2025-01-10T16:45:00Z",
+      "currentTopic": "Ocean Life",
+      "status": "Needs Attention"
+    }
+  ],
+  "progress": {
+    "child-akhil": {
+      "stories": {
+        "completed": 4,
+        "inProgress": 2,
+        "total": 6,
+        "byTopic": [
+          {
+            "topic": "Photosynthesis",
+            "icon": "🌱",
+            "storiesRead": 2,
+            "inProgress": 1,
+            "lastOpened": "2025-01-15T12:00:00Z",
+            "completionPercentage": 75
+          },
+          {
+            "topic": "Solar System",
+            "icon": "🪐",
+            "storiesRead": 2,
+            "inProgress": 0,
+            "lastOpened": "2025-01-14T09:30:00Z",
+            "completionPercentage": 100
+          },
+          {
+            "topic": "Moon & Gravity",
+            "icon": "🌙",
+            "storiesRead": 0,
+            "inProgress": 1,
+            "lastOpened": "2025-01-15T14:00:00Z",
+            "completionPercentage": 40
+          }
+        ]
+      },
+      "quizzes": {
+        "attempts": 8,
+        "averageScore": 85,
+        "byTopic": [
+          {
+            "topic": "Photosynthesis",
+            "attempts": 3,
+            "bestScore": 90,
+            "lastAttempt": "2025-01-15T13:00:00Z",
+            "averageScore": 87
+          },
+          {
+            "topic": "Solar System",
+            "attempts": 3,
+            "bestScore": 95,
+            "lastAttempt": "2025-01-14T10:00:00Z",
+            "averageScore": 88
+          },
+          {
+            "topic": "Moon & Gravity",
+            "attempts": 2,
+            "bestScore": 75,
+            "lastAttempt": "2025-01-15T14:30:00Z",
+            "averageScore": 77
+          }
+        ]
+      },
+      "chat": {
+        "questionsThisWeek": 15,
+        "totalQuestions": 42,
+        "topicsExplored": 5
+      },
+      "streak": {
+        "days": 7,
+        "lastActivity": "2025-01-15T14:30:00Z"
+      },
+      "activity": {
+        "last7Days": [
+          { "date": "2025-01-09", "sessions": 1 },
+          { "date": "2025-01-10", "sessions": 0 },
+          { "date": "2025-01-11", "sessions": 2 },
+          { "date": "2025-01-12", "sessions": 1 },
+          { "date": "2025-01-13", "sessions": 3 },
+          { "date": "2025-01-14", "sessions": 2 },
+          { "date": "2025-01-15", "sessions": 3 }
+        ],
+        "topicsExplored": [
+          { "topic": "Photosynthesis", "count": 8 },
+          { "topic": "Solar System", "count": 6 },
+          { "topic": "Moon & Gravity", "count": 5 },
+          { "topic": "Ocean Life", "count": 3 },
+          { "topic": "Dinosaurs", "count": 2 }
+        ]
+      }
+    },
+    "child-maya": {
+      "stories": {
+        "completed": 3,
+        "inProgress": 1,
+        "total": 4,
+        "byTopic": [
+          {
+            "topic": "Solar System",
+            "icon": "🪐",
+            "storiesRead": 2,
+            "inProgress": 1,
+            "lastOpened": "2025-01-15T10:00:00Z",
+            "completionPercentage": 80
+          },
+          {
+            "topic": "Dinosaurs",
+            "icon": "🦖",
+            "storiesRead": 1,
+            "inProgress": 0,
+            "lastOpened": "2025-01-13T14:00:00Z",
+            "completionPercentage": 100
+          }
+        ]
+      },
+      "quizzes": {
+        "attempts": 5,
+        "averageScore": 78,
+        "byTopic": [
+          {
+            "topic": "Solar System",
+            "attempts": 3,
+            "bestScore": 82,
+            "lastAttempt": "2025-01-15T10:15:00Z",
+            "averageScore": 79
+          },
+          {
+            "topic": "Dinosaurs",
+            "attempts": 2,
+            "bestScore": 75,
+            "lastAttempt": "2025-01-13T15:00:00Z",
+            "averageScore": 76
+          }
+        ]
+      },
+      "chat": {
+        "questionsThisWeek": 8,
+        "totalQuestions": 18,
+        "topicsExplored": 3
+      },
+      "streak": {
+        "days": 5,
+        "lastActivity": "2025-01-15T10:15:00Z"
+      },
+      "activity": {
+        "last7Days": [
+          { "date": "2025-01-09", "sessions": 0 },
+          { "date": "2025-01-10", "sessions": 1 },
+          { "date": "2025-01-11", "sessions": 1 },
+          { "date": "2025-01-12", "sessions": 0 },
+          { "date": "2025-01-13", "sessions": 2 },
+          { "date": "2025-01-14", "sessions": 1 },
+          { "date": "2025-01-15", "sessions": 1 }
+        ],
+        "topicsExplored": [
+          { "topic": "Solar System", "count": 5 },
+          { "topic": "Dinosaurs", "count": 2 },
+          { "topic": "Ocean Life", "count": 1 }
+        ]
+      }
+    },
+    "child-ryan": {
+      "stories": {
+        "completed": 1,
+        "inProgress": 1,
+        "total": 2,
+        "byTopic": [
+          {
+            "topic": "Ocean Life",
+            "icon": "🌊",
+            "storiesRead": 1,
+            "inProgress": 1,
+            "lastOpened": "2025-01-10T16:30:00Z",
+            "completionPercentage": 50
+          }
+        ]
+      },
+      "quizzes": {
+        "attempts": 2,
+        "averageScore": 65,
+        "byTopic": [
+          {
+            "topic": "Ocean Life",
+            "attempts": 2,
+            "bestScore": 70,
+            "lastAttempt": "2025-01-10T17:00:00Z",
+            "averageScore": 65
+          }
+        ]
+      },
+      "chat": {
+        "questionsThisWeek": 2,
+        "totalQuestions": 5,
+        "topicsExplored": 1
+      },
+      "streak": {
+        "days": 0,
+        "lastActivity": "2025-01-10T17:00:00Z"
+      },
+      "activity": {
+        "last7Days": [
+          { "date": "2025-01-09", "sessions": 0 },
+          { "date": "2025-01-10", "sessions": 1 },
+          { "date": "2025-01-11", "sessions": 0 },
+          { "date": "2025-01-12", "sessions": 0 },
+          { "date": "2025-01-13", "sessions": 0 },
+          { "date": "2025-01-14", "sessions": 0 },
+          { "date": "2025-01-15", "sessions": 0 }
+        ],
+        "topicsExplored": [
+          { "topic": "Ocean Life", "count": 2 }
+        ]
+      }
+    }
+  },
+  "badges": {
+    "coreBadges": [
+      {
+        "id": "first-curious-question",
+        "name": "First Curious Question",
+        "description": "Ask your first question in chat",
+        "icon": "💭",
+        "hint": "Ask 1 question in chat",
+        "unlockedFor": ["child-akhil", "child-maya"]
+      },
+      {
+        "id": "photosynthesis-explorer",
+        "name": "Photosynthesis Explorer",
+        "description": "Complete all stories about photosynthesis",
+        "icon": "🌱",
+        "hint": "Complete your first science story about plants",
+        "unlockedFor": ["child-akhil"]
+      },
+      {
+        "id": "quiz-hero",
+        "name": "Quiz Hero",
+        "description": "Score 80% or higher on any quiz",
+        "icon": "🏆",
+        "hint": "Score 80%+ on a quiz",
+        "unlockedFor": ["child-akhil", "child-maya"]
+      },
+      {
+        "id": "story-master",
+        "name": "Story Master",
+        "description": "Complete 5 stories",
+        "icon": "📚",
+        "hint": "Complete 5 stories",
+        "unlockedFor": ["child-akhil"]
+      },
+      {
+        "id": "streak-star",
+        "name": "Streak Star",
+        "description": "Maintain a 7-day learning streak",
+        "icon": "⭐",
+        "hint": "Learn for 7 days in a row",
+        "unlockedFor": ["child-akhil"]
+      }
+    ]
+  }
+}
+
