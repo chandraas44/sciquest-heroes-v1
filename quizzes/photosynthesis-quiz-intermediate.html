@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photosynthesis Quiz - Intermediate | SciQuest Heroes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            color: #1e293b;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .font-fredoka {
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .quiz-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #e2e8f0;
+        }
+
+        .quiz-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 36px;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 12px;
+        }
+
+        .quiz-subtitle {
+            font-size: 18px;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .question-card {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .question-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        .question-number {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 12px;
+        }
+
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin: 8px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateX(4px);
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: #e0e7ff;
+            font-weight: 600;
+        }
+
+        .option.correct {
+            background: #d1fae5;
+            border-color: #22c55e;
+            color: #166534;
+        }
+
+        .option.incorrect {
+            background: #fee2e2;
+            border-color: #ef4444;
+            color: #991b1b;
+        }
+
+        .option.disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 16px 32px;
+            font-weight: 700;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Fredoka', sans-serif;
+            width: 100%;
+            margin-top: 24px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .results-section {
+            display: none;
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 3px solid #e2e8f0;
+        }
+
+        .results-section.show {
+            display: block;
+        }
+
+        .score-display {
+            text-align: center;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+        }
+
+        .score-text {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .score-label {
+            font-size: 20px;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .answer-key {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 24px;
+        }
+
+        .answer-key-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 20px;
+        }
+
+        .answer-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .answer-item:last-child {
+            border-bottom: none;
+        }
+
+        .answer-question {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .answer-correct {
+            color: #22c55e;
+            font-weight: 600;
+        }
+
+        .back-btn {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 24px;
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .back-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .quiz-container {
+                padding: 24px;
+            }
+
+            .quiz-title {
+                font-size: 28px;
+            }
+
+            .question-text {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <h1 class="quiz-title">🌿 Photosynthesis Quiz - Intermediate</h1>
+            <p class="quiz-subtitle">Test your understanding of how plants make food!</p>
+        </div>
+
+        <form id="quizForm">
+            <!-- Question 1 -->
+            <div class="question-card">
+                <div class="question-number">Question 1</div>
+                <div class="question-text">What are the three main things plants need for photosynthesis?</div>
+                <div class="option" data-value="A" data-correct="false">A. Soil, water, and fertilizer</div>
+                <div class="option" data-value="B" data-correct="true">B. Carbon dioxide, water, and sunlight</div>
+                <div class="option" data-value="C" data-correct="false">C. Oxygen, nitrogen, and light</div>
+                <div class="option" data-value="D" data-correct="false">D. Minerals, air, and heat</div>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="question-card">
+                <div class="question-number">Question 2</div>
+                <div class="question-text">What is the green substance in plant leaves that helps capture sunlight?</div>
+                <div class="option" data-value="A" data-correct="false">A. Chlorine</div>
+                <div class="option" data-value="B" data-correct="true">B. Chlorophyll</div>
+                <div class="option" data-value="C" data-correct="false">C. Chloroplast</div>
+                <div class="option" data-value="D" data-correct="false">D. Carbon</div>
+            </div>
+
+            <!-- Question 3 -->
+            <div class="question-card">
+                <div class="question-number">Question 3</div>
+                <div class="question-text">What two important things do plants produce during photosynthesis?</div>
+                <div class="option" data-value="A" data-correct="false">A. Water and carbon dioxide</div>
+                <div class="option" data-value="B" data-correct="false">B. Soil and minerals</div>
+                <div class="option" data-value="C" data-correct="true">C. Glucose (sugar) and oxygen</div>
+                <div class="option" data-value="D" data-correct="false">D. Nitrogen and hydrogen</div>
+            </div>
+
+            <!-- Question 4 -->
+            <div class="question-card">
+                <div class="question-number">Question 4</div>
+                <div class="question-text">Why do plants in a forest grow taller when they compete for sunlight?</div>
+                <div class="option" data-value="A" data-correct="false">A. Because they want to be the tallest</div>
+                <div class="option" data-value="B" data-correct="true">B. Because they need sunlight to make food through photosynthesis</div>
+                <div class="option" data-value="C" data-correct="false">C. Because tall trees are stronger</div>
+                <div class="option" data-value="D" data-correct="false">D. Because they don't like shade</div>
+            </div>
+
+            <!-- Question 5 -->
+            <div class="question-card">
+                <div class="question-number">Question 5</div>
+                <div class="question-text">Where does photosynthesis mainly happen in a plant?</div>
+                <div class="option" data-value="A" data-correct="true">A. In the leaves</div>
+                <div class="option" data-value="B" data-correct="false">B. In the roots</div>
+                <div class="option" data-value="C" data-correct="false">C. In the stem</div>
+                <div class="option" data-value="D" data-correct="false">D. In the flowers</div>
+            </div>
+
+            <!-- Question 6 -->
+            <div class="question-card">
+                <div class="question-number">Question 6</div>
+                <div class="question-text">If a farmer notices that crops in a shaded area grow slower, what is the most likely reason?</div>
+                <div class="option" data-value="A" data-correct="false">A. The soil is different</div>
+                <div class="option" data-value="B" data-correct="true">B. They get less sunlight for photosynthesis</div>
+                <div class="option" data-value="C" data-correct="false">C. They get too much water</div>
+                <div class="option" data-value="D" data-correct="false">D. The temperature is wrong</div>
+            </div>
+
+            <!-- Question 7 -->
+            <div class="question-card">
+                <div class="question-number">Question 7</div>
+                <div class="question-text">What gas do plants take in from the air to use in photosynthesis?</div>
+                <div class="option" data-value="A" data-correct="true">A. Carbon dioxide</div>
+                <div class="option" data-value="B" data-correct="false">B. Oxygen</div>
+                <div class="option" data-value="C" data-correct="false">C. Nitrogen</div>
+                <div class="option" data-value="D" data-correct="false">D. Hydrogen</div>
+            </div>
+
+            <!-- Question 8 -->
+            <div class="question-card">
+                <div class="question-number">Question 8</div>
+                <div class="question-text">What happens to plants in the fall when days get shorter and there's less sunlight?</div>
+                <div class="option" data-value="A" data-correct="false">A. They grow faster</div>
+                <div class="option" data-value="B" data-correct="true">B. They make less food and their leaves change color</div>
+                <div class="option" data-value="C" data-correct="false">C. They make more food</div>
+                <div class="option" data-value="D" data-correct="false">D. Nothing changes</div>
+            </div>
+
+            <!-- Question 9 -->
+            <div class="question-card">
+                <div class="question-number">Question 9</div>
+                <div class="question-text">Why are plants important for all living things on Earth?</div>
+                <div class="option" data-value="A" data-correct="false">A. Because they look pretty</div>
+                <div class="option" data-value="B" data-correct="true">B. Because they produce oxygen we breathe and food for many animals</div>
+                <div class="option" data-value="C" data-correct="false">C. Because they clean the soil</div>
+                <div class="option" data-value="D" data-correct="false">D. Because they make the weather</div>
+            </div>
+
+            <!-- Question 10 -->
+            <div class="question-card">
+                <div class="question-number">Question 10</div>
+                <div class="question-text">What do plants use the sugar (glucose) they make during photosynthesis for?</div>
+                <div class="option" data-value="A" data-correct="false">A. To make the leaves green</div>
+                <div class="option" data-value="B" data-correct="true">B. To grow, repair themselves, and store energy</div>
+                <div class="option" data-value="C" data-correct="false">C. To make more water</div>
+                <div class="option" data-value="D" data-correct="false">D. To make carbon dioxide</div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                <i class="fas fa-check-circle mr-2"></i>Submit Quiz
+            </button>
+        </form>
+
+        <div class="results-section" id="resultsSection">
+            <div class="score-display">
+                <div class="score-text" id="scoreText">0/10</div>
+                <div class="score-label" id="scoreLabel">Great job!</div>
+            </div>
+
+            <div class="answer-key">
+                <h2 class="answer-key-title">Answer Key</h2>
+                <div class="answer-item">
+                    <div class="answer-question">Question 1: What are the three main things plants need for photosynthesis?</div>
+                    <div class="answer-correct">Correct Answer: B</div>
+                </div>
+                <div class="answer-item">
+                    <div class="answer-question">Question 2: What is the green substance in plant leaves that helps capture sunlight?</div>
+                    <div class="answer-correct">Correct Answer: B</div>
+                </div>
+                <div class="answer-item">
+                    <div class="answer-question">Question 3: What two important things do plants produce during photosynthesis?</div>
+                    <div class="answer-correct">Correct Answer: C</div>
+                </div>
+                <div class="answer-item">
+                    <div class="answer-question">Question 4: Why do plants in a forest grow taller when they compete for sunlight?</div>
+                    <div class="answer-correct">Correct Answer: B</div>
+                </div>
+                <div class="answer-item">
+                    <div class="answer-question">Question 5: Where does photosynthesis mainly happen in a plant?</div>
+                    <div class="answer-correct">Correct Answer: A</div>
+                </div>
+                <div class="answer-item">
+                    <div class="answer-question">Question 6: If a farmer notices that crops in a shaded area grow slower, what is the most likely reason?</div>
+                    <div class="answer-correct">Correct Answer: B</div>
+                </div>
+                <div class="answer-item">
+                    <div class="answer-question">Question 7: What gas do plants take in from the air to use in photosynthesis?</div>
+                    <div class="answer-correct">Correct Answer: A</div>
+                </div>
+                <div class="answer-item">
+                    <div class="answer-question">Question 8: What happens to plants in the fall when days get shorter and there's less sunlight?</div>
+                    <div class="answer-correct">Correct Answer: B</div>
+                </div>
+                <div class="answer-item">
+                    <div class="answer-question">Question 9: Why are plants important for all living things on Earth?</div>
+                    <div class="answer-correct">Correct Answer: B</div>
+                </div>
+                <div class="answer-item">
+                    <div class="answer-question">Question 10: What do plants use the sugar (glucose) they make during photosynthesis for?</div>
+                    <div class="answer-correct">Correct Answer: B</div>
+                </div>
+            </div>
+
+            <a href="../dashboards/student-dashboard.html" class="back-btn">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { saveQuizResult, getCurrentUserId } from '../quiz-handler.js';
+
+        const quizForm = document.getElementById('quizForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const resultsSection = document.getElementById('resultsSection');
+        const scoreText = document.getElementById('scoreText');
+        const scoreLabel = document.getElementById('scoreLabel');
+        const options = document.querySelectorAll('.option');
+        let selectedAnswers = {};
+        let quizSubmitted = false;
+
+        // Handle option selection
+        options.forEach(option => {
+            option.addEventListener('click', function() {
+                if (quizSubmitted) return;
+
+                const questionCard = this.closest('.question-card');
+                const questionOptions = questionCard.querySelectorAll('.option');
+                
+                // Remove selected class from all options in this question
+                questionOptions.forEach(opt => opt.classList.remove('selected'));
+                
+                // Add selected class to clicked option
+                this.classList.add('selected');
+                
+                // Store the answer
+                const questionNumber = questionCard.querySelector('.question-number').textContent;
+                selectedAnswers[questionNumber] = this.dataset.value;
+            });
+        });
+
+        // Handle form submission
+        quizForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (quizSubmitted) return;
+
+            // Check if all questions are answered
+            const totalQuestions = document.querySelectorAll('.question-card').length;
+            if (Object.keys(selectedAnswers).length < totalQuestions) {
+                alert('Please answer all questions before submitting!');
+                return;
+            }
+
+            quizSubmitted = true;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            // Calculate score
+            let score = 0;
+            options.forEach(option => {
+                const questionCard = option.closest('.question-card');
+                const isSelected = option.classList.contains('selected');
+                const isCorrect = option.dataset.correct === 'true';
+
+                if (isSelected && isCorrect) {
+                    score++;
+                    option.classList.add('correct');
+                } else if (isSelected && !isCorrect) {
+                    option.classList.add('incorrect');
+                }
+
+                // Show correct answer
+                if (isCorrect) {
+                    option.classList.add('correct');
+                }
+
+                option.classList.add('disabled');
+            });
+
+            // Display results
+            scoreText.textContent = `${score}/10`;
+            if (score === 10) {
+                scoreLabel.textContent = 'Perfect! You're a photosynthesis expert! 🌟';
+            } else if (score >= 7) {
+                scoreLabel.textContent = 'Excellent work! You understand photosynthesis well! 🌱';
+            } else if (score >= 5) {
+                scoreLabel.textContent = 'Good job! Keep learning about plants! 🌿';
+            } else {
+                scoreLabel.textContent = 'Nice try! Review the answers and try again! 💪';
+            }
+
+            resultsSection.classList.add('show');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Save results to database
+            try {
+                const userId = await getCurrentUserId();
+                if (userId) {
+                    const result = await saveQuizResult(userId, 'photosynthesis', 'intermediate', score);
+                    if (result.success) {
+                        console.log('Quiz results saved successfully');
+                    } else {
+                        console.error('Failed to save quiz results:', result.error);
+                    }
+                }
+            } catch (error) {
+                console.error('Error saving quiz results:', error);
+            }
+        });
+    </script>
+</body>
+</html>
+
