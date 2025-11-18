@@ -126,67 +126,87 @@ export async function getChildProgress(childId) {
 export async function getChildBadges(childId) {
   if (!childId) throw new Error('childId is required');
   
-  if (shouldUseMockData()) {
-    const data = await loadMockDashboardData();
-    const childProgress = data.progress[childId] || null;
-    const coreBadges = data.badges?.coreBadges || [];
-    
-    return {
-      coreBadges: coreBadges.map((badge) => ({
-        ...badge,
-        unlocked: badge.unlockedFor?.includes(childId) || false
-      }))
-    };
-  }
-
-  const client = getSupabaseClient();
-  if (!client) {
-    const data = await loadMockDashboardData();
-    const coreBadges = data.badges?.coreBadges || [];
-    return {
-      coreBadges: coreBadges.map((badge) => ({
-        ...badge,
-        unlocked: badge.unlockedFor?.includes(childId) || false
-      }))
-    };
-  }
-
+  // Use badge-services.js for consistency (handles both mock and real data)
   try {
-    const { data, error } = await client
-      .from('badge_awards')
-      .select('badge_id, awarded_at')
-      .eq('user_id', childId);
-
-    if (error) throw error;
-
-    // Fetch badge definitions
-    const { data: badgeDefs, error: defError } = await client
-      .from('badges')
-      .select('*');
-
-    if (defError) throw defError;
-
-    const unlockedIds = new Set((data || []).map((award) => award.badge_id));
-
+    const { getChildBadges: getBadgesFromService, getBadgeAwards } = await import('../badges/badge-services.js');
+    const badges = await getBadgesFromService(childId);
+    const awards = getBadgeAwards(childId);
+    
+    // Map to dashboard format
     return {
-      coreBadges: (badgeDefs || []).map((badge) => ({
+      coreBadges: badges.map((badge) => ({
         ...badge,
-        unlocked: unlockedIds.has(badge.id),
-        awardedAt: unlockedIds.has(badge.id) 
-          ? (data || []).find((a) => a.badge_id === badge.id)?.awarded_at 
-          : null
+        unlocked: badge.unlocked || false,
+        awardedAt: badge.awardedAt || null,
+        // Keep hint and description for display
+        hint: badge.hint || badge.description
       }))
     };
   } catch (error) {
-    console.warn('[dashboard] Supabase badges fetch failed, reverting to mock data', error);
-    const data = await loadMockDashboardData();
-    const coreBadges = data.badges?.coreBadges || [];
-    return {
-      coreBadges: coreBadges.map((badge) => ({
-        ...badge,
-        unlocked: badge.unlockedFor?.includes(childId) || false
-      }))
-    };
+    console.warn('[dashboard] Badge service unavailable, using fallback', error);
+    
+    // Fallback to mock data directly
+    if (shouldUseMockData()) {
+      const data = await loadMockDashboardData();
+      const coreBadges = data.badges?.coreBadges || [];
+      
+      return {
+        coreBadges: coreBadges.map((badge) => ({
+          ...badge,
+          unlocked: badge.unlockedFor?.includes(childId) || false
+        }))
+      };
+    }
+
+    const client = getSupabaseClient();
+    if (!client) {
+      const data = await loadMockDashboardData();
+      const coreBadges = data.badges?.coreBadges || [];
+      return {
+        coreBadges: coreBadges.map((badge) => ({
+          ...badge,
+          unlocked: badge.unlockedFor?.includes(childId) || false
+        }))
+      };
+    }
+
+    try {
+      const { data, error } = await client
+        .from('badge_awards')
+        .select('badge_id, awarded_at')
+        .eq('user_id', childId);
+
+      if (error) throw error;
+
+      // Fetch badge definitions
+      const { data: badgeDefs, error: defError } = await client
+        .from('badges')
+        .select('*');
+
+      if (defError) throw defError;
+
+      const unlockedIds = new Set((data || []).map((award) => award.badge_id));
+
+      return {
+        coreBadges: (badgeDefs || []).map((badge) => ({
+          ...badge,
+          unlocked: unlockedIds.has(badge.id),
+          awardedAt: unlockedIds.has(badge.id) 
+            ? (data || []).find((a) => a.badge_id === badge.id)?.awarded_at 
+            : null
+        }))
+      };
+    } catch (dbError) {
+      console.warn('[dashboard] Supabase badges fetch failed, reverting to mock data', dbError);
+      const data = await loadMockDashboardData();
+      const coreBadges = data.badges?.coreBadges || [];
+      return {
+        coreBadges: coreBadges.map((badge) => ({
+          ...badge,
+          unlocked: badge.unlockedFor?.includes(childId) || false
+        }))
+      };
+    }
   }
 }
 

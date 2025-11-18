@@ -6,6 +6,13 @@ import {
   logAnalyticsEvent,
   isUsingStoryMocks
 } from './story-services.js';
+import {
+  evaluateBadgeRules,
+  getBadgeById
+} from '../badges/badge-services.js';
+import {
+  showBadgeCelebration
+} from '../shared/badge-celebration.js';
 
 const params = new URLSearchParams(window.location.search);
 // Extract storyId from query params, or fallback to pathname: /stories/{storyId}/read
@@ -132,6 +139,27 @@ async function goToNextPanel() {
   if (state.currentPanelIndex >= state.panelCount - 1) {
     await persistProgress(true);
     await logAnalyticsEvent('story_completed', { storyId });
+    
+    // Evaluate badges on story completion
+    const MOCK_CHILD_ID = 'child-akhil'; // Future: from auth
+    try {
+      const newlyAwarded = await evaluateBadgeRules(MOCK_CHILD_ID, 'story_completed', {
+        storyId,
+        topicTag: state.story?.topicTag || null,
+        sourceFeature: 'story_viewer'
+      });
+      
+      // Show celebration for each newly awarded badge (queued)
+      for (const award of newlyAwarded) {
+        const badge = await getBadgeById(award.badgeId);
+        if (badge) {
+          showBadgeCelebration(award.badgeId, badge.name, badge.icon);
+        }
+      }
+    } catch (error) {
+      console.warn('[story-viewer] Badge evaluation failed', error);
+    }
+    
     nextBtn.disabled = true;
     return;
   }

@@ -8,6 +8,13 @@ import {
   logChatEvent,
   isUsingChatMocks
 } from './chat-services.js';
+import {
+  evaluateBadgeRules,
+  getBadgeById
+} from '../badges/badge-services.js';
+import {
+  showBadgeCelebration
+} from '../shared/badge-celebration.js';
 
 const params = new URLSearchParams(window.location.search);
 const topicId = params.get('topicId');
@@ -196,6 +203,27 @@ async function handleSendMessage() {
     childId: 'guest-child',
     createdAt: state.messages[0]?.timestamp || new Date().toISOString()
   });
+  
+  // Evaluate badges on chat message (after transcript is saved)
+  const MOCK_CHILD_ID = 'child-akhil'; // Future: from auth
+  try {
+    const newlyAwarded = await evaluateBadgeRules(MOCK_CHILD_ID, 'chat_message', {
+      topicId: state.topicId,
+      messageCount: state.messages.filter((m) => m.role === 'user').length,
+      storyRef: state.context.storyRef || null,
+      sourceFeature: 'chat_session'
+    });
+    
+    // Show celebration for each newly awarded badge (queued)
+    for (const award of newlyAwarded) {
+      const badge = await getBadgeById(award.badgeId);
+      if (badge) {
+        showBadgeCelebration(award.badgeId, badge.name, badge.icon);
+      }
+    }
+  } catch (error) {
+    console.warn('[chat] Badge evaluation failed', error);
+  }
 }
 
 async function loadStoryTitle(storyId) {

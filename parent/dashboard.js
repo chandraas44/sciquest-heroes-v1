@@ -5,6 +5,10 @@ import {
   logAnalyticsEvent,
   isUsingDashboardMocks
 } from './dashboard-services.js';
+import {
+  getBadgeById,
+  getBadgeProgress
+} from '../badges/badge-services.js';
 
 // Mock parent ID for now (will be from auth in future)
 const MOCK_PARENT_ID = 'parent-001';
@@ -473,30 +477,141 @@ function renderBadges() {
   
   badges.forEach((badge) => {
     const tile = document.createElement('div');
-    tile.className = `badge-tile bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-4 min-w-[180px] flex-shrink-0 hover:shadow-[0_0_30px_rgba(155,55,255,0.5)] transition relative`;
+    tile.className = `badge-tile bg-white/15 backdrop-blur-xl border border-white/20 rounded-2xl p-4 min-w-[180px] flex-shrink-0 hover:shadow-[0_0_30px_rgba(155,55,255,0.5)] hover:border-white/30 transition relative cursor-pointer`;
     tile.dataset.badgeId = badge.id;
     
     const iconClass = badge.unlocked
       ? 'bg-gradient-to-br from-purple-500 to-pink-500 shadow-[0_0_20px_rgba(155,55,255,0.4)]'
-      : 'bg-white/10 opacity-40';
+      : 'bg-white/15';
+    
+    const iconOpacity = badge.unlocked ? '' : 'opacity-70';
     
     tile.innerHTML = `
       <div class="badge-icon-container mb-3 flex justify-center relative">
         <div class="badge-icon w-16 h-16 rounded-full flex items-center justify-center ${iconClass}">
-          <span class="text-3xl">${badge.icon || '🏆'}</span>
+          <span class="text-3xl ${iconOpacity}">${badge.icon || '🏆'}</span>
         </div>
         ${badge.unlocked
           ? '<span class="absolute top-0 right-0 w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-xs">✓</span>'
-          : '<span class="absolute top-0 right-0 w-6 h-6 bg-white/20 rounded-full flex items-center justify-center text-white/60 text-xs">🔒</span>'}
+          : '<span class="absolute top-0 right-0 w-6 h-6 bg-white/25 rounded-full flex items-center justify-center text-white/70 text-xs">🔒</span>'}
       </div>
       <h4 class="font-fredoka text-base font-bold text-white mb-2 text-center">${badge.name}</h4>
-      <p class="text-white/80 text-xs text-center ${!badge.unlocked ? 'italic text-white/60' : ''}">
+      <p class="text-white/80 text-xs text-center ${!badge.unlocked ? 'italic text-white/70' : ''}">
         ${badge.unlocked ? `Earned on: ${badge.awardedAt ? new Date(badge.awardedAt).toLocaleDateString() : 'Recently'}` : `Hint: ${badge.hint || badge.description}`}
       </p>
     `;
     
+    // Click handler to open badge detail modal
+    tile.addEventListener('click', () => {
+      showBadgeDetailModal(badge.id);
+    });
+    
     badgesContainerEl.appendChild(tile);
   });
+}
+
+async function showBadgeDetailModal(badgeId) {
+  const badge = await getBadgeById(badgeId);
+  if (!badge) {
+    alert('Badge not found');
+    return;
+  }
+  
+  // Check if child has this badge unlocked
+  const childBadges = state.badges?.coreBadges || [];
+  const childBadge = childBadges.find((b) => b.id === badgeId);
+  const isUnlocked = childBadge?.unlocked || false;
+  
+  // Get progress if locked
+  let progress = null;
+  if (!isUnlocked && state.selectedChildId) {
+    progress = await getBadgeProgress(state.selectedChildId, badgeId);
+  }
+  
+  // Create modal HTML
+  const iconClass = isUnlocked
+    ? 'bg-gradient-to-br from-purple-500 to-pink-500 shadow-[0_0_30px_rgba(155,55,255,0.4)]'
+    : 'bg-white/15';
+  
+  const iconOpacity = isUnlocked ? '' : 'opacity-70';
+  
+  let progressHtml = '';
+  if (progress) {
+    const percentage = Math.round((progress.current / progress.required) * 100);
+    progressHtml = `
+      <div class="mb-4">
+        <div class="bg-white/10 rounded-full h-3 mb-2">
+          <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-3 rounded-full transition-all" style="width: ${percentage}%"></div>
+        </div>
+        <p class="text-white/80 text-xs font-semibold">${progress.current} of ${progress.required} completed (${percentage}%)</p>
+      </div>
+    `;
+  }
+  
+  const modalHtml = `
+    <div class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 max-w-md w-full mx-4 shadow-[0_0_60px_rgba(155,55,255,0.5)] relative">
+        <button
+          id="closeBadgeModalBtn"
+          class="absolute top-4 right-4 text-white/80 hover:text-white text-2xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/20 transition"
+        >
+          ×
+        </button>
+        <div class="text-center">
+          <div class="badge-icon-container mb-4 flex justify-center relative">
+            <div class="badge-icon w-32 h-32 rounded-full flex items-center justify-center ${iconClass} mx-auto">
+              <span class="text-6xl ${iconOpacity}">${badge.icon || '🏆'}</span>
+            </div>
+            ${isUnlocked
+              ? '<span class="absolute top-0 right-0 w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-sm">✓</span>'
+              : '<span class="absolute top-0 right-0 w-8 h-8 bg-white/25 rounded-full flex items-center justify-center text-white/70 text-sm">🔒</span>'}
+          </div>
+          <h3 class="font-fredoka text-3xl font-bold text-white mb-4">${badge.name}</h3>
+          <p class="text-white/80 text-lg mb-4">${badge.description}</p>
+          ${progressHtml}
+          ${isUnlocked 
+            ? `<p class="text-white/70 text-sm mb-4">Earned on: ${childBadge?.awardedAt ? new Date(childBadge.awardedAt).toLocaleDateString() : 'Recently'}</p>`
+            : `<p class="text-white/70 italic text-sm mb-4">Hint: ${badge.hint || badge.description}</p>`
+          }
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Remove existing modal if any
+  const existingModal = document.getElementById('badgeDetailModal');
+  if (existingModal) {
+    existingModal.remove();
+  }
+  
+  // Create modal
+  const modalEl = document.createElement('div');
+  modalEl.id = 'badgeDetailModal';
+  modalEl.innerHTML = modalHtml;
+  document.body.appendChild(modalEl);
+  
+  // Close handlers
+  const closeBtn = modalEl.querySelector('#closeBadgeModalBtn');
+  closeBtn.addEventListener('click', () => {
+    modalEl.remove();
+  });
+  
+  modalEl.addEventListener('click', (e) => {
+    if (e.target === modalEl) {
+      modalEl.remove();
+    }
+  });
+  
+  // ESC key to close
+  const handleEsc = (e) => {
+    if (e.key === 'Escape' && document.getElementById('badgeDetailModal')) {
+      document.getElementById('badgeDetailModal')?.remove();
+      document.removeEventListener('keydown', handleEsc);
+    }
+  };
+  document.addEventListener('keydown', handleEsc);
+  
+  await logAnalyticsEvent('badge_detail_viewed', { badgeId, childId: state.selectedChildId });
 }
 
 // Tab switching

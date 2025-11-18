@@ -1,0 +1,91 @@
+{
+  "rules": [
+    {
+      "id": "first-curious-question",
+      "badgeId": "first-curious-question",
+      "trigger": {
+        "type": "chat_message",
+        "conditions": {
+          "count": 1,
+          "role": "user"
+        }
+      },
+      "evaluation": {
+        "type": "count",
+        "source": "chat_messages",
+        "filter": { "role": "user" },
+        "threshold": 1
+      },
+      "priority": 1,
+      "description": "Triggered when user sends first chat message"
+    },
+    {
+      "id": "story-master",
+      "badgeId": "story-master",
+      "trigger": {
+        "type": "story_completed",
+        "conditions": {}
+      },
+      "evaluation": {
+        "type": "count",
+        "source": "story_progress",
+        "filter": { "completed": true },
+        "threshold": 5
+      },
+      "priority": 2,
+      "description": "Triggered when 5 stories completed"
+    },
+    {
+      "id": "photosynthesis-explorer",
+      "badgeId": "photosynthesis-explorer",
+      "trigger": {
+        "type": "story_completed",
+        "conditions": {
+          "topicTag": "Photosynthesis"
+        }
+      },
+      "evaluation": {
+        "type": "count",
+        "source": "story_progress",
+        "filter": { "completed": true, "topicTag": "Photosynthesis" },
+        "threshold": 1
+      },
+      "priority": 2,
+      "description": "Triggered when photosynthesis story completed"
+    },
+    {
+      "id": "quiz-hero",
+      "badgeId": "quiz-hero",
+      "trigger": {
+        "type": "quiz_completed",
+        "conditions": {
+          "score": { "gte": 80 }
+        }
+      },
+      "evaluation": {
+        "type": "max_score",
+        "source": "quiz_attempts",
+        "threshold": 80
+      },
+      "priority": 2,
+      "description": "Triggered when quiz score >= 80%"
+    },
+    {
+      "id": "streak-star",
+      "badgeId": "streak-star",
+      "trigger": {
+        "type": "daily_activity",
+        "conditions": {}
+      },
+      "evaluation": {
+        "type": "streak",
+        "source": "all_activities",
+        "threshold": 7,
+        "unit": "days"
+      },
+      "priority": 3,
+      "description": "Triggered when 7-day streak achieved"
+    }
+  ]
+}
+

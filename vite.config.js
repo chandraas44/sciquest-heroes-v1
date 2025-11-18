@@ -4,6 +4,7 @@ import { resolve } from 'path';
 export default defineConfig({
   root: '.',
   publicDir: 'images',
+  appType: 'mpa', // Multi-page app - disable SPA fallback to index.html
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
@@ -26,7 +27,8 @@ export default defineConfig({
         storyDetail: resolve(__dirname, 'stories/story.html'),
         storyReader: resolve(__dirname, 'stories/reader.html'),
         chat: resolve(__dirname, 'chat/index.html'),
-        parentDashboard: resolve(__dirname, 'parent/dashboard.html')
+        parentDashboard: resolve(__dirname, 'parent/dashboard.html'),
+        badges: resolve(__dirname, 'badges/badges.html')
       }
     }
   },
@@ -36,26 +38,44 @@ export default defineConfig({
     cors: true
   },
   configureServer(server) {
+    // Add middleware to catch routes before Vite's HTML fallback
+    // With appType: 'mpa', Vite won't fallback to index.html for unmatched routes
     server.middlewares.use((req, res, next) => {
+      // Parse URL path and query separately
+      const [path, queryString] = req.url.split('?');
+      const query = queryString ? `?${queryString}` : '';
+      
+      // Log badge requests for debugging
+      if (path.includes('/child/badges')) {
+        console.log(`[Vite Middleware] ${req.method} ${req.url} -> path: ${path}, query: ${query}`);
+      }
+      
+      // Rewrite /child/badges to /badges/badges.html (check this FIRST)
+      if (path === '/child/badges' || path.startsWith('/child/badges/')) {
+        req.url = `/badges/badges.html${query}`;
+        console.log(`[Vite] ✓ Rewrote /child/badges to ${req.url}`);
+        next();
+        return;
+      }
+      
       // Rewrite /stories/{storyId}/read to /stories/reader.html with storyId in query
-      const storyMatch = req.url.match(/^\/stories\/([^/]+)\/read(\?.*)?$/);
+      const storyMatch = path.match(/^\/stories\/([^/]+)\/read$/);
       if (storyMatch) {
         const storyId = storyMatch[1];
-        const existingQuery = storyMatch[2] || '';
-        const params = new URLSearchParams(existingQuery.replace('?', ''));
+        const params = new URLSearchParams(queryString || '');
         params.set('storyId', storyId);
         req.url = `/stories/reader.html?${params.toString()}`;
-        console.log(`[Vite] Rewrote /stories/${storyId}/read to ${req.url}`);
+        console.log(`[Vite] ✓ Rewrote /stories/${storyId}/read to ${req.url}`);
         next();
         return;
       }
       
       // Rewrite /parent/dashboard to /parent/dashboard.html
-      const dashboardMatch = req.url.match(/^\/parent\/dashboard(\?.*)?$/);
-      if (dashboardMatch) {
-        const existingQuery = dashboardMatch[1] || '';
-        req.url = `/parent/dashboard.html${existingQuery}`;
-        console.log(`[Vite] Rewrote /parent/dashboard to ${req.url}`);
+      if (path === '/parent/dashboard' || path.startsWith('/parent/dashboard/')) {
+        req.url = `/parent/dashboard.html${query}`;
+        console.log(`[Vite] ✓ Rewrote /parent/dashboard to ${req.url}`);
+        next();
+        return;
       }
       
       next();
