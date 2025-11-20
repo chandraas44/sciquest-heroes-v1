@@ -180,6 +180,13 @@ This delta addresses all 7 validated issues from the internal team review:
   - Updated header "Badges" link to use `/child/badges` route
   - Updated footer "Badges" link to use `/child/badges` route
   - Verified Vite middleware rewrite rule is working correctly
+  - **Additional Fixes (Post-Implementation):**
+    - Fixed script path in `badges.html` from relative `./badges.js` to absolute `/badges/badges.js`
+    - Fixed asset file exclusion in Vite middleware to prevent rewriting `.js`, `.css`, `.json` files
+    - Fixed `/child/badges` route to use exact match only (prevents rewriting `/child/badges.js`)
+    - Updated `badge-services.js` `initializeDefaultAwards()` function to use async/await properly
+    - Added DOM ready check and better error handling in `badges.js`
+    - Updated dashboard links in `badges.html` from `../parent/dashboard.html` to `/parent/dashboard`
 
 ### Issue #4: Parent Dashboard Routing Conflict ✅
 - **Status:** Fixed
@@ -216,8 +223,12 @@ This delta addresses all 7 validated issues from the internal team review:
 ## File-by-File Change Log
 
 ### `badges/badges.html`
-- **Line 50:** Changed header "Badges" link from `./badges.html` to `/child/badges`
-- **Line 139:** Changed footer "Badges" link from `./badges.html` to `/child/badges`
+- **Line 46:** Changed header "Dashboard" link from `../parent/dashboard.html` to `/parent/dashboard`
+- **Line 49:** Changed header "Dashboard" link from `../parent/dashboard.html` to `/parent/dashboard`
+- **Line 50:** Changed header "Badges" link from `/badges/badges.html` to `/child/badges`
+- **Line 138:** Changed footer "Dashboard" link from `../parent/dashboard.html` to `/parent/dashboard`
+- **Line 139:** Changed footer "Badges" link from `/badges/badges.html` to `/child/badges`
+- **Line 146:** Changed script path from relative `./badges.js` to absolute `/badges/badges.js` (critical fix for routing)
 
 ### `auth/index-auth.js`
 - **Line 21:** Changed parent redirect from `dashboards/parent-dashboard.html` to `/parent/dashboard`
@@ -266,8 +277,29 @@ This delta addresses all 7 validated issues from the internal team review:
 - **Line 143:** Changed footer dashboard link to `/parent/dashboard`
 
 ### `vite.config.js`
-- **Lines 61-71:** Verified rewrite rule exists for `/stories/{storyId}/read` → `/stories/reader.html?storyId={storyId}`
-- No changes needed - rewrite rule already correct
+- **Lines 18-23:** Added asset file exclusion check to prevent rewriting `.js`, `.css`, `.json`, image files, etc.
+- **Lines 25-31:** Updated `/child/badges` rewrite to use exact match only (prevents rewriting `/child/badges.js`)
+- **Lines 44-54:** Verified rewrite rule exists for `/stories/{storyId}/read` → `/stories/reader.html?storyId={storyId}`
+- **Lines 127-162:** Added terminal noise suppression:
+  - Set `logLevel: 'error'` to suppress warnings
+  - Override `process.stderr.write` to filter image path warnings
+  - Override `console.error` to filter warnings but preserve important logs
+- **Lines 76-77:** Added plugin registration logging for debugging
+
+### `badges/badge-services.js`
+- **Lines 169-190:** Fixed `initializeDefaultAwards()` function:
+  - Changed from promise chain to async/await pattern
+  - Properly awaits `loadMockBadgeData()` before accessing `defaultAwards`
+  - Ensures default badges are initialized correctly on first load
+
+### `badges/badges.js`
+- **Lines 258-277:** Enhanced `loadBadges()` function:
+  - Added console logging for debugging
+  - Improved error handling
+- **Lines 286-302:** Added `initializeBadges()` function:
+  - DOM ready check before initialization
+  - DOM element validation with error logging
+  - Better error messages for missing elements
 
 ---
 
@@ -1046,19 +1078,19 @@ This delta addresses all 7 validated issues from the internal team review:
 ## Verification
 
 ### Files Modified
-1. `badges/badges.html`
-2. `auth/index-auth.js`
-3. `stories/reader.html`
-4. `stories/story-viewer.js`
-5. `stories/story.html`
-6. `stories/index.html`
-7. `chat/index.html`
+1. `badges/badges.html` - Routing links and script path fixes
+2. `badges/badges.js` - Initialization improvements and error handling
+3. `badges/badge-services.js` - Fixed async/await in initializeDefaultAwards
+4. `vite.config.js` - Asset exclusion, exact route matching, terminal noise suppression
+5. `auth/index-auth.js` - Dashboard link updates
+6. `stories/reader.html` - Visual fixes and action buttons
+7. `stories/story-viewer.js` - Thumbnail highlighting and error handling
+8. `stories/story.html` - Dashboard link updates
+9. `stories/index.html` - Dashboard link updates
+10. `chat/index.html` - Dashboard link updates
 
-### Files Verified (No Changes Needed)
-1. `vite.config.js` - Rewrite rules already correct
-2. `badges/badge-services.js` - Already uses "child" terminology
-3. `parent/dashboard.js` - Already uses "child" terminology
-4. `chat/chat-session.js` - Already uses "child" terminology
+### Files Created
+1. `docs/FINAL_VERIFICATION_CHECKLIST.md` - Comprehensive verification checklist for reviewers
 
 ### Lint Status
 ✅ All files pass linting with no errors
@@ -1079,11 +1111,64 @@ When merging this Delta 1 into other branches:
 
 ---
 
+## Additional Post-Implementation Fixes
+
+### Routing Debug Session (2025-01-XX)
+
+After initial implementation, additional fixes were required to fully resolve routing issues:
+
+1. **Script Path Issue:**
+   - **Problem:** When accessed via `/child/badges`, the relative script path `./badges.js` resolved to `/child/badges.js` instead of `/badges/badges.js`
+   - **Solution:** Changed script path to absolute `/badges/badges.js` in `badges.html`
+   - **Result:** Script now loads correctly regardless of URL path
+
+2. **Asset File Rewriting:**
+   - **Problem:** Vite middleware was rewriting `/child/badges.js` to `/badges/badges.html`, preventing script loading
+   - **Solution:** Added asset file exclusion check (`.js`, `.css`, `.json`, images, etc.) before route rewriting
+   - **Result:** Asset files are no longer rewritten, only HTML routes are processed
+
+3. **Route Matching Precision:**
+   - **Problem:** `/child/badges` rewrite was too broad, catching `/child/badges.js` as well
+   - **Solution:** Changed to exact match only (`path === '/child/badges' || path === '/child/badges/'`)
+   - **Result:** Only exact route matches are rewritten, assets pass through
+
+4. **Badge Initialization:**
+   - **Problem:** `initializeDefaultAwards()` wasn't properly awaiting async operations
+   - **Solution:** Converted from promise chain to async/await pattern
+   - **Result:** Default badges now initialize correctly on first page load
+
+5. **Terminal Noise:**
+   - **Problem:** Continuous image path warnings flooding terminal output
+   - **Solution:** Added terminal noise suppression in `vite.config.js`:
+     - Set `logLevel: 'error'`
+     - Filter image warnings via `process.stderr.write` override
+     - Preserve important middleware logs
+   - **Result:** Clean terminal output while maintaining debugging visibility
+
+### Testing Results
+
+All fixes verified and working:
+- ✅ `/child/badges` route loads correctly
+- ✅ Badges display correctly (5 badges, 1 unlocked)
+- ✅ Script loads without 404 errors
+- ✅ Terminal output is clean
+- ✅ All navigation links work correctly
+
+### Commit Details
+
+- **Commit:** `cd580a4`
+- **Message:** "Fix routing issues and badge system - Delta 1 (Anpu)"
+- **Files Changed:** 5 files (372 insertions, 47 deletions)
+- **Pushed to:** `origin/Anpu`
+
+---
+
 ## Related Documents
 - Internal Review Issues Validation Report (Issues #1-7)
 - Badge System Implementation Plan
 - Parent Dashboard Implementation Plan
 - Comic Viewer Implementation Plan
+- Final Verification Checklist (`docs/FINAL_VERIFICATION_CHECKLIST.md`)
 
 ---
 
