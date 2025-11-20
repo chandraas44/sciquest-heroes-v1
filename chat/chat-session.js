@@ -56,15 +56,15 @@ function renderTopicPicker(topics) {
   topics.forEach((topic) => {
     const card = document.createElement('div');
     card.className =
-      'bg-gradient-to-br from-indigo-700/40 to-fuchsia-600/40 backdrop-blur-xl border border-white/20 rounded-3xl p-6 cursor-pointer hover:from-indigo-700/50 hover:to-fuchsia-600/50 transition shadow-[0_0_30px_rgba(155,55,255,0.25)]';
+      'bg-white border-2 border-purple-200 rounded-3xl p-6 cursor-pointer hover:border-purple-300 transition shadow-[0_0_20px_rgba(139,92,246,0.15)] hover:shadow-[0_0_30px_rgba(139,92,246,0.3)]';
     card.innerHTML = `
       <div class="flex justify-center mb-4">
-        <div class="bg-white/20 p-4 rounded-full">
+        <div class="bg-purple-100 p-4 rounded-full border-2 border-purple-200">
           <div class="text-6xl">${topic.icon}</div>
         </div>
       </div>
-      <h3 class="font-fredoka text-2xl text-white mb-2 text-center">${topic.name}</h3>
-      <p class="text-white/80 text-sm mb-4 text-center">${topic.description}</p>
+      <h3 class="font-fredoka text-2xl text-slate-700 mb-2 text-center">${topic.name}</h3>
+      <p class="text-slate-600 text-sm mb-4 text-center">${topic.description}</p>
       <button class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-3 rounded-2xl hover:from-purple-600 hover:to-pink-600 transition shadow-lg">
         Start Chat
       </button>
@@ -121,7 +121,7 @@ function renderQuickPrompts() {
   state.topic.quickPrompts.forEach((prompt, idx) => {
     const btn = document.createElement('button');
     btn.className =
-      'px-4 py-2 bg-white/10 border border-white/20 text-white rounded-full text-sm font-semibold hover:bg-white/20 transition';
+      'px-4 py-2 bg-purple-100 border-2 border-purple-200 text-slate-700 rounded-full text-sm font-semibold hover:bg-purple-200 transition';
     btn.textContent = prompt;
     btn.addEventListener('click', async () => {
       messageInputEl.value = prompt;
@@ -256,8 +256,8 @@ async function initChatSession() {
   if (!topic) {
     chatWindowEl.innerHTML = `
       <div class="text-center py-12">
-        <p class="text-white text-lg mb-4">Topic not found. Please go back and select a topic.</p>
-        <button onclick="window.location.href='./index.html'" class="px-6 py-3 bg-purple-600 text-white rounded-2xl font-semibold hover:bg-purple-500 transition">
+        <p class="text-slate-700 text-lg mb-4">Topic not found. Please go back and select a topic.</p>
+        <button onclick="window.location.href='./index.html'" class="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl font-semibold hover:from-purple-600 hover:to-pink-600 transition">
           Go to Topic List
         </button>
       </div>

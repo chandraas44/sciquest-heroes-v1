@@ -14,39 +14,39 @@
     <style>
       body {
         font-family: 'Inter', sans-serif;
-        background: #030712;
-        color: #030712;
+        background: #ffffff;
+        color: #1e293b;
       }
       .font-fredoka {
         font-family: 'Fredoka', sans-serif;
       }
     </style>
   </head>
-  <body class="min-h-screen bg-gradient-to-br from-[#4F2EC9] to-[#9B37FF] text-white">
+  <body class="min-h-screen bg-white text-slate-800">
     <!-- Header -->
-    <nav class="fixed w-full z-50 backdrop-blur-xl bg-white/10 border-b border-white/20 shadow-2xl">
+    <nav class="fixed w-full z-50 backdrop-blur-xl bg-white/95 border-b border-purple-200 shadow-lg">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-20">
           <div class="flex items-center space-x-4">
-            <div class="w-14 h-14 bg-gradient-to-br from-purple-500 via-pink-500 to-pink-600 rounded-3xl flex items-center justify-center border-4 border-white/30 shadow-2xl">
+            <div class="w-14 h-14 bg-gradient-to-br from-purple-500 via-pink-500 to-pink-600 rounded-3xl flex items-center justify-center border-4 border-purple-200 shadow-lg">
               <span class="text-3xl">🚀</span>
             </div>
-            <a href="../index.html" class="font-fredoka text-2xl font-bold bg-gradient-to-r from-white to-purple-100 bg-clip-text text-transparent">SciQuest Heroes</a>
+            <a href="../index.html" class="font-fredoka text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">SciQuest Heroes</a>
           </div>
           <div class="hidden lg:flex items-center space-x-6">
-            <a href="../stories/index.html" class="font-fredoka text-white hover:text-purple-200 transition font-bold">Stories</a>
-            <a href="../chat/index.html" class="font-fredoka text-white hover:text-purple-200 transition font-bold">Chat</a>
-            <a href="./dashboard.html" class="font-fredoka text-purple-200 font-bold">Dashboard</a>
+            <a href="../stories/index.html" class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold">Stories</a>
+            <a href="../chat/index.html" class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold">Chat</a>
+            <a href="./dashboard.html" class="font-fredoka text-purple-600 font-bold">Dashboard</a>
             <button
               id="logoutBtn"
-              class="font-fredoka text-white hover:text-purple-200 transition font-bold px-4 py-2 rounded-full border border-white/20 hover:bg-white/10"
+              class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold px-4 py-2 rounded-full border border-purple-200 hover:bg-purple-50"
             >
               Logout
             </button>
           </div>
           <button
             id="logoutBtnMobile"
-            class="lg:hidden font-fredoka text-white hover:text-purple-200 transition font-bold px-3 py-2 rounded-full border border-white/20 hover:bg-white/10 text-sm"
+            class="lg:hidden font-fredoka text-slate-700 hover:text-purple-600 transition font-bold px-3 py-2 rounded-full border border-purple-200 hover:bg-purple-50 text-sm"
           >
             Logout
           </button>
@@ -59,16 +59,16 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Dashboard Title -->
         <header class="mb-8">
-          <h1 class="font-fredoka text-4xl md:text-5xl font-bold text-white mb-2">Parent Dashboard</h1>
-          <p class="text-white/80 text-lg">Track your children's learning progress and achievements</p>
+          <h1 class="font-fredoka text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">Parent Dashboard</h1>
+          <p class="text-slate-600 text-lg">Track your children's learning progress and achievements</p>
         </header>
 
         <!-- Two-Column Layout -->
         <div class="grid grid-cols-1 lg:grid-cols-[30%_70%] gap-6">
           <!-- Left Column: Children List -->
           <aside class="w-full lg:w-auto">
-            <div class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 shadow-[0_0_30px_rgba(155,55,255,0.25)] sticky top-28">
-              <h2 class="font-fredoka text-3xl font-bold text-white mb-6">Your Young Heroes</h2>
+            <div class="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-3xl p-6 shadow-[0_0_20px_rgba(139,92,246,0.15)] sticky top-28">
+              <h2 class="font-fredoka text-3xl font-bold text-slate-700 mb-6">Your Young Heroes</h2>
               <div id="childrenList" class="space-y-4">
                 <!-- Child cards will be rendered here -->
               </div>
@@ -78,15 +78,15 @@
           <!-- Right Column: Selected Child Detail -->
           <main class="w-full">
             <!-- Empty State -->
-            <div id="emptyState" class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-12 text-center shadow-[0_0_30px_rgba(155,55,255,0.25)]">
+            <div id="emptyState" class="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-3xl p-12 text-center shadow-[0_0_20px_rgba(139,92,246,0.15)]">
               <div class="text-6xl mb-4">🦸</div>
-              <p class="text-white/70 text-lg font-medium">Select a hero on the left to see their progress.</p>
+              <p class="text-slate-600 text-lg font-medium">Select a hero on the left to see their progress.</p>
             </div>
 
             <!-- Selected Child Detail -->
             <div id="childDetail" class="hidden">
               <!-- Header Row -->
-              <div id="childHeader" class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 mb-6 shadow-[0_0_30px_rgba(155,55,255,0.25)]">
+              <div id="childHeader" class="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-3xl p-6 mb-6 shadow-[0_0_20px_rgba(139,92,246,0.15)]">
                 <!-- Will be populated by JavaScript -->
               </div>
 
@@ -96,18 +96,18 @@
               </div>
 
               <!-- Learning Progress Section -->
-              <div id="learningProgressSection" class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 mb-6 shadow-[0_0_30px_rgba(155,55,255,0.25)]">
-                <h3 class="font-fredoka text-2xl font-bold text-white mb-4">Learning Progress</h3>
+              <div id="learningProgressSection" class="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-3xl p-6 mb-6 shadow-[0_0_20px_rgba(139,92,246,0.15)]">
+                <h3 class="font-fredoka text-2xl font-bold text-slate-700 mb-4">Learning Progress</h3>
                 
                 <!-- Tab Navigation -->
-                <div class="flex gap-2 mb-6 border-b border-white/10">
+                <div class="flex gap-2 mb-6 border-b border-purple-200">
                   <button class="tab-btn active px-4 py-2 rounded-t-2xl font-fredoka font-bold text-sm transition bg-gradient-to-r from-purple-500 to-pink-500 text-white" data-tab="overview">
                     Overview
                   </button>
-                  <button class="tab-btn px-4 py-2 rounded-t-2xl font-fredoka font-bold text-sm transition bg-white/10 text-white/70 hover:bg-white/20" data-tab="stories">
+                  <button class="tab-btn px-4 py-2 rounded-t-2xl font-fredoka font-bold text-sm transition bg-purple-100 text-slate-600 hover:bg-purple-200" data-tab="stories">
                     Stories
                   </button>
-                  <button class="tab-btn px-4 py-2 rounded-t-2xl font-fredoka font-bold text-sm transition bg-white/10 text-white/70 hover:bg-white/20" data-tab="quizzes">
+                  <button class="tab-btn px-4 py-2 rounded-t-2xl font-fredoka font-bold text-sm transition bg-purple-100 text-slate-600 hover:bg-purple-200" data-tab="quizzes">
                     Quizzes
                   </button>
                 </div>
@@ -127,16 +127,16 @@
               </div>
 
               <!-- Curiosity Badges Section -->
-              <div id="badgesSection" class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 shadow-[0_0_30px_rgba(155,55,255,0.25)]">
-                <h3 class="font-fredoka text-2xl font-bold text-white mb-4">Curiosity Badges</h3>
-                <p id="badgesSummary" class="text-white/90 text-sm font-medium mb-4">
+              <div id="badgesSection" class="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-3xl p-6 shadow-[0_0_20px_rgba(139,92,246,0.15)]">
+                <h3 class="font-fredoka text-2xl font-bold text-slate-700 mb-4">Curiosity Badges</h3>
+                <p id="badgesSummary" class="text-slate-600 text-sm font-medium mb-4">
                   <!-- Badge summary will be rendered here -->
                 </p>
                 <div id="badgesContainer" class="flex gap-4 overflow-x-auto pb-2 mb-4 md:flex-wrap md:overflow-x-visible">
                   <!-- Badge tiles will be rendered here -->
                 </div>
                 <div class="flex justify-end">
-                  <button id="viewBadgeRulesBtn" class="text-white/70 text-xs underline hover:text-white transition">
+                  <button id="viewBadgeRulesBtn" class="text-slate-500 text-xs underline hover:text-purple-600 transition">
                     View all badge rules
                   </button>
                 </div>
@@ -148,22 +148,22 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-white/10 backdrop-blur-xl border-t border-white/20 mt-auto py-8">
+    <footer class="bg-gradient-to-br from-purple-50 to-pink-50 border-t border-purple-200 mt-auto py-8">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
           <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-gradient-to-br from-purple-500 via-pink-500 to-pink-600 rounded-2xl flex items-center justify-center border-2 border-white/30">
+            <div class="w-10 h-10 bg-gradient-to-br from-purple-500 via-pink-500 to-pink-600 rounded-2xl flex items-center justify-center border-2 border-purple-200">
               <span class="text-2xl">🚀</span>
             </div>
-            <span class="font-fredoka text-lg font-bold text-white">SciQuest Heroes</span>
+            <span class="font-fredoka text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">SciQuest Heroes</span>
           </div>
-          <div class="flex items-center gap-6 text-white/80 text-sm font-semibold">
-            <a href="../index.html" class="hover:text-white transition">Home</a>
-            <a href="../stories/index.html" class="hover:text-white transition">Stories</a>
-            <a href="../chat/index.html" class="hover:text-white transition">Chat</a>
-            <a href="./dashboard.html" class="hover:text-white transition">Dashboard</a>
+          <div class="flex items-center gap-6 text-slate-600 text-sm font-semibold">
+            <a href="../index.html" class="hover:text-purple-600 transition">Home</a>
+            <a href="../stories/index.html" class="hover:text-purple-600 transition">Stories</a>
+            <a href="../chat/index.html" class="hover:text-purple-600 transition">Chat</a>
+            <a href="./dashboard.html" class="hover:text-purple-600 transition">Dashboard</a>
           </div>
-          <p class="text-white/60 text-xs font-medium">© 2025 SciQuest Heroes. Safe learning for curious minds.</p>
+          <p class="text-slate-500 text-xs font-medium">© 2025 SciQuest Heroes. Safe learning for curious minds.</p>
         </div>
       </div>
     </footer>

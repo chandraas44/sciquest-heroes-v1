@@ -67,25 +67,25 @@ function formatRelativeTime(dateString) {
 
 function renderBadgeTile(badge) {
   const tile = document.createElement('div');
-  tile.className = `bg-white/15 backdrop-blur-xl border border-white/20 rounded-3xl p-6 shadow-[0_0_30px_rgba(155,55,255,0.25)] hover:shadow-[0_0_40px_rgba(155,55,255,0.6)] hover:border-white/30 transition cursor-pointer`;
+  tile.className = `bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-3xl p-6 shadow-[0_0_20px_rgba(139,92,246,0.15)] hover:shadow-[0_0_30px_rgba(139,92,246,0.3)] hover:border-purple-300 transition cursor-pointer`;
   tile.dataset.badgeId = badge.id;
   
   // Highlight if selected from URL
   if (badgeIdFromUrl === badge.id) {
-    tile.classList.add('border-purple-400/50', 'shadow-[0_0_50px_rgba(155,55,255,0.7)]');
+    tile.classList.add('border-purple-500', 'shadow-[0_0_40px_rgba(139,92,246,0.4)]');
     // Scroll into view
     setTimeout(() => tile.scrollIntoView({ behavior: 'smooth', block: 'center' }), 500);
   }
   
   const iconClass = badge.unlocked
-    ? 'bg-gradient-to-br from-purple-500 to-pink-500 shadow-[0_0_30px_rgba(155,55,255,0.4)]'
-    : 'bg-white/15';
+    ? 'bg-gradient-to-br from-purple-500 to-pink-500 shadow-[0_0_20px_rgba(139,92,246,0.4)]'
+    : 'bg-purple-100 border-2 border-purple-200';
   
   const iconOpacity = badge.unlocked ? '' : 'opacity-70';
   
   const statusBadge = badge.unlocked
     ? '<span class="absolute top-0 right-0 w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-xs">✓</span>'
-    : '<span class="absolute top-0 right-0 w-6 h-6 bg-white/25 rounded-full flex items-center justify-center text-white/70 text-xs">🔒</span>';
+    : '<span class="absolute top-0 right-0 w-6 h-6 bg-purple-200 rounded-full flex items-center justify-center text-purple-600 text-xs">🔒</span>';
   
   tile.innerHTML = `
     <div class="badge-icon-container mb-3 flex justify-center relative">
@@ -94,8 +94,8 @@ function renderBadgeTile(badge) {
       </div>
       ${statusBadge}
     </div>
-    <h4 class="font-fredoka text-xl font-bold text-white mb-2 text-center">${badge.name}</h4>
-    <p class="text-white/80 text-xs text-center ${!badge.unlocked ? 'italic text-white/70' : ''}">
+    <h4 class="font-fredoka text-xl font-bold text-slate-700 mb-2 text-center">${badge.name}</h4>
+    <p class="text-slate-600 text-xs text-center ${!badge.unlocked ? 'italic text-slate-500' : ''}">
       ${badge.unlocked 
         ? `Earned: ${badge.awardedAt ? formatRelativeTime(badge.awardedAt) : 'Recently'}` 
         : `Hint: ${badge.hint || badge.description}`
@@ -127,8 +127,8 @@ async function showBadgeDetailModal(badgeId) {
   }
   
   const iconClass = badge.unlocked
-    ? 'bg-gradient-to-br from-purple-500 to-pink-500 shadow-[0_0_30px_rgba(155,55,255,0.4)]'
-    : 'bg-white/15';
+    ? 'bg-gradient-to-br from-purple-500 to-pink-500 shadow-[0_0_20px_rgba(139,92,246,0.4)]'
+    : 'bg-purple-100 border-2 border-purple-200';
   
   const iconOpacity = badge.unlocked ? '' : 'opacity-70';
   
@@ -137,10 +137,10 @@ async function showBadgeDetailModal(badgeId) {
     const percentage = Math.round((progress.current / progress.required) * 100);
     progressHtml = `
       <div class="mb-4">
-        <div class="bg-white/10 rounded-full h-3 mb-2">
+        <div class="bg-purple-100 rounded-full h-3 mb-2">
           <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-3 rounded-full transition-all" style="width: ${percentage}%"></div>
         </div>
-        <p class="text-white/80 text-xs font-semibold">${progress.current} of ${progress.required} completed (${percentage}%)</p>
+        <p class="text-slate-600 text-xs font-semibold">${progress.current} of ${progress.required} completed (${percentage}%)</p>
       </div>
     `;
   }
@@ -181,14 +181,14 @@ async function showBadgeDetailModal(badgeId) {
           </div>
           ${badge.unlocked
           ? '<span class="absolute top-0 right-0 w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-sm">✓</span>'
-          : '<span class="absolute top-0 right-0 w-8 h-8 bg-white/25 rounded-full flex items-center justify-center text-white/70 text-sm">🔒</span>'}
+          : '<span class="absolute top-0 right-0 w-8 h-8 bg-purple-200 rounded-full flex items-center justify-center text-purple-600 text-sm">🔒</span>'}
         </div>
-        <h3 class="font-fredoka text-3xl font-bold text-white mb-4">${badge.name}</h3>
-        <p class="text-white/80 text-lg mb-4">${badge.description}</p>
+        <h3 class="font-fredoka text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">${badge.name}</h3>
+        <p class="text-slate-600 text-lg mb-4">${badge.description}</p>
         ${progressHtml}
         ${badge.unlocked 
-          ? `<p class="text-white/70 text-sm mb-4">Earned on: ${badge.awardedAt ? new Date(badge.awardedAt).toLocaleDateString() : 'Recently'}</p>`
-          : `<p class="text-white/70 italic text-sm mb-4">Hint: ${badge.hint || badge.description}</p>`
+          ? `<p class="text-slate-500 text-sm mb-4">Earned on: ${badge.awardedAt ? new Date(badge.awardedAt).toLocaleDateString() : 'Recently'}</p>`
+          : `<p class="text-slate-500 italic text-sm mb-4">Hint: ${badge.hint || badge.description}</p>`
         }
       ${howToEarnHtml}
     </div>
@@ -223,8 +223,8 @@ function renderBadgeSummary() {
   const totalCount = state.badges.length;
   
   badgeSummaryEl.innerHTML = `
-    <p class="text-white/90 text-lg font-medium">
-      You've unlocked <span class="font-fredoka text-2xl font-bold text-white">${unlockedCount}</span> of <span class="font-fredoka text-2xl font-bold text-white">${totalCount}</span> badges!
+    <p class="text-slate-700 text-lg font-medium">
+      You've unlocked <span class="font-fredoka text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">${unlockedCount}</span> of <span class="font-fredoka text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">${totalCount}</span> badges!
     </p>
   `;
 }

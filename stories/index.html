@@ -14,8 +14,8 @@
     <style>
       body {
         font-family: 'Inter', sans-serif;
-        background: #0f172a;
-        color: #0f172a;
+        background: #ffffff;
+        color: #1e293b;
       }
       .font-fredoka {
         font-family: 'Fredoka', sans-serif;
@@ -25,35 +25,35 @@
       }
       .panel-card:hover {
         transform: translateY(-6px);
-        box-shadow: 0 20px 45px rgba(15, 23, 42, 0.15);
+        box-shadow: 0 20px 45px rgba(139, 92, 246, 0.15);
       }
     </style>
   </head>
-  <body class="min-h-screen bg-gradient-to-br from-[#4F2EC9] to-[#9B37FF] text-white">
+  <body class="min-h-screen bg-white text-slate-800">
     <!-- Header -->
-    <nav class="fixed w-full z-50 backdrop-blur-xl bg-white/10 border-b border-white/20 shadow-2xl">
+    <nav class="fixed w-full z-50 backdrop-blur-xl bg-white/95 border-b border-purple-200 shadow-lg">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-20">
           <div class="flex items-center space-x-4">
-            <div class="w-14 h-14 bg-gradient-to-br from-purple-500 via-pink-500 to-pink-600 rounded-3xl flex items-center justify-center border-4 border-white/30 shadow-2xl">
+            <div class="w-14 h-14 bg-gradient-to-br from-purple-500 via-pink-500 to-pink-600 rounded-3xl flex items-center justify-center border-4 border-purple-200 shadow-lg">
               <span class="text-3xl">🚀</span>
             </div>
-            <a href="../index.html" class="font-fredoka text-2xl font-bold bg-gradient-to-r from-white to-purple-100 bg-clip-text text-transparent">SciQuest Heroes</a>
+            <a href="../index.html" class="font-fredoka text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">SciQuest Heroes</a>
           </div>
           <div class="hidden lg:flex items-center space-x-6">
-            <a href="./index.html" class="font-fredoka text-purple-200 font-bold">Stories</a>
-            <a href="../chat/index.html" class="font-fredoka text-white hover:text-purple-200 transition font-bold">Chat</a>
-            <a href="/parent/dashboard" class="font-fredoka text-white hover:text-purple-200 transition font-bold">Dashboard</a>
+            <a href="./index.html" class="font-fredoka text-purple-600 font-bold">Stories</a>
+            <a href="../chat/index.html" class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold">Chat</a>
+            <a href="/parent/dashboard" class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold">Dashboard</a>
             <button
               id="logoutBtn"
-              class="font-fredoka text-white hover:text-purple-200 transition font-bold px-4 py-2 rounded-full border border-white/20 hover:bg-white/10"
+              class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold px-4 py-2 rounded-full border border-purple-200 hover:bg-purple-50"
             >
               Logout
             </button>
           </div>
           <button
             id="logoutBtnMobile"
-            class="lg:hidden font-fredoka text-white hover:text-purple-200 transition font-bold px-3 py-2 rounded-full border border-white/20 hover:bg-white/10 text-sm"
+            class="lg:hidden font-fredoka text-slate-700 hover:text-purple-600 transition font-bold px-3 py-2 rounded-full border border-purple-200 hover:bg-purple-50 text-sm"
           >
             Logout
           </button>
@@ -61,14 +61,14 @@
       </div>
     </nav>
     <div class="pb-24 pt-24">
-      <header class="max-w-6xl mx-auto px-6 py-10 flex flex-col gap-6 text-white">
+      <header class="max-w-6xl mx-auto px-6 py-10 flex flex-col gap-6">
         <div class="flex items-center justify-between">
           <div>
-            <p class="uppercase tracking-widest text-sm font-semibold opacity-80">Story Hub</p>
-            <h1 class="font-fredoka text-4xl md:text-5xl font-bold mt-2">Choose Your Comic Journey</h1>
+            <p class="uppercase tracking-widest text-sm font-semibold text-slate-500">Story Hub</p>
+            <h1 class="font-fredoka text-4xl md:text-5xl font-bold mt-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Choose Your Comic Journey</h1>
           </div>
         </div>
-        <p class="text-lg md:text-xl max-w-3xl opacity-90">
+        <p class="text-lg md:text-xl max-w-3xl text-slate-600">
           Explore science adventures crafted for curious minds. Start any story to unlock panel-by-panel narration, quick
           glossary helpers, and AI chat prompts tied to the action.
         </p>
@@ -86,18 +86,18 @@
         </div>
 
         <div
-          class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-[0_0_30px_rgba(155,55,255,0.25)] px-6 py-6 md:px-10 md:py-10 flex flex-col gap-4"
+          class="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-3xl shadow-[0_0_20px_rgba(139,92,246,0.15)] px-6 py-6 md:px-10 md:py-10 flex flex-col gap-4"
         >
           <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h2 class="font-fredoka text-3xl font-bold text-white">Available Adventures</h2>
-              <p class="text-white/80 text-sm md:text-base">Updated daily with new science quests.</p>
+              <h2 class="font-fredoka text-3xl font-bold text-slate-700">Available Adventures</h2>
+              <p class="text-slate-600 text-sm md:text-base">Updated daily with new science quests.</p>
             </div>
             <div class="flex items-center gap-3">
-              <span class="text-white/80 text-sm font-medium">Need help?</span>
+              <span class="text-slate-600 text-sm font-medium">Need help?</span>
               <a
                 href="../profile.html"
-                class="px-4 py-2 rounded-full bg-indigo-600/30 border border-white/20 text-white text-sm font-bold hover:bg-indigo-600/40 transition"
+                class="px-4 py-2 rounded-full bg-purple-100 border-2 border-purple-200 text-slate-700 text-sm font-bold hover:bg-purple-200 transition"
                 >View Profile</a
               >
             </div>
@@ -105,7 +105,7 @@
 
           <div id="storiesGrid" class="grid gap-6 md:grid-cols-2"></div>
 
-          <div id="storyListEmpty" class="hidden text-center py-16 text-white/60 font-medium text-lg">
+          <div id="storyListEmpty" class="hidden text-center py-16 text-slate-500 font-medium text-lg">
             No stories are available yet. Check back soon!
           </div>
         </div>
@@ -113,28 +113,28 @@
     </main>
 
     <template id="storyCardTemplate">
-      <article class="panel-card bg-gradient-to-br from-indigo-700/40 to-fuchsia-600/40 backdrop-blur-xl border border-white/20 rounded-2xl overflow-hidden shadow-[0_0_30px_rgba(155,55,255,0.25)] hover:shadow-[0_0_40px_rgba(155,55,255,0.35)] transition">
-        <div class="relative h-48 bg-purple-700/25">
+      <article class="panel-card bg-white border-2 border-purple-200 rounded-2xl overflow-hidden shadow-[0_0_20px_rgba(139,92,246,0.15)] hover:shadow-[0_0_30px_rgba(139,92,246,0.3)] transition">
+        <div class="relative h-48 bg-purple-50">
           <img data-cover class="w-full h-full object-cover" alt="" />
           <div
             data-topic
-            class="absolute top-3 left-3 bg-white/20 backdrop-blur-xl border border-white/30 text-white text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full shadow-lg"
+            class="absolute top-3 left-3 bg-purple-100 border-2 border-purple-200 text-slate-700 text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full shadow-lg"
           ></div>
         </div>
         <div class="p-5 flex flex-col gap-3">
           <div>
-            <h3 data-title class="font-fredoka text-2xl text-white font-bold"></h3>
-            <p data-summary class="text-sm text-white/80 leading-relaxed mt-2 line-clamp-3"></p>
+            <h3 data-title class="font-fredoka text-2xl text-slate-700 font-bold"></h3>
+            <p data-summary class="text-sm text-slate-600 leading-relaxed mt-2 line-clamp-3"></p>
           </div>
-          <div class="flex items-center gap-3 text-white/70 text-xs uppercase font-bold tracking-wide">
+          <div class="flex items-center gap-3 text-slate-500 text-xs uppercase font-bold tracking-wide">
             <span data-readingLevel></span>
             <span>•</span>
             <span data-estimatedTime></span>
           </div>
-          <div class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl px-4 py-3 flex items-center justify-between text-sm">
+          <div class="bg-purple-50 border-2 border-purple-200 rounded-2xl px-4 py-3 flex items-center justify-between text-sm">
             <div class="flex flex-col">
-              <span class="text-white/70 text-xs">Progress</span>
-              <span data-progressLabel class="font-bold text-white"></span>
+              <span class="text-slate-600 text-xs">Progress</span>
+              <span data-progressLabel class="font-bold text-slate-700"></span>
             </div>
             <button
               data-openStory
@@ -148,22 +148,22 @@
     </template>
 
     <!-- Footer -->
-    <footer class="bg-white/10 backdrop-blur-xl border-t border-white/20 mt-auto py-8">
+    <footer class="bg-gradient-to-br from-purple-50 to-pink-50 border-t border-purple-200 mt-auto py-8">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
           <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-gradient-to-br from-purple-500 via-pink-500 to-pink-600 rounded-2xl flex items-center justify-center border-2 border-white/30">
+            <div class="w-10 h-10 bg-gradient-to-br from-purple-500 via-pink-500 to-pink-600 rounded-2xl flex items-center justify-center border-2 border-purple-200">
               <span class="text-2xl">🚀</span>
             </div>
-            <span class="font-fredoka text-lg font-bold text-white">SciQuest Heroes</span>
+            <span class="font-fredoka text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">SciQuest Heroes</span>
           </div>
-          <div class="flex items-center gap-6 text-white/80 text-sm font-semibold">
-            <a href="../index.html" class="hover:text-white transition">Home</a>
-            <a href="./index.html" class="hover:text-white transition">Stories</a>
-            <a href="../chat/index.html" class="hover:text-white transition">Chat</a>
-            <a href="/parent/dashboard" class="hover:text-white transition">Dashboard</a>
+          <div class="flex items-center gap-6 text-slate-600 text-sm font-semibold">
+            <a href="../index.html" class="hover:text-purple-600 transition">Home</a>
+            <a href="./index.html" class="hover:text-purple-600 transition">Stories</a>
+            <a href="../chat/index.html" class="hover:text-purple-600 transition">Chat</a>
+            <a href="/parent/dashboard" class="hover:text-purple-600 transition">Dashboard</a>
           </div>
-          <p class="text-white/60 text-xs font-medium">© 2025 SciQuest Heroes. Safe learning for curious minds.</p>
+          <p class="text-slate-500 text-xs font-medium">© 2025 SciQuest Heroes. Safe learning for curious minds.</p>
         </div>
       </div>
     </footer>

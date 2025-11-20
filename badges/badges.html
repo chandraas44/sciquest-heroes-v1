@@ -14,8 +14,8 @@
     <style>
       body {
         font-family: 'Inter', sans-serif;
-        background: #030712;
-        color: #030712;
+        background: #ffffff;
+        color: #1e293b;
       }
       .font-fredoka {
         font-family: 'Fredoka', sans-serif;
@@ -32,32 +32,32 @@
       }
     </style>
   </head>
-  <body class="min-h-screen bg-gradient-to-br from-[#4F2EC9] to-[#9B37FF] text-white">
+  <body class="min-h-screen bg-white text-slate-800">
     <!-- Header -->
-    <nav class="fixed w-full z-50 backdrop-blur-xl bg-white/10 border-b border-white/20 shadow-2xl">
+    <nav class="fixed w-full z-50 backdrop-blur-xl bg-white/95 border-b border-purple-200 shadow-lg">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-20">
           <div class="flex items-center space-x-4">
-            <div class="w-14 h-14 bg-gradient-to-br from-purple-500 via-pink-500 to-pink-600 rounded-3xl flex items-center justify-center border-4 border-white/30 shadow-2xl">
+            <div class="w-14 h-14 bg-gradient-to-br from-purple-500 via-pink-500 to-pink-600 rounded-3xl flex items-center justify-center border-4 border-purple-200 shadow-lg">
               <span class="text-3xl">🚀</span>
             </div>
-            <a href="../index.html" class="font-fredoka text-2xl font-bold bg-gradient-to-r from-white to-purple-100 bg-clip-text text-transparent">SciQuest Heroes</a>
+            <a href="../index.html" class="font-fredoka text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">SciQuest Heroes</a>
           </div>
           <div class="hidden lg:flex items-center space-x-6">
-            <a href="../stories/index.html" class="font-fredoka text-white hover:text-purple-200 transition font-bold">Stories</a>
-            <a href="../chat/index.html" class="font-fredoka text-white hover:text-purple-200 transition font-bold">Chat</a>
-            <a href="../parent/dashboard.html" class="font-fredoka text-white hover:text-purple-200 transition font-bold">Dashboard</a>
-            <a href="/badges/badges.html" class="font-fredoka text-purple-200 font-bold">Badges</a>
+            <a href="../stories/index.html" class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold">Stories</a>
+            <a href="../chat/index.html" class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold">Chat</a>
+            <a href="../parent/dashboard.html" class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold">Dashboard</a>
+            <a href="/badges/badges.html" class="font-fredoka text-purple-600 font-bold">Badges</a>
             <button
               id="logoutBtn"
-              class="font-fredoka text-white hover:text-purple-200 transition font-bold px-4 py-2 rounded-full border border-white/20 hover:bg-white/10"
+              class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold px-4 py-2 rounded-full border border-purple-200 hover:bg-purple-50"
             >
               Logout
             </button>
           </div>
           <button
             id="logoutBtnMobile"
-            class="lg:hidden font-fredoka text-white hover:text-purple-200 transition font-bold px-3 py-2 rounded-full border border-white/20 hover:bg-white/10 text-sm"
+            class="lg:hidden font-fredoka text-slate-700 hover:text-purple-600 transition font-bold px-3 py-2 rounded-full border border-purple-200 hover:bg-purple-50 text-sm"
           >
             Logout
           </button>
@@ -70,13 +70,13 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Hero Section -->
         <header class="mb-8 text-center">
-          <h1 class="font-fredoka text-4xl md:text-5xl font-bold text-white mb-2">Your Curiosity Badges</h1>
-          <p class="text-white/80 text-lg">Collect badges by exploring stories, asking questions, and learning!</p>
+          <h1 class="font-fredoka text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">Your Curiosity Badges</h1>
+          <p class="text-slate-600 text-lg">Collect badges by exploring stories, asking questions, and learning!</p>
         </header>
 
         <!-- Summary Card -->
-        <div id="badgeSummary" class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 mb-8 shadow-[0_0_30px_rgba(155,55,255,0.25)] text-center">
-          <p class="text-white/90 text-lg font-medium">
+        <div id="badgeSummary" class="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-3xl p-6 mb-8 shadow-[0_0_20px_rgba(139,92,246,0.15)] text-center">
+          <p class="text-slate-700 text-lg font-medium">
             <!-- Will be populated by JavaScript -->
           </p>
         </div>
@@ -87,15 +87,15 @@
         </div>
 
         <!-- Empty State -->
-        <div id="emptyState" class="hidden bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-12 text-center shadow-[0_0_30px_rgba(155,55,255,0.25)]">
+        <div id="emptyState" class="hidden bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-3xl p-12 text-center shadow-[0_0_20px_rgba(139,92,246,0.15)]">
           <div class="text-6xl mb-4 opacity-60">🏆</div>
-          <p class="text-white/70 text-lg font-medium">No badges are available yet. Start exploring to earn your first badge! 🏆</p>
+          <p class="text-slate-600 text-lg font-medium">No badges are available yet. Start exploring to earn your first badge! 🏆</p>
         </div>
 
         <!-- Error State -->
-        <div id="errorState" class="hidden bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-12 text-center shadow-[0_0_30px_rgba(155,55,255,0.25)]">
+        <div id="errorState" class="hidden bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-3xl p-12 text-center shadow-[0_0_20px_rgba(139,92,246,0.15)]">
           <div class="text-6xl mb-4 opacity-60">🏆</div>
-          <p class="text-white/70 text-lg font-medium mb-4">Unable to load badges right now. Please try again later.</p>
+          <p class="text-slate-600 text-lg font-medium mb-4">Unable to load badges right now. Please try again later.</p>
           <button
             id="retryBtn"
             class="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold px-8 py-3 rounded-2xl hover:from-purple-600 hover:to-pink-600 transition shadow-lg"
@@ -107,11 +107,11 @@
     </div>
 
     <!-- Badge Detail Modal -->
-    <div id="badgeModal" class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-      <div class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 max-w-md w-full mx-4 shadow-[0_0_60px_rgba(155,55,255,0.5)] relative">
+    <div id="badgeModal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="bg-white border-2 border-purple-200 rounded-3xl p-8 max-w-md w-full mx-4 shadow-[0_0_40px_rgba(139,92,246,0.3)] relative">
         <button
           id="closeModalBtn"
-          class="absolute top-4 right-4 text-white/80 hover:text-white text-2xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/20 transition"
+          class="absolute top-4 right-4 text-slate-600 hover:text-slate-900 text-2xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-purple-50 transition"
         >
           ×
         </button>
@@ -122,23 +122,23 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-white/10 backdrop-blur-xl border-t border-white/20 mt-auto py-8">
+    <footer class="bg-gradient-to-br from-purple-50 to-pink-50 border-t border-purple-200 mt-auto py-8">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
           <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-gradient-to-br from-purple-500 via-pink-500 to-pink-600 rounded-2xl flex items-center justify-center border-2 border-white/30">
+            <div class="w-10 h-10 bg-gradient-to-br from-purple-500 via-pink-500 to-pink-600 rounded-2xl flex items-center justify-center border-2 border-purple-200">
               <span class="text-2xl">🚀</span>
             </div>
-            <span class="font-fredoka text-lg font-bold text-white">SciQuest Heroes</span>
+            <span class="font-fredoka text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">SciQuest Heroes</span>
           </div>
-          <div class="flex items-center gap-6 text-white/80 text-sm font-semibold">
-            <a href="../index.html" class="hover:text-white transition">Home</a>
-            <a href="../stories/index.html" class="hover:text-white transition">Stories</a>
-            <a href="../chat/index.html" class="hover:text-white transition">Chat</a>
-            <a href="../parent/dashboard.html" class="hover:text-white transition">Dashboard</a>
-            <a href="/badges/badges.html" class="hover:text-white transition">Badges</a>
+          <div class="flex items-center gap-6 text-slate-600 text-sm font-semibold">
+            <a href="../index.html" class="hover:text-purple-600 transition">Home</a>
+            <a href="../stories/index.html" class="hover:text-purple-600 transition">Stories</a>
+            <a href="../chat/index.html" class="hover:text-purple-600 transition">Chat</a>
+            <a href="../parent/dashboard.html" class="hover:text-purple-600 transition">Dashboard</a>
+            <a href="/badges/badges.html" class="hover:text-purple-600 transition">Badges</a>
           </div>
-          <p class="text-white/60 text-xs font-medium">© 2025 SciQuest Heroes. Safe learning for curious minds.</p>
+          <p class="text-slate-500 text-xs font-medium">© 2025 SciQuest Heroes. Safe learning for curious minds.</p>
         </div>
       </div>
     </footer>

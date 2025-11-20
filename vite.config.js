@@ -80,111 +80,93 @@ export default defineConfig({
       }
     };
     
-    // CRITICAL: Add rewrite middleware FIRST before any other processing
-    // This MUST run before Vite's static file handler
-    server.middlewares.use((req, res, next) => {
-        // Capture ORIGINAL URL before ANY processing or normalization
-        const originalUrl = req.url || '';
-        const method = req.method || 'GET';
-        
-        // FORCE LOG every request to /child/badges (with or without trailing slash)
-        if (originalUrl.includes('/child/badges')) {
-          originalConsoleError(`\n🔍 [MIDDLEWARE] ${method} ${originalUrl}\n`);
-        }
-        
-        // ROUTE REWRITES - Check in priority order
-        // 1. /child/badges -> /badges/badges.html (HIGHEST PRIORITY)
-        // Handle: /child/badges, /child/badges/, /child/badges?, /child/badges/?
-        if (originalUrl === '/child/badges' || 
-            originalUrl === '/child/badges/' ||
-            originalUrl.startsWith('/child/badges/') || 
-            originalUrl.startsWith('/child/badges?')) {
-          const query = originalUrl.includes('?') ? originalUrl.substring(originalUrl.indexOf('?')) : '';
-          req.url = `/badges/badges.html${query}`;
-          originalConsoleError(`\n✅✅✅ ROUTE REWRITE SUCCESS: "${originalUrl}" -> "/badges/badges.html${query}"\n`);
-          next();
-          return;
-        }
-        
-        // 2. /parent/dashboard -> /parent/dashboard.html
-        if (originalUrl === '/parent/dashboard' || originalUrl.startsWith('/parent/dashboard/')) {
-          const query = originalUrl.includes('?') ? originalUrl.substring(originalUrl.indexOf('?')) : '';
-          req.url = `/parent/dashboard.html${query}`;
-          next();
-          return;
-        }
-        
-        next();
-    });
-    
-    // Add general middleware for other routes
-    server.middlewares.use((req, res, next) => {
-        
-        // Parse URL path and query separately
-        const [path, queryString] = req.url.split('?');
-        const query = queryString ? `?${queryString}` : '';
-        
-        // Normalize path: remove trailing slash (except root)
-        const normalizedPath = path === '/' ? '/' : path.replace(/\/$/, '');
-        
-        // Enhanced logging for all routes being processed
-        console.log(`[Vite Middleware] ${req.method} ${req.url} -> path: "${path}", normalized: "${normalizedPath}"`);
-        
-        // Double-check /child/badges after normalization
-        if (normalizedPath === '/child/badges' || normalizedPath.startsWith('/child/badges/')) {
-          req.url = `/badges/badges.html${query}`;
-          console.log(`[Vite] ✓✓✓ REWROTE /child/badges (normalized: "${normalizedPath}") to ${req.url}`);
-          next();
-          return;
-        }
-        
-        // Rewrite /parent/dashboard to /parent/dashboard.html
-        if (normalizedPath === '/parent/dashboard' || normalizedPath.startsWith('/parent/dashboard/')) {
-          req.url = `/parent/dashboard.html${query}`;
-          console.log(`[Vite] ✓ Rewrote /parent/dashboard to ${req.url}`);
-          next();
-          return;
-        }
+    // CRITICAL: Create rewrite middleware function that runs FIRST
+    const rewriteMiddleware = (req, res, next) => {
+      const originalUrl = req.url || '';
+      const method = req.method || 'GET';
       
-      // Rewrite /stories/{storyId}/read to /stories/reader.html with storyId in query
-      // Match pattern: /stories/{any-non-slash-chars}/read
+      // FORCE LOG ALL /child/badges requests to see if middleware is hit
+      if (originalUrl.includes('/child/badges') || originalUrl === '/child/badges') {
+        originalConsoleError(`\n🔍🔍🔍 MIDDLEWARE HIT: ${method} "${originalUrl}"\n`);
+      }
+      
+      // EARLY CHECK: If URL contains /child/badges, rewrite immediately (before any parsing)
+      if (originalUrl.includes('/child/badges')) {
+        const [path, queryString] = originalUrl.split('?');
+        const query = queryString ? `?${queryString}` : '';
+        req.url = `/badges/badges.html${query}`;
+        originalConsoleError(`\n✅✅✅ ROUTE REWRITE SUCCESS: ${method} "${originalUrl}" -> "${req.url}"\n`);
+        next();
+        return;
+      }
+      
+      // Parse URL: split path and query
+      const [path, queryString] = originalUrl.split('?');
+      const query = queryString ? `?${queryString}` : '';
+      
+      // Normalize path: remove trailing slash (except root)
+      const normalizedPath = path === '/' ? '/' : path.replace(/\/$/, '');
+      
+      // ROUTE REWRITES - Check in priority order
+      
+      // 1. /child/badges -> /badges/badges.html (HIGHEST PRIORITY - redundant check for safety)
+      if (normalizedPath === '/child/badges' || 
+          path === '/child/badges' || 
+          path === '/child/badges/' ||
+          path.startsWith('/child/badges/') ||
+          path.startsWith('/child/badges?')) {
+        req.url = `/badges/badges.html${query}`;
+        originalConsoleError(`\n✅ ROUTE REWRITE: ${method} "${originalUrl}" -> "${req.url}"\n`);
+        next();
+        return;
+      }
+      
+      // 2. /parent/dashboard -> /parent/dashboard.html
+      if (normalizedPath === '/parent/dashboard' || path.startsWith('/parent/dashboard/')) {
+        req.url = `/parent/dashboard.html${query}`;
+        originalConsoleError(`\n✅ ROUTE REWRITE: ${method} "${originalUrl}" -> "${req.url}"\n`);
+        next();
+        return;
+      }
+      
+      // 3. /stories/{storyId}/read -> /stories/reader.html
       const storyMatch = normalizedPath.match(/^\/stories\/([^/]+)\/read$/);
       if (storyMatch) {
         const storyId = storyMatch[1];
         const params = new URLSearchParams(queryString || '');
-        // Preserve existing query params (like panel) and add storyId
         params.set('storyId', storyId);
         req.url = `/stories/reader.html?${params.toString()}`;
-        console.log(`[Vite] ✓ Rewrote /stories/${storyId}/read to ${req.url}`);
+        originalConsoleError(`\n✅ ROUTE REWRITE: ${method} "${originalUrl}" -> "${req.url}"\n`);
         next();
         return;
       }
       
-      // Rewrite /stories (with or without trailing slash) to /stories/index.html
-      // Check both original path and normalized path
-      if (path === '/stories' || path === '/stories/' || normalizedPath === '/stories') {
+      // 4. /stories -> /stories/index.html
+      if (normalizedPath === '/stories') {
         req.url = `/stories/index.html${query}`;
-        console.log(`[Vite] ✓ Rewrote /stories to ${req.url}`);
+        originalConsoleError(`\n✅ ROUTE REWRITE: ${method} "${originalUrl}" -> "${req.url}"\n`);
         next();
         return;
       }
       
-      // Rewrite /chat (with or without trailing slash) to /chat/index.html
-      // Check both original path and normalized path
-      if (path === '/chat' || path === '/chat/' || normalizedPath === '/chat') {
+      // 5. /chat -> /chat/index.html
+      if (normalizedPath === '/chat') {
         req.url = `/chat/index.html${query}`;
-        console.log(`[Vite] ✓ Rewrote /chat to ${req.url}`);
+        originalConsoleError(`\n✅ ROUTE REWRITE: ${method} "${originalUrl}" -> "${req.url}"\n`);
         next();
         return;
       }
       
-      // Log unmatched routes for debugging
-      if (!normalizedPath.endsWith('.html') && !normalizedPath.startsWith('/assets') && !normalizedPath.startsWith('/@vite') && !normalizedPath.startsWith('/node_modules') && normalizedPath !== '/' && !normalizedPath.startsWith('/images')) {
-        console.log(`[Vite] ⚠ Unmatched route: ${normalizedPath}`);
-      }
-      
+      // Continue to next middleware (Vite's static file handler)
       next();
-    });
+    };
+    
+    // Register middleware - this should run before Vite's static file handler
+    // In Vite, middleware registered in configureServer runs before static file serving
+    server.middlewares.use(rewriteMiddleware);
+    
+    // Log that middleware is registered
+    originalConsoleError('\n✅✅✅ REWRITE MIDDLEWARE REGISTERED - Will handle /child/badges, /parent/dashboard, etc.\n');
   },
   preview: {
     port: 3000,

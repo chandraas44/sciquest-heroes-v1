@@ -65,9 +65,9 @@ function renderChildCard(child) {
   const isSelected = state.selectedChildId === child.id;
   const status = child.status || calculateChildStatus(child);
   
-  card.className = `bg-white/10 backdrop-blur-xl border ${
-    isSelected ? 'border-purple-400/50 shadow-[0_0_40px_rgba(155,55,255,0.5)]' : 'border-white/20'
-  } rounded-3xl p-4 mb-4 shadow-[0_0_30px_rgba(155,55,255,0.25)] hover:shadow-[0_0_40px_rgba(155,55,255,0.35)] transition cursor-pointer`;
+  card.className = `bg-gradient-to-br from-purple-50 to-pink-50 border-2 ${
+    isSelected ? 'border-purple-500 shadow-[0_0_30px_rgba(139,92,246,0.4)]' : 'border-purple-200'
+  } rounded-3xl p-4 mb-4 shadow-[0_0_20px_rgba(139,92,246,0.15)] hover:shadow-[0_0_30px_rgba(139,92,246,0.3)] transition cursor-pointer`;
   
   // Get stats from progress (only for selected child, otherwise show defaults)
   let stats = { completed: 0, inProgress: 0 };
@@ -82,15 +82,15 @@ function renderChildCard(child) {
       <img
         src="${child.avatarUrl || '/avatars/child1.png'}"
         alt="${child.firstName}"
-        class="w-16 h-16 rounded-full border-4 border-white/30 object-cover"
+        class="w-16 h-16 rounded-full border-4 border-purple-200 object-cover"
         onerror="this.src='/avatars/child1.png'"
       />
       <div class="flex-1">
-        <h3 class="font-fredoka text-xl font-bold text-white mb-1">${child.firstName || child.username}</h3>
-        <p class="text-white/80 text-sm">${child.gradeLevel || 'Grade N/A'} · Age ${child.age || 'N/A'}</p>
+        <h3 class="font-fredoka text-xl font-bold text-slate-700 mb-1">${child.firstName || child.username}</h3>
+        <p class="text-slate-600 text-sm">${child.gradeLevel || 'Grade N/A'} · Age ${child.age || 'N/A'}</p>
       </div>
     </div>
-    <p class="text-white/70 text-xs font-semibold mb-3">
+    <p class="text-slate-600 text-xs font-semibold mb-3">
       Stories: ${stats.completed} · Quizzes: ${quizAttempts}
     </p>
     <div class="flex items-center justify-between mb-3">
@@ -117,7 +117,7 @@ function renderChildCard(child) {
 function renderChildrenList() {
   childrenListEl.innerHTML = '';
   if (!state.children.length) {
-    childrenListEl.innerHTML = '<p class="text-white/60 text-sm">No children found.</p>';
+    childrenListEl.innerHTML = '<p class="text-slate-500 text-sm">No children found.</p>';
     return;
   }
   
@@ -169,8 +169,8 @@ async function loadChildData(childId) {
   } catch (error) {
     console.error('[dashboard] Failed to load child data', error);
     childDetailEl.innerHTML = `
-      <div class="bg-red-500/20 border border-red-400/50 rounded-3xl p-6 text-center">
-        <p class="text-red-200 font-semibold">Unable to load progress data. Please try again.</p>
+      <div class="bg-red-50 border-2 border-red-200 rounded-3xl p-6 text-center">
+        <p class="text-red-600 font-semibold">Unable to load progress data. Please try again.</p>
       </div>
     `;
   }
@@ -190,12 +190,12 @@ function renderChildHeader() {
       <img
         src="${child.avatarUrl || '/avatars/child1.png'}"
         alt="${child.firstName}"
-        class="w-16 h-16 rounded-full border-4 border-white/30 object-cover"
+        class="w-16 h-16 rounded-full border-4 border-purple-200 object-cover"
         onerror="this.src='/avatars/child1.png'"
       />
       <div>
-        <h2 class="font-fredoka text-4xl font-bold text-white">${child.firstName || child.username}</h2>
-        <p class="text-white/80 text-sm mt-1">
+        <h2 class="font-fredoka text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">${child.firstName || child.username}</h2>
+        <p class="text-slate-600 text-sm mt-1">
           Last active: ${lastActiveRelative} · Current topic: ${currentTopic}
         </p>
       </div>
@@ -212,33 +212,33 @@ function renderLearningSnapshot() {
   const streak = state.progress.streak || { days: 0 };
   
   learningSnapshotEl.innerHTML = `
-    <div class="metric-card bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-4 shadow-[0_0_20px_rgba(155,55,255,0.2)]">
+    <div class="metric-card bg-white border-2 border-purple-200 rounded-2xl p-4 shadow-[0_0_15px_rgba(139,92,246,0.1)]">
       <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-3">
         <span class="text-2xl">📚</span>
       </div>
-      <div class="font-fredoka text-2xl font-bold text-white mb-1">${stories.completed} / ${stories.inProgress}</div>
-      <p class="text-white/80 text-xs font-medium">Stories completed: ${stories.completed} / In progress: ${stories.inProgress}</p>
+      <div class="font-fredoka text-2xl font-bold text-slate-700 mb-1">${stories.completed} / ${stories.inProgress}</div>
+      <p class="text-slate-600 text-xs font-medium">Stories completed: ${stories.completed} / In progress: ${stories.inProgress}</p>
     </div>
-    <div class="metric-card bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-4 shadow-[0_0_20px_rgba(155,55,255,0.2)]">
+    <div class="metric-card bg-white border-2 border-purple-200 rounded-2xl p-4 shadow-[0_0_15px_rgba(139,92,246,0.1)]">
       <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-3">
         <span class="text-2xl">🏆</span>
       </div>
-      <div class="font-fredoka text-2xl font-bold text-white mb-1">${quizzes.averageScore}%</div>
-      <p class="text-white/80 text-xs font-medium">Average quiz score: ${quizzes.averageScore}%</p>
+      <div class="font-fredoka text-2xl font-bold text-slate-700 mb-1">${quizzes.averageScore}%</div>
+      <p class="text-slate-600 text-xs font-medium">Average quiz score: ${quizzes.averageScore}%</p>
     </div>
-    <div class="metric-card bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-4 shadow-[0_0_20px_rgba(155,55,255,0.2)]">
+    <div class="metric-card bg-white border-2 border-purple-200 rounded-2xl p-4 shadow-[0_0_15px_rgba(139,92,246,0.1)]">
       <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-3">
         <span class="text-2xl">💬</span>
       </div>
-      <div class="font-fredoka text-2xl font-bold text-white mb-1">${chat.questionsThisWeek}</div>
-      <p class="text-white/80 text-xs font-medium">Questions asked this week: ${chat.questionsThisWeek}</p>
+      <div class="font-fredoka text-2xl font-bold text-slate-700 mb-1">${chat.questionsThisWeek}</div>
+      <p class="text-slate-600 text-xs font-medium">Questions asked this week: ${chat.questionsThisWeek}</p>
     </div>
-    <div class="metric-card bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-4 shadow-[0_0_20px_rgba(155,55,255,0.2)]">
+    <div class="metric-card bg-white border-2 border-purple-200 rounded-2xl p-4 shadow-[0_0_15px_rgba(139,92,246,0.1)]">
       <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-3">
         <span class="text-2xl">🔥</span>
       </div>
-      <div class="font-fredoka text-2xl font-bold text-white mb-1">${streak.days}</div>
-      <p class="text-white/80 text-xs font-medium">Learning streak: ${streak.days} days</p>
+      <div class="font-fredoka text-2xl font-bold text-slate-700 mb-1">${streak.days}</div>
+      <p class="text-slate-600 text-xs font-medium">Learning streak: ${streak.days} days</p>
     </div>
   `;
 }
@@ -287,7 +287,7 @@ function renderOverviewTab() {
     
     lineChartSvg += `
       <rect x="${x}" y="${y}" width="30" height="${barHeight}" fill="url(#lineGradient)" rx="4" />
-      <text x="${x + 15}" y="${chartHeight - 5}" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.7">
+      <text x="${x + 15}" y="${chartHeight - 5}" text-anchor="middle" fill="#475569" font-size="10" opacity="0.7">
         ${new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' }).slice(0, 1)}
       </text>
     `;
@@ -308,7 +308,7 @@ function renderOverviewTab() {
     
     barChartSvg += `
       <rect x="${x}" y="${y}" width="40" height="${barHeight}" fill="url(#lineGradient)" rx="4" />
-      <text x="${x + 20}" y="${chartHeight - 5}" text-anchor="middle" fill="#ffffff" font-size="8" opacity="0.7" transform="rotate(-45 ${x + 20} ${chartHeight - 5})">
+      <text x="${x + 20}" y="${chartHeight - 5}" text-anchor="middle" fill="#475569" font-size="8" opacity="0.7" transform="rotate(-45 ${x + 20} ${chartHeight - 5})">
         ${topic.topic.substring(0, 10)}
       </text>
     `;
@@ -318,16 +318,16 @@ function renderOverviewTab() {
   
   tabOverviewEl.innerHTML = `
     <div class="grid md:grid-cols-2 gap-4 mb-4">
-      <div class="chart-container bg-white/5 rounded-xl p-4">
-        <h4 class="font-fredoka text-sm font-bold text-white mb-3">Last 7 Days Activity</h4>
+      <div class="chart-container bg-white rounded-xl p-4 border-2 border-purple-200">
+        <h4 class="font-fredoka text-sm font-bold text-slate-700 mb-3">Last 7 Days Activity</h4>
         <div class="h-48">${lineChartSvg}</div>
       </div>
-      <div class="chart-container bg-white/5 rounded-xl p-4">
-        <h4 class="font-fredoka text-sm font-bold text-white mb-3">Topics Explored</h4>
+      <div class="chart-container bg-white rounded-xl p-4 border-2 border-purple-200">
+        <h4 class="font-fredoka text-sm font-bold text-slate-700 mb-3">Topics Explored</h4>
         <div class="h-48">${barChartSvg}</div>
       </div>
     </div>
-    <p class="text-white/90 text-sm font-medium bg-white/5 rounded-xl p-4">
+    <p class="text-slate-600 text-sm font-medium bg-white rounded-xl p-4 border-2 border-purple-200">
       This week, ${childName} explored ${topicCount} topics and completed ${storyCount} new stories.
     </p>
   `;
@@ -335,7 +335,7 @@ function renderOverviewTab() {
 
 function renderStoriesTab() {
   if (!state.progress?.stories?.byTopic) {
-    tabStoriesEl.innerHTML = '<p class="text-white/60 text-sm">No story progress data available.</p>';
+    tabStoriesEl.innerHTML = '<p class="text-slate-500 text-sm">No story progress data available.</p>';
     return;
   }
   
@@ -348,20 +348,20 @@ function renderStoriesTab() {
     const lastOpenedRelative = formatRelativeTime(topic.lastOpened);
     
     storiesHtml += `
-      <div class="topic-progress-row bg-white/5 rounded-xl p-4 hover:bg-white/10 transition">
+      <div class="topic-progress-row bg-white rounded-xl p-4 hover:bg-purple-50 transition border-2 border-purple-200">
         <div class="flex items-center gap-3 mb-3">
-          <div class="w-10 h-10 bg-gradient-to-br from-indigo-600/30 to-fuchsia-600/30 rounded-full flex items-center justify-center">
+          <div class="w-10 h-10 bg-gradient-to-br from-purple-200 to-pink-200 rounded-full flex items-center justify-center">
             <span class="text-xl">${topic.icon || '📚'}</span>
           </div>
-          <h4 class="font-fredoka text-lg font-bold text-white">${topic.topic}</h4>
+          <h4 class="font-fredoka text-lg font-bold text-slate-700">${topic.topic}</h4>
         </div>
         <div class="mb-2">
-          <div class="bg-white/10 rounded-full h-3 mb-1">
+          <div class="bg-purple-100 rounded-full h-3 mb-1">
             <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-3 rounded-full transition-all" style="width: ${completionPercent}%"></div>
           </div>
-          <p class="text-white text-xs font-semibold">${completionPercent}%</p>
+          <p class="text-slate-700 text-xs font-semibold">${completionPercent}%</p>
         </div>
-        <p class="text-white/70 text-xs">
+        <p class="text-slate-600 text-xs">
           Stories read: ${topic.storiesRead || 0} · In progress: ${topic.inProgress || 0} · Last opened: ${lastOpenedRelative}
         </p>
       </div>
@@ -374,14 +374,14 @@ function renderStoriesTab() {
 
 function renderQuizzesTab() {
   if (!state.progress?.quizzes) {
-    tabQuizzesEl.innerHTML = '<p class="text-white/60 text-sm">No quiz data available.</p>';
+    tabQuizzesEl.innerHTML = '<p class="text-slate-500 text-sm">No quiz data available.</p>';
     return;
   }
   
   const quizzes = state.progress.quizzes.byTopic || [];
   
   if (!quizzes.length) {
-    tabQuizzesEl.innerHTML = '<p class="text-white/60 text-sm">No quiz attempts yet.</p>';
+    tabQuizzesEl.innerHTML = '<p class="text-slate-500 text-sm">No quiz attempts yet.</p>';
     return;
   }
   
@@ -406,7 +406,7 @@ function renderQuizzesTab() {
     
     quizChartSvg += `
       <rect x="${x}" y="${y}" width="40" height="${barHeight}" fill="url(#quizGradient)" rx="4" />
-      <text x="${x + 20}" y="${chartHeight - 5}" text-anchor="middle" fill="#ffffff" font-size="8" opacity="0.7" transform="rotate(-45 ${x + 20} ${chartHeight - 5})">
+      <text x="${x + 20}" y="${chartHeight - 5}" text-anchor="middle" fill="#475569" font-size="8" opacity="0.7" transform="rotate(-45 ${x + 20} ${chartHeight - 5})">
         ${quiz.topic.substring(0, 10)}
       </text>
     `;
@@ -416,14 +416,14 @@ function renderQuizzesTab() {
   
   // Table
   let tableHtml = `
-    <div class="bg-white/5 rounded-xl p-4 overflow-x-auto">
+    <div class="bg-white rounded-xl p-4 overflow-x-auto border-2 border-purple-200">
       <table class="w-full">
         <thead>
-          <tr class="border-b border-white/10">
-            <th class="text-left text-white font-bold text-sm py-2">Topic</th>
-            <th class="text-left text-white font-bold text-sm py-2">Attempts</th>
-            <th class="text-left text-white font-bold text-sm py-2">Best Score</th>
-            <th class="text-left text-white font-bold text-sm py-2">Last Attempt</th>
+          <tr class="border-b border-purple-200">
+            <th class="text-left text-slate-700 font-bold text-sm py-2">Topic</th>
+            <th class="text-left text-slate-700 font-bold text-sm py-2">Attempts</th>
+            <th class="text-left text-slate-700 font-bold text-sm py-2">Best Score</th>
+            <th class="text-left text-slate-700 font-bold text-sm py-2">Last Attempt</th>
           </tr>
         </thead>
         <tbody>
@@ -432,11 +432,11 @@ function renderQuizzesTab() {
   quizzes.forEach((quiz) => {
     const lastAttemptRelative = formatRelativeTime(quiz.lastAttempt);
     tableHtml += `
-      <tr class="border-b border-white/10">
-        <td class="text-white/80 text-sm py-2">${quiz.topic}</td>
-        <td class="text-white/80 text-sm py-2">${quiz.attempts || 0}</td>
-        <td class="text-white/80 text-sm py-2">${quiz.bestScore || 0}%</td>
-        <td class="text-white/80 text-sm py-2">${lastAttemptRelative}</td>
+      <tr class="border-b border-purple-100">
+        <td class="text-slate-600 text-sm py-2">${quiz.topic}</td>
+        <td class="text-slate-600 text-sm py-2">${quiz.attempts || 0}</td>
+        <td class="text-slate-600 text-sm py-2">${quiz.bestScore || 0}%</td>
+        <td class="text-slate-600 text-sm py-2">${lastAttemptRelative}</td>
       </tr>
     `;
   });
@@ -448,8 +448,8 @@ function renderQuizzesTab() {
   `;
   
   tabQuizzesEl.innerHTML = `
-    <div class="chart-container bg-white/5 rounded-xl p-4 mb-4">
-      <h4 class="font-fredoka text-sm font-bold text-white mb-3">Quiz Performance by Topic</h4>
+    <div class="chart-container bg-white rounded-xl p-4 mb-4 border-2 border-purple-200">
+      <h4 class="font-fredoka text-sm font-bold text-slate-700 mb-3">Quiz Performance by Topic</h4>
       <div class="h-48">${quizChartSvg}</div>
     </div>
     ${tableHtml}
@@ -477,12 +477,12 @@ function renderBadges() {
   
   badges.forEach((badge) => {
     const tile = document.createElement('div');
-    tile.className = `badge-tile bg-white/15 backdrop-blur-xl border border-white/20 rounded-2xl p-4 min-w-[180px] flex-shrink-0 hover:shadow-[0_0_30px_rgba(155,55,255,0.5)] hover:border-white/30 transition relative cursor-pointer`;
+    tile.className = `badge-tile bg-white border-2 border-purple-200 rounded-2xl p-4 min-w-[180px] flex-shrink-0 hover:shadow-[0_0_30px_rgba(139,92,246,0.3)] hover:border-purple-300 transition relative cursor-pointer`;
     tile.dataset.badgeId = badge.id;
     
     const iconClass = badge.unlocked
-      ? 'bg-gradient-to-br from-purple-500 to-pink-500 shadow-[0_0_20px_rgba(155,55,255,0.4)]'
-      : 'bg-white/15';
+      ? 'bg-gradient-to-br from-purple-500 to-pink-500 shadow-[0_0_20px_rgba(139,92,246,0.4)]'
+      : 'bg-purple-100 border-2 border-purple-200';
     
     const iconOpacity = badge.unlocked ? '' : 'opacity-70';
     
@@ -493,10 +493,10 @@ function renderBadges() {
         </div>
         ${badge.unlocked
           ? '<span class="absolute top-0 right-0 w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-xs">✓</span>'
-          : '<span class="absolute top-0 right-0 w-6 h-6 bg-white/25 rounded-full flex items-center justify-center text-white/70 text-xs">🔒</span>'}
+          : '<span class="absolute top-0 right-0 w-6 h-6 bg-purple-200 rounded-full flex items-center justify-center text-purple-600 text-xs">🔒</span>'}
       </div>
-      <h4 class="font-fredoka text-base font-bold text-white mb-2 text-center">${badge.name}</h4>
-      <p class="text-white/80 text-xs text-center ${!badge.unlocked ? 'italic text-white/70' : ''}">
+      <h4 class="font-fredoka text-base font-bold text-slate-700 mb-2 text-center">${badge.name}</h4>
+      <p class="text-slate-600 text-xs text-center ${!badge.unlocked ? 'italic text-slate-500' : ''}">
         ${badge.unlocked ? `Earned on: ${badge.awardedAt ? new Date(badge.awardedAt).toLocaleDateString() : 'Recently'}` : `Hint: ${badge.hint || badge.description}`}
       </p>
     `;
@@ -530,8 +530,8 @@ async function showBadgeDetailModal(badgeId) {
   
   // Create modal HTML
   const iconClass = isUnlocked
-    ? 'bg-gradient-to-br from-purple-500 to-pink-500 shadow-[0_0_30px_rgba(155,55,255,0.4)]'
-    : 'bg-white/15';
+    ? 'bg-gradient-to-br from-purple-500 to-pink-500 shadow-[0_0_20px_rgba(139,92,246,0.4)]'
+    : 'bg-purple-100 border-2 border-purple-200';
   
   const iconOpacity = isUnlocked ? '' : 'opacity-70';
   
@@ -540,20 +540,20 @@ async function showBadgeDetailModal(badgeId) {
     const percentage = Math.round((progress.current / progress.required) * 100);
     progressHtml = `
       <div class="mb-4">
-        <div class="bg-white/10 rounded-full h-3 mb-2">
+        <div class="bg-purple-100 rounded-full h-3 mb-2">
           <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-3 rounded-full transition-all" style="width: ${percentage}%"></div>
         </div>
-        <p class="text-white/80 text-xs font-semibold">${progress.current} of ${progress.required} completed (${percentage}%)</p>
+        <p class="text-slate-600 text-xs font-semibold">${progress.current} of ${progress.required} completed (${percentage}%)</p>
       </div>
     `;
   }
   
   const modalHtml = `
-    <div class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-      <div class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 max-w-md w-full mx-4 shadow-[0_0_60px_rgba(155,55,255,0.5)] relative">
+    <div class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="bg-white border-2 border-purple-200 rounded-3xl p-8 max-w-md w-full mx-4 shadow-[0_0_40px_rgba(139,92,246,0.3)] relative">
         <button
           id="closeBadgeModalBtn"
-          class="absolute top-4 right-4 text-white/80 hover:text-white text-2xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/20 transition"
+          class="absolute top-4 right-4 text-slate-600 hover:text-slate-900 text-2xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-purple-50 transition"
         >
           ×
         </button>
@@ -564,14 +564,14 @@ async function showBadgeDetailModal(badgeId) {
             </div>
             ${isUnlocked
               ? '<span class="absolute top-0 right-0 w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-sm">✓</span>'
-              : '<span class="absolute top-0 right-0 w-8 h-8 bg-white/25 rounded-full flex items-center justify-center text-white/70 text-sm">🔒</span>'}
+              : '<span class="absolute top-0 right-0 w-8 h-8 bg-purple-200 rounded-full flex items-center justify-center text-purple-600 text-sm">🔒</span>'}
           </div>
-          <h3 class="font-fredoka text-3xl font-bold text-white mb-4">${badge.name}</h3>
-          <p class="text-white/80 text-lg mb-4">${badge.description}</p>
+          <h3 class="font-fredoka text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">${badge.name}</h3>
+          <p class="text-slate-600 text-lg mb-4">${badge.description}</p>
           ${progressHtml}
           ${isUnlocked 
-            ? `<p class="text-white/70 text-sm mb-4">Earned on: ${childBadge?.awardedAt ? new Date(childBadge.awardedAt).toLocaleDateString() : 'Recently'}</p>`
-            : `<p class="text-white/70 italic text-sm mb-4">Hint: ${badge.hint || badge.description}</p>`
+            ? `<p class="text-slate-500 text-sm mb-4">Earned on: ${childBadge?.awardedAt ? new Date(childBadge.awardedAt).toLocaleDateString() : 'Recently'}</p>`
+            : `<p class="text-slate-500 italic text-sm mb-4">Hint: ${badge.hint || badge.description}</p>`
           }
         </div>
       </div>
@@ -622,10 +622,10 @@ document.querySelectorAll('.tab-btn').forEach((btn) => {
     
     // Update active state
     document.querySelectorAll('.tab-btn').forEach((b) => {
-      b.className = b.className.replace(/bg-gradient-to-r from-purple-500 to-pink-500 text-white/g, 'bg-white/10 text-white/70 hover:bg-white/20');
+      b.className = b.className.replace(/bg-gradient-to-r from-purple-500 to-pink-500 text-white/g, 'bg-purple-100 text-slate-600 hover:bg-purple-200');
       b.className = b.className.replace(/active/g, '');
     });
-    btn.className = btn.className.replace(/bg-white\/10 text-white\/70/g, 'bg-gradient-to-r from-purple-500 to-pink-500 text-white');
+    btn.className = btn.className.replace(/bg-purple-100 text-slate-600 hover:bg-purple-200/g, 'bg-gradient-to-r from-purple-500 to-pink-500 text-white');
     btn.className += ' active';
     
     // Hide all tab contents
@@ -672,7 +672,7 @@ async function loadDashboard() {
     await logAnalyticsEvent('dashboard_viewed', { parentId: MOCK_PARENT_ID });
   } catch (error) {
     console.error('[dashboard] Failed to load dashboard', error);
-    childrenListEl.innerHTML = '<p class="text-red-200 text-sm">Unable to load dashboard data.</p>';
+    childrenListEl.innerHTML = '<p class="text-red-600 text-sm">Unable to load dashboard data.</p>';
   }
 }
 
