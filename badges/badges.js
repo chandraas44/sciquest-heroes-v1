@@ -261,7 +261,9 @@ async function loadBadges() {
     emptyStateEl.classList.add('hidden');
     errorStateEl.classList.add('hidden');
     
+    console.log('[badges] Loading badges for child:', MOCK_CHILD_ID);
     const badges = await getChildBadges(MOCK_CHILD_ID);
+    console.log('[badges] Loaded badges:', badges);
     state.badges = badges;
     
     renderBadgeSummary();
@@ -281,6 +283,34 @@ retryBtn?.addEventListener('click', () => {
   loadBadges();
 });
 
-// Initialize
-loadBadges();
+// Initialize - verify script loaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeBadges);
+} else {
+  initializeBadges();
+}
+
+function initializeBadges() {
+  console.log('[badges] Script loaded successfully');
+  console.log('[badges] MOCK_CHILD_ID:', MOCK_CHILD_ID);
+  console.log('[badges] DOM elements:', {
+    badgeGridEl: !!badgeGridEl,
+    emptyStateEl: !!emptyStateEl,
+    errorStateEl: !!errorStateEl,
+    badgeSummaryEl: !!badgeSummaryEl
+  });
+
+  if (!badgeGridEl || !emptyStateEl || !errorStateEl || !badgeSummaryEl) {
+    console.error('[badges] Missing required DOM elements!', {
+      badgeGridEl: !!badgeGridEl,
+      emptyStateEl: !!emptyStateEl,
+      errorStateEl: !!errorStateEl,
+      badgeSummaryEl: !!badgeSummaryEl
+    });
+    return;
+  }
+
+  // Initialize
+  loadBadges();
+}
 

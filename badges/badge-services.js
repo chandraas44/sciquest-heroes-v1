@@ -166,24 +166,22 @@ export function getBadgeAwards(childId) {
   return getBadgeAwardsFromStorage(childId);
 }
 
-function initializeDefaultAwards(childId) {
+async function initializeDefaultAwards(childId) {
   try {
-    const data = loadMockBadgeData();
-    return data.then((mockData) => {
-      const defaultAwards = mockData.defaultAwards?.[childId] || [];
-      if (defaultAwards.length > 0) {
-        const awardsData = JSON.parse(localStorage.getItem(BADGE_AWARDS_STORAGE_KEY) || '{}');
-        if (!awardsData[childId] || awardsData[childId].length === 0) {
-          // Initialize with default awards
-          awardsData[childId] = defaultAwards.map((badgeId) => ({
-            badgeId,
-            awardedAt: new Date().toISOString(),
-            context: { trigger: 'default_init' }
-          }));
-          localStorage.setItem(BADGE_AWARDS_STORAGE_KEY, JSON.stringify(awardsData));
-        }
+    const mockData = await loadMockBadgeData();
+    const defaultAwards = mockData.defaultAwards?.[childId] || [];
+    if (defaultAwards.length > 0) {
+      const awardsData = JSON.parse(localStorage.getItem(BADGE_AWARDS_STORAGE_KEY) || '{}');
+      if (!awardsData[childId] || awardsData[childId].length === 0) {
+        // Initialize with default awards
+        awardsData[childId] = defaultAwards.map((badgeId) => ({
+          badgeId,
+          awardedAt: new Date().toISOString(),
+          context: { trigger: 'default_init' }
+        }));
+        localStorage.setItem(BADGE_AWARDS_STORAGE_KEY, JSON.stringify(awardsData));
       }
-    });
+    }
   } catch (error) {
     console.warn('[badges] Failed to initialize default awards', error);
   }
