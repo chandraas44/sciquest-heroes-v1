@@ -80,10 +80,10 @@ function renderChildCard(child) {
   card.innerHTML = `
     <div class="flex items-center gap-4 mb-3">
       <img
-        src="${child.avatarUrl || '../images/avatars/child1.png'}"
+        src="${child.avatarUrl || '/avatars/child1.png'}"
         alt="${child.firstName}"
         class="w-16 h-16 rounded-full border-4 border-white/30 object-cover"
-        onerror="this.src='../images/avatars/child1.png'"
+        onerror="this.src='/avatars/child1.png'"
       />
       <div class="flex-1">
         <h3 class="font-fredoka text-xl font-bold text-white mb-1">${child.firstName || child.username}</h3>
@@ -188,10 +188,10 @@ function renderChildHeader() {
   childHeaderEl.innerHTML = `
     <div class="flex items-center gap-4">
       <img
-        src="${child.avatarUrl || '../images/avatars/child1.png'}"
+        src="${child.avatarUrl || '/avatars/child1.png'}"
         alt="${child.firstName}"
         class="w-16 h-16 rounded-full border-4 border-white/30 object-cover"
-        onerror="this.src='../images/avatars/child1.png'"
+        onerror="this.src='/avatars/child1.png'"
       />
       <div>
         <h2 class="font-fredoka text-4xl font-bold text-white">${child.firstName || child.username}</h2>

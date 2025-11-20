@@ -9,7 +9,7 @@
       "username": "akhil_scientist",
       "gradeLevel": "Grade 5",
       "age": 11,
-      "avatarUrl": "../images/avatars/child1.png",
+      "avatarUrl": "/avatars/child1.png",
       "lastActive": "2025-01-15T14:30:00Z",
       "currentTopic": "Photosynthesis",
       "status": "On Track"
@@ -23,7 +23,7 @@
       "username": "maya_explorer",
       "gradeLevel": "Grade 3",
       "age": 9,
-      "avatarUrl": "../images/avatars/child2.png",
+      "avatarUrl": "/avatars/child2.png",
       "lastActive": "2025-01-15T10:15:00Z",
       "currentTopic": "Solar System",
       "status": "On Track"
@@ -37,7 +37,7 @@
       "username": "ryan_astro",
       "gradeLevel": "Grade 4",
       "age": 10,
-      "avatarUrl": "../images/avatars/child3.png",
+      "avatarUrl": "/avatars/child3.png",
       "lastActive": "2025-01-10T16:45:00Z",
       "currentTopic": "Ocean Life",
       "status": "Needs Attention"
@@ -300,4 +300,6 @@
     ]
   }
 }
+
+
 

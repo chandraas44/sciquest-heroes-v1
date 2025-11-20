@@ -61,20 +61,36 @@ function renderProgressDots() {
   state.panels.forEach((_, idx) => {
     const dot = document.createElement('span');
     dot.className = 'dot' + (idx === state.currentPanelIndex ? ' active' : '');
-    dot.addEventListener('click', () => jumpToPanel(idx));
+    dot.title = `Panel ${idx + 1}: ${state.panels[idx]?.narration?.substring(0, 50)}...` || `Panel ${idx + 1}`;
+    dot.addEventListener('click', () => {
+      // Highlight the clicked dot and show narration
+      jumpToPanel(idx);
+      // Temporarily highlight the narration area
+      highlightNarration();
+    });
     progressDotsEl.appendChild(dot);
   });
+}
+
+function highlightNarration() {
+  // Add a brief highlight animation to the narration element
+  if (panelNarrationEl) {
+    panelNarrationEl.classList.add('animate-pulse');
+    setTimeout(() => {
+      panelNarrationEl.classList.remove('animate-pulse');
+    }, 600);
+  }
 }
 
 function updateGlossary(terms = []) {
   glossaryList.innerHTML = '';
   if (!terms.length) {
-    glossaryList.innerHTML = '<p class="text-white/60 text-sm">No glossary terms on this panel.</p>';
+    glossaryList.innerHTML = '<p class="text-slate-500 text-sm">No glossary terms on this panel.</p>';
     return;
   }
   terms.forEach((term) => {
     const pill = document.createElement('span');
-    pill.className = 'glossary-pill px-3 py-1 rounded-full bg-indigo-600/30 border border-white/20 text-white font-semibold';
+    pill.className = 'glossary-pill px-3 py-1 rounded-full bg-indigo-100 border border-indigo-200 text-indigo-700 font-semibold';
     pill.textContent = term;
     glossaryList.appendChild(pill);
   });
@@ -196,6 +212,16 @@ function wireControls() {
     if (glossaryDialog) glossaryDialog.showModal();
   });
   glossaryCloseBtn.addEventListener('click', () => glossaryDialog?.close());
+  
+  // Wire up action buttons
+  const takeQuizBtn = document.getElementById('takeQuizBtn');
+  if (takeQuizBtn) {
+    takeQuizBtn.addEventListener('click', () => {
+      if (storyId) {
+        window.location.href = `/stories/${storyId}/quiz`;
+      }
+    });
+  }
 }
 
 async function init() {
@@ -203,6 +229,17 @@ async function init() {
     showOfflineBannerIfNeeded();
     window.addEventListener('online', showOfflineBannerIfNeeded);
     window.addEventListener('offline', showOfflineBannerIfNeeded);
+
+    // Verify storyId is available before proceeding
+    if (!storyId) {
+      // Try one more time to extract from pathname
+      const pathMatch = window.location.pathname.match(/^\/stories\/([^/]+)\/read$/);
+      if (pathMatch) {
+        storyId = pathMatch[1];
+      } else {
+        throw new Error('Story ID not found. Please navigate from the story list.');
+      }
+    }
 
     await loadStory();
     wireControls();
@@ -221,9 +258,21 @@ async function init() {
     });
   } catch (error) {
     console.error('[story-viewer] Failed to initialize viewer', error);
-    panelNarrationEl.textContent = 'Unable to load this story. Please head back to the story list.';
-    nextBtn.disabled = true;
-    prevBtn.disabled = true;
+    if (panelNarrationEl) {
+      panelNarrationEl.textContent = 'Unable to load this story. Please head back to the story list.';
+    }
+    if (nextBtn) nextBtn.disabled = true;
+    if (prevBtn) prevBtn.disabled = true;
+    
+    // Show error message to user
+    const errorMsg = document.createElement('div');
+    errorMsg.className = 'max-w-5xl mx-auto px-6 mt-6 bg-red-50 border border-red-200 rounded-2xl p-4 text-red-800';
+    errorMsg.innerHTML = `
+      <p class="font-semibold mb-2">⚠️ Error loading story</p>
+      <p class="text-sm">${error.message || 'Please check the story URL and try again.'}</p>
+      <a href="./index.html" class="text-sm underline mt-2 inline-block">← Back to Stories</a>
+    `;
+    document.querySelector('main')?.insertBefore(errorMsg, document.querySelector('main')?.firstChild);
   }
 }
 

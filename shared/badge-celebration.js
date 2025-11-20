@@ -85,7 +85,7 @@ function createCelebrationOverlay(badgeId, badgeName, badgeIcon) {
   viewBtn.className = 'bg-white/20 backdrop-blur-xl border-2 border-white/30 text-white font-fredoka font-bold px-8 py-3 rounded-2xl hover:bg-white/30 transition shadow-lg mb-4';
   viewBtn.textContent = 'View Badge';
   viewBtn.onclick = () => {
-    window.location.href = `/child/badges?badgeId=${badgeId}`;
+    window.location.href = `/badges/badges.html?badgeId=${badgeId}`;
   };
   
   // Close button
@@ -191,4 +191,6 @@ export function clearCelebrationQueue() {
   isCelebrating = false;
   dismissCelebration();
 }
+
+
 
