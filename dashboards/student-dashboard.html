@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Student Dashboard - Your Science Adventure Hub">
+    <meta name="description" content="Child Dashboard - Your Science Adventure Hub">
     <title>My Dashboard - SciQuest Heroes</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fredoka:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -30,7 +33,7 @@
 
         .navbar {
             background: #ffffff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             padding: 16px 0;
             position: sticky;
             top: 0;
@@ -94,7 +97,7 @@
             background: white;
             border: 2px solid #e2e8f0;
             border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
             min-width: 220px;
             display: none;
             overflow: hidden;
@@ -110,6 +113,7 @@
                 opacity: 0;
                 transform: translateY(-10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -167,7 +171,7 @@
             right: -10%;
             width: 400px;
             height: 400px;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
             border-radius: 50%;
         }
 
@@ -184,7 +188,7 @@
             height: 100px;
             border-radius: 50%;
             border: 4px solid white;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
             background: white;
             display: flex;
             align-items: center;
@@ -222,20 +226,31 @@
             background: white;
             border-radius: 16px;
             padding: 24px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             transition: all 0.3s ease;
             border-left: 4px solid;
         }
 
         .stat-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
         }
 
-        .stat-card.blue { border-left-color: #3b82f6; }
-        .stat-card.green { border-left-color: #22c55e; }
-        .stat-card.yellow { border-left-color: #fbbf24; }
-        .stat-card.pink { border-left-color: #ec4899; }
+        .stat-card.blue {
+            border-left-color: #3b82f6;
+        }
+
+        .stat-card.green {
+            border-left-color: #22c55e;
+        }
+
+        .stat-card.yellow {
+            border-left-color: #fbbf24;
+        }
+
+        .stat-card.pink {
+            border-left-color: #ec4899;
+        }
 
         .stat-header {
             display: flex;
@@ -255,10 +270,21 @@
             color: white;
         }
 
-        .stat-icon.blue { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-        .stat-icon.green { background: linear-gradient(135deg, #22c55e, #16a34a); }
-        .stat-icon.yellow { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
-        .stat-icon.pink { background: linear-gradient(135deg, #ec4899, #db2777); }
+        .stat-icon.blue {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .stat-icon.green {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+        }
+
+        .stat-icon.yellow {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        }
+
+        .stat-icon.pink {
+            background: linear-gradient(135deg, #ec4899, #db2777);
+        }
 
         .stat-value {
             font-family: 'Fredoka', sans-serif;
@@ -279,7 +305,7 @@
             border-radius: 16px;
             padding: 32px;
             margin-bottom: 32px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         .section-header {
@@ -323,7 +349,7 @@
 
         .continue-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
             border-color: #22c55e;
         }
 
@@ -395,7 +421,7 @@
 
         .adventure-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
             border-color: #667eea;
         }
 
@@ -444,7 +470,7 @@
 
         .badge-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
         }
 
         .badge-card.earned {
@@ -578,6 +604,7 @@
         }
     </style>
 </head>
+
 <body>
     <nav class="navbar">
         <div class="navbar-container">
@@ -755,7 +782,7 @@
                 </div>
                 <div class="badge-card">
                     <div class="badge-icon">⭐</div>
-                    <div class="badge-name">Star Student</div>
+                    <div class="badge-name">Star Child</div>
                 </div>
                 <div class="badge-card">
                     <div class="badge-icon">🏆</div>
@@ -794,4 +821,5 @@
 
     <script type="module" src="student-dashboard.js"></script>
 </body>
+
 </html>
