@@ -95,20 +95,6 @@
                 if (profile && profile.account_type) {
                     const type = profile.account_type.toLowerCase();
                     switch (type) {
-                        case 'parent':
-                            window.location.href = '../dashboards/parent-dashboard.html';
-                            break;
-                        case 'teacher':
-                            window.location.href = '../dashboards/teacher-dashboard.html';
-                            break;
-                        case 'student':
-                            window.location.href = '../dashboards/student-dashboard.html';
-                            break;
-                        default:
-                            window.location.href = '../index.html';
-                    }
-                } else {
-                    // No profile or account type, redirect to home or onboarding
                     window.location.href = '../index.html';
                 }
 

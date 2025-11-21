@@ -243,7 +243,7 @@ panel2Form.addEventListener('submit', async (e) => {
             showSuccess('Account created successfully! Redirecting to avatar selection...');
 
             setTimeout(() => {
-                window.location.href = 'avatar-selection.html';
+                window.location.href = '../avatar-selection.html';
             }, 1500);
         }
     } catch (error) {
