@@ -1,0 +1,57 @@
+{
+  "badges": [
+    {
+      "id": "first-curious-question",
+      "name": "First Curious Question",
+      "description": "Ask your first question in chat",
+      "icon": "💭",
+      "hint": "Ask 1 question in chat",
+      "category": "chat",
+      "rarity": "common"
+    },
+    {
+      "id": "photosynthesis-explorer",
+      "name": "Photosynthesis Explorer",
+      "description": "Complete all stories about photosynthesis",
+      "icon": "🌱",
+      "hint": "Complete your first science story about plants",
+      "category": "stories",
+      "rarity": "common"
+    },
+    {
+      "id": "quiz-hero",
+      "name": "Quiz Hero",
+      "description": "Score 80% or higher on any quiz",
+      "icon": "🏆",
+      "hint": "Score 80%+ on a quiz",
+      "category": "quizzes",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "story-master",
+      "name": "Story Master",
+      "description": "Complete 5 stories",
+      "icon": "📚",
+      "hint": "Complete 5 stories",
+      "category": "stories",
+      "rarity": "rare"
+    },
+    {
+      "id": "streak-star",
+      "name": "Streak Star",
+      "description": "Maintain a 7-day learning streak",
+      "icon": "⭐",
+      "hint": "Learn for 7 days in a row",
+      "category": "streaks",
+      "rarity": "rare"
+    }
+  ],
+  "defaultAwards": {
+    "child-akhil": ["first-curious-question"],
+    "child-maya": ["first-curious-question"],
+    "child-ryan": ["first-curious-question"]
+  }
+}
+
+
+
