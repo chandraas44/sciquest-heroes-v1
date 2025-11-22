@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Student signup - Join SciQuest Heroes">
-    <title>Student Signup - SciQuest Heroes</title>
+    <meta name="description" content="Child signup - Join SciQuest Heroes">
+    <title>Child Signup - SciQuest Heroes</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -407,8 +407,8 @@
             }
         }
     </style>
-    <script type="module" crossorigin src="/assets/studentSignup-Bsdiy14L.js"></script>
-    <link rel="modulepreload" crossorigin href="/assets/config-CMljicwL.js">
+  <script type="module" crossorigin src="/assets/studentSignup-BsrQ4XG8.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/config-N_0HKkEA.js">
 </head>
 
 <body>
@@ -438,12 +438,13 @@
             <div class="error-message" id="errorMessage"></div>
             <div class="success-message" id="successMessage"></div>
 
+            <!-- Panel 1: Age and Parent Email -->
             <div class="panel active" id="panel1">
                 <form id="panel1Form">
-                    <div class="mb-5">
-                        <label for="studentAge" class="form-label">Student's Age</label>
+                    <div class="mb-6">
+                        <label for="studentAge" class="form-label">How old are you?</label>
                         <select id="studentAge" class="form-input" required>
-                            <option value="">Select age...</option>
+                            <option value="">Select your age</option>
                             <option value="8">8 years old</option>
                             <option value="9">9 years old</option>
                             <option value="10">10 years old</option>
@@ -466,16 +467,17 @@
                 </form>
             </div>
 
+            <!-- Panel 2: Child Details, Password, and Captcha -->
             <div class="panel" id="panel2">
                 <form id="panel2Form">
                     <div class="mb-4">
-                        <label for="firstName" class="form-label">Student's First Name</label>
+                        <label for="firstName" class="form-label">Child's First Name</label>
                         <input type="text" id="firstName" class="form-input" placeholder="Enter your first name"
                             required>
                     </div>
 
                     <div class="mb-4">
-                        <label for="email" class="form-label">Student's Email Address</label>
+                        <label for="email" class="form-label">Child's Email Address</label>
                         <input type="email" id="email" class="form-input" placeholder="student@email.com" required>
                         <p class="text-xs text-slate-500 font-semibold mt-2">
                             This email will be used to sign in to your account
@@ -519,8 +521,7 @@
             </div>
         </div>
     </section>
-
-
+
 
     <script>
         const particlesContainer = document.querySelector('.particles');
