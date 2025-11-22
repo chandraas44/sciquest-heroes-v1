@@ -13,6 +13,9 @@ import {
 import {
   showBadgeCelebration
 } from '../shared/badge-celebration.js';
+import {
+  getQuizUrl
+} from './quiz-routing.js';
 
 const params = new URLSearchParams(window.location.search);
 // Extract storyId from query params, or fallback to pathname: /stories/{storyId}/read
@@ -215,12 +218,39 @@ function wireControls() {
   
   // Wire up action buttons
   const takeQuizBtn = document.getElementById('takeQuizBtn');
+  console.log('[story-viewer] Take Quiz button found:', !!takeQuizBtn);
   if (takeQuizBtn) {
-    takeQuizBtn.addEventListener('click', () => {
-      if (storyId) {
+    takeQuizBtn.addEventListener('click', async () => {
+      console.log('[story-viewer] Take Quiz button clicked!');
+      console.log('[story-viewer] storyId:', storyId);
+      console.log('[story-viewer] state.story:', state.story);
+      
+      if (!storyId || !state.story) {
+        console.warn('[story-viewer] Cannot navigate to quiz: missing storyId or story', {
+          storyId,
+          hasStory: !!state.story
+        });
+        alert('Story not loaded yet. Please wait for the story to finish loading.');
+        return;
+      }
+
+      try {
+        console.log('[story-viewer] Getting quiz URL for story:', state.story);
+        // Get the appropriate quiz URL based on grade level and story topic
+        const quizUrl = await getQuizUrl(state.story);
+        console.log('[story-viewer] Quiz URL determined:', quizUrl);
+        console.log('[story-viewer] Navigating to:', quizUrl);
+        window.location.href = quizUrl;
+      } catch (error) {
+        console.error('[story-viewer] Failed to get quiz URL:', error);
+        alert(`Error getting quiz URL: ${error.message}`);
+        // Fallback to default quiz route if routing fails
         window.location.href = `/stories/${storyId}/quiz`;
       }
     });
+    console.log('[story-viewer] Take Quiz button handler attached successfully');
+  } else {
+    console.error('[story-viewer] Take Quiz button NOT FOUND in DOM!');
   }
 }
 
@@ -242,6 +272,8 @@ async function init() {
     }
 
     await loadStory();
+    console.log('[story-viewer] Story loaded, wiring controls...');
+    console.log('[story-viewer] State after loadStory:', { story: state.story?.title, panels: state.panels.length });
     wireControls();
     updatePanelUI();
     
