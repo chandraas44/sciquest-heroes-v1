@@ -41,7 +41,7 @@ async function checkAuth() {
 
     if (profile.account_type !== 'student') {
         if (profile.account_type === 'parent') {
-            window.location.href = 'parent-dashboard.html';
+            window.location.href = '../parent/dashboard.html';
         } else if (profile.account_type === 'teacher') {
             window.location.href = 'teacher-dashboard.html';
         } else {
