@@ -153,6 +153,16 @@
           "ctaLabel": "Celebrate rainforest heroes"
         }
       ]
+    },
+    {
+      "id": "photosynthesis-adventure",
+      "title": "Photosynthesis Adventure",
+      "coverUrl": "../images/chlorophotosynthesis.png",
+      "topicTag": "Photosynthesis",
+      "readingLevel": "Ages 7-9",
+      "estimatedTime": "8 min",
+      "summary": "Join Mr. Chloro as he teaches how plants make food using sunlight, water, and air!",
+      "panels": []
     }
   ]
 }

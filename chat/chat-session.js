@@ -189,7 +189,7 @@ async function handleSendMessage() {
     hasContext: Boolean(state.context.storyRef)
   });
 
-  const aiResponse = await sendMessage(state.topicId, messageText, state.context);
+  const aiResponse = await sendMessage(state.topicId, messageText, state.context, state.sessionId, state.messages);
   state.messages.pop();
   state.messages.push(aiResponse);
   renderMessages();
