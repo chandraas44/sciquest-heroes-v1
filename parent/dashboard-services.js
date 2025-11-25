@@ -21,6 +21,14 @@ function getSupabaseClient() {
   return supabaseClient;
 }
 
+export async function getCurrentUser() {
+  const client = getSupabaseClient();
+  if (!client) return null;
+
+  const { data: { user } } = await client.auth.getUser();
+  return user;
+}
+
 function shouldUseMockData() {
   if (USE_DASHBOARD_MOCKS) return true;
   return !hasSupabaseConfig();
@@ -43,25 +51,39 @@ async function loadMockDashboardData() {
 
 export async function getParentChildren(parentId) {
   if (!parentId) throw new Error('parentId is required');
-  
+  console.log('[dashboard] getParentChildren called for:', parentId);
+
   if (shouldUseMockData()) {
+    console.log('[dashboard] Using mock data (forced)');
     const data = await loadMockDashboardData();
     return data.children.filter((child) => child.parentId === parentId) || [];
   }
 
   const client = getSupabaseClient();
   if (!client) {
+    console.warn('[dashboard] No Supabase client available, falling back to mock');
     const data = await loadMockDashboardData();
     return data.children.filter((child) => child.parentId === parentId) || [];
   }
 
   try {
+    console.log('[dashboard] Fetching children from Supabase...');
     const { data, error } = await client
-      .rpc('get_parent_children', { parent_user_id: parentId })
-      .select('*');
+      .rpc('get_parent_children', { parent_user_id: parentId });
 
-    if (error) throw error;
-    return data || [];
+    if (error) {
+      console.error('[dashboard] Supabase RPC error:', error);
+      throw error;
+    }
+    console.log('[dashboard] Supabase returned children:', data);
+
+    // Map snake_case to camelCase for frontend
+    return (data || []).map(child => ({
+      ...child,
+      firstName: child.first_name,
+      avatarUrl: child.avatar_url,
+      gradeLevel: child.grade_level
+    }));
   } catch (error) {
     console.warn('[dashboard] Supabase children fetch failed, reverting to mock data', error);
     const data = await loadMockDashboardData();
@@ -71,7 +93,7 @@ export async function getParentChildren(parentId) {
 
 export async function getChildProgress(childId) {
   if (!childId) throw new Error('childId is required');
-  
+
   if (shouldUseMockData()) {
     const data = await loadMockDashboardData();
     return data.progress[childId] || null;
@@ -125,13 +147,13 @@ export async function getChildProgress(childId) {
 
 export async function getChildBadges(childId) {
   if (!childId) throw new Error('childId is required');
-  
+
   // Use badge-services.js for consistency (handles both mock and real data)
   try {
     const { getChildBadges: getBadgesFromService, getBadgeAwards } = await import('../badges/badge-services.js');
     const badges = await getBadgesFromService(childId);
     const awards = getBadgeAwards(childId);
-    
+
     // Map to dashboard format
     return {
       coreBadges: badges.map((badge) => ({
@@ -144,12 +166,12 @@ export async function getChildBadges(childId) {
     };
   } catch (error) {
     console.warn('[dashboard] Badge service unavailable, using fallback', error);
-    
+
     // Fallback to mock data directly
     if (shouldUseMockData()) {
       const data = await loadMockDashboardData();
       const coreBadges = data.badges?.coreBadges || [];
-      
+
       return {
         coreBadges: coreBadges.map((badge) => ({
           ...badge,
@@ -191,8 +213,8 @@ export async function getChildBadges(childId) {
         coreBadges: (badgeDefs || []).map((badge) => ({
           ...badge,
           unlocked: unlockedIds.has(badge.id),
-          awardedAt: unlockedIds.has(badge.id) 
-            ? (data || []).find((a) => a.badge_id === badge.id)?.awarded_at 
+          awardedAt: unlockedIds.has(badge.id)
+            ? (data || []).find((a) => a.badge_id === badge.id)?.awarded_at
             : null
         }))
       };
@@ -214,7 +236,7 @@ export async function getChildBadges(childId) {
 function aggregateStoryProgress(storyProgress) {
   const completed = storyProgress.filter((sp) => sp.completed).length;
   const inProgress = storyProgress.filter((sp) => !sp.completed && sp.last_panel_index > 0).length;
-  
+
   // Group by topic
   const byTopic = {};
   storyProgress.forEach((sp) => {
@@ -282,7 +304,7 @@ function aggregateQuizProgress(quizAttempts) {
 function aggregateChatProgress(chatInteractions) {
   const weekAgo = new Date();
   weekAgo.setDate(weekAgo.getDate() - 7);
-  
+
   const questionsThisWeek = chatInteractions.filter(
     (msg) => msg.role === 'user' && new Date(msg.created_at) >= weekAgo
   ).length;
@@ -309,16 +331,16 @@ function calculateStreak(storyProgress, quizAttempts, chatInteractions) {
   }
 
   const lastActivity = new Date(Math.max(...allActivities.map((d) => d.getTime())));
-  
+
   // Calculate consecutive days with activity (simplified)
   let streak = 0;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  
+
   for (let i = 0; i < 30; i++) {
     const checkDate = new Date(today);
     checkDate.setDate(checkDate.getDate() - i);
-    
+
     const hasActivity = allActivities.some((activityDate) => {
       const activityDay = new Date(activityDate);
       activityDay.setHours(0, 0, 0, 0);
@@ -341,12 +363,12 @@ function calculateStreak(storyProgress, quizAttempts, chatInteractions) {
 function aggregateActivity(storyProgress, quizAttempts, chatInteractions) {
   const last7Days = [];
   const today = new Date();
-  
+
   for (let i = 6; i >= 0; i--) {
     const date = new Date(today);
     date.setDate(date.getDate() - i);
     const dateStr = date.toISOString().split('T')[0];
-    
+
     const activities = [
       ...storyProgress.filter((sp) => sp.updated_at?.startsWith(dateStr)),
       ...quizAttempts.filter((qa) => qa.created_at?.startsWith(dateStr)),
