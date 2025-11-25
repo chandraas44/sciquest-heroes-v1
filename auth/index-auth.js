@@ -18,13 +18,13 @@ async function checkAuthAndUpdateUI() {
 
         if (profile) {
             if (profile.account_type === 'parent') {
-                window.location.href = 'dashboards/parent-dashboard.html';
+                window.location.href = '/parent/dashboard.html';
                 return;
             } else if (profile.account_type === 'teacher') {
                 window.location.href = 'dashboards/teacher-dashboard.html';
                 return;
             } else if (profile.account_type === 'student') {
-                window.location.href = 'dashboards/student-dashboard.html';
+                window.location.href = 'stories/index.html';
                 return;
             }
         }
@@ -203,7 +203,7 @@ function addUserMenuToNavbar(profile) {
 
 function getDashboardLink(accountType) {
     if (accountType === 'parent') {
-        return 'dashboards/parent-dashboard.html';
+        return '/parent/dashboard.html';
     } else if (accountType === 'teacher') {
         return 'dashboards/teacher-dashboard.html';
     } else if (accountType === 'student') {

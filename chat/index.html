@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Topic Chat | SciQuest Heroes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #ffffff;
+      color: #1e293b;
+    }
+
+    .font-fredoka {
+      font-family: 'Fredoka', sans-serif;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen bg-white text-slate-800">
+  <!-- Header -->
+  <nav class="fixed w-full z-50 backdrop-blur-xl bg-white/95 border-b border-purple-200 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-20">
+        <div class="flex items-center space-x-4">
+          <div
+            class="w-14 h-14 bg-gradient-to-br from-purple-500 via-pink-500 to-pink-600 rounded-3xl flex items-center justify-center border-4 border-purple-200 shadow-lg">
+            <span class="text-3xl">🚀</span>
+          </div>
+          <a href="./index.html"
+            class="font-fredoka text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">SciQuest
+            Heroes</a>
+        </div>
+        <div class="hidden lg:flex items-center space-x-6">
+          <a href="../stories/index.html"
+            class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold">Stories</a>
+          <a href="./index.html" class="font-fredoka text-purple-600 font-bold">Chat</a>
+          <button id="logoutBtn"
+            class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold px-4 py-2 rounded-full border border-purple-200 hover:bg-purple-50">
+            Logout
+          </button>
+        </div>
+        <button id="logoutBtnMobile"
+          class="lg:hidden font-fredoka text-slate-700 hover:text-purple-600 transition font-bold px-3 py-2 rounded-full border border-purple-200 hover:bg-purple-50 text-sm">
+          Logout
+        </button>
+      </div>
+    </div>
+  </nav>
+  <div id="offlineBanner" class="hidden max-w-5xl mx-auto mt-6 px-6">
+    <div
+      class="bg-amber-100/90 text-amber-900 rounded-2xl px-4 py-3 text-sm font-medium border border-amber-300 flex items-center gap-3">
+      <span>⚠️</span>
+      <span>Working in mock/offline mode. Chat history will sync when online.</span>
+    </div>
+  </div>
+
+  <!-- Chat Lobby (Topic Picker) -->
+  <div id="topicPicker" class="hidden max-w-6xl mx-auto px-6 pt-24 pb-20">
+    <header class="text-center mb-12">
+      <h1
+        class="font-fredoka text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+        Choose a Topic</h1>
+      <p class="text-slate-600 text-lg">Pick a topic you'd like to learn about!</p>
+    </header>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  </div>
+
+  <!-- Chat Session -->
+  <div id="chatSession" class="hidden max-w-4xl mx-auto px-6 pt-24 pb-20 min-h-screen flex flex-col">
+    <header id="chatHeader" class="mb-6">
+      <div class="flex items-center justify-between mb-4">
+        <button id="backBtn"
+          class="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-slate-600 hover:text-purple-600 transition">
+          ← Back
+        </button>
+        <h1 id="topicName"
+          class="font-fredoka text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+        </h1>
+        <div class="w-20"></div>
+      </div>
+      <div id="contextBadge"
+        class="hidden inline-block px-4 py-2 bg-purple-100 border-2 border-purple-200 rounded-full text-sm font-semibold cursor-pointer hover:bg-purple-200 transition text-slate-700">
+      </div>
+    </header>
+
+    <div id="safetyBanner"
+      class="bg-amber-50 text-amber-900 rounded-2xl px-4 py-3 text-sm font-medium border-2 border-amber-200 mb-4 flex items-center gap-3">
+      <span>🛡️</span>
+      <span>This is a safe, educational chat. All responses are checked for safety.</span>
+    </div>
+
+    <div id="chatWindow"
+      class="flex-1 bg-white border-2 border-purple-200 rounded-3xl p-6 mb-4 overflow-y-auto shadow-[0_0_20px_rgba(139,92,246,0.15)]"
+      style="max-height: calc(100vh - 400px); min-height: 300px;"></div>
+
+    <div id="quickPrompts" class="flex flex-wrap gap-2 mb-4"></div>
+
+    <div class="flex gap-3">
+      <textarea id="messageInput" placeholder="Type your question here..."
+        class="flex-1 bg-white border-2 border-purple-200 rounded-2xl px-4 py-3 text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+        rows="2"></textarea>
+      <button id="sendBtn"
+        class="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold px-8 py-3 rounded-2xl hover:from-purple-600 hover:to-pink-600 transition shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+        Send
+      </button>
+    </div>
+
+    <button id="escalationBtn"
+      class="mt-4 w-full bg-purple-100 border-2 border-purple-200 text-slate-700 font-bold py-3 rounded-2xl hover:bg-purple-200 transition shadow-lg">
+      👨‍👩‍👧‍👦 Ask a Parent or Teacher
+    </button>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gradient-to-br from-purple-50 to-pink-50 border-t border-purple-200 mt-auto py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-center items-center">
+        <p class="text-slate-500 text-xs font-medium">© 2025 SciQuest Heroes. Safe learning for curious minds.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="./chat-session.js"></script>
+  <script type="module" src="../shared/logo-handler.js"></script>
+  <script type="module">
+    // Logout functionality
+    const handleLogout = async () => {
+      try {
+        // Try Supabase logout if available
+        const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm');
+        const { supabaseConfig } = await import('../config.js');
+
+        if (supabaseConfig?.url && supabaseConfig?.anonKey) {
+          const supabase = createClient(supabaseConfig.url, supabaseConfig.anonKey);
+          const { error } = await supabase.auth.signOut();
+          if (error) throw error;
+        }
+      } catch (error) {
+        console.log('Supabase logout skipped (mock mode)');
+      }
+
+      // Clear all storage
+      localStorage.clear();
+      sessionStorage.clear();
+
+      // Redirect to auth page
+      window.location.href = '../auth/auth.html';
+    };
+
+    document.getElementById('logoutBtn')?.addEventListener('click', handleLogout);
+    document.getElementById('logoutBtnMobile')?.addEventListener('click', handleLogout);
+  </script>
+</body>
+
+</html>

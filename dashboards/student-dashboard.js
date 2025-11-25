@@ -50,10 +50,10 @@ async function checkAuth() {
         return;
     }
 
-    loadUserProfile(profile);
+    loadChildProfile(profile);
 }
 
-async function loadUserProfile(profile) {
+async function loadChildProfile(profile) {
     try {
         const displayName = profile.first_name || profile.full_name || profile.username || 'Hero';
         userName.textContent = profile.email || displayName;
