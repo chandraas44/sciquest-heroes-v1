@@ -2,12 +2,12 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 import { supabaseConfig } from '../config.js';
 
 const EDGE_ANALYTICS_URL = import.meta.env?.VITE_EDGE_ANALYTICS_URL || '';
-const USE_DASHBOARD_MOCKS = (import.meta.env?.VITE_USE_DASHBOARD_MOCKS ?? 'true') === 'true';
+
 const USE_ANALYTICS_QUEUE = true;
 const ANALYTICS_QUEUE_KEY = 'sqh_analytics_queue_v1';
 
 let supabaseClient = null;
-let cachedMockDashboardData = null;
+
 
 function hasSupabaseConfig() {
   return Boolean(supabaseConfig?.url && supabaseConfig?.anonKey);
@@ -29,41 +29,18 @@ export async function getCurrentUser() {
   return user;
 }
 
-function shouldUseMockData() {
-  if (USE_DASHBOARD_MOCKS) return true;
-  return !hasSupabaseConfig();
-}
 
-export function isUsingDashboardMocks() {
-  return shouldUseMockData();
-}
 
-async function loadMockDashboardData() {
-  if (cachedMockDashboardData) return cachedMockDashboardData;
-  const res = await fetch(new URL('./mockDashboardData.json', import.meta.url));
-  if (!res.ok) {
-    throw new Error('Unable to load mock dashboard data');
-  }
-  const data = await res.json();
-  cachedMockDashboardData = data;
-  return cachedMockDashboardData;
-}
+
 
 export async function getParentChildren(parentId) {
   if (!parentId) throw new Error('parentId is required');
   console.log('[dashboard] getParentChildren called for:', parentId);
 
-  if (shouldUseMockData()) {
-    console.log('[dashboard] Using mock data (forced)');
-    const data = await loadMockDashboardData();
-    return data.children.filter((child) => child.parentId === parentId) || [];
-  }
-
   const client = getSupabaseClient();
   if (!client) {
-    console.warn('[dashboard] No Supabase client available, falling back to mock');
-    const data = await loadMockDashboardData();
-    return data.children.filter((child) => child.parentId === parentId) || [];
+    console.warn('[dashboard] No Supabase client available');
+    return [];
   }
 
   try {
@@ -85,24 +62,17 @@ export async function getParentChildren(parentId) {
       gradeLevel: child.grade_level
     }));
   } catch (error) {
-    console.warn('[dashboard] Supabase children fetch failed, reverting to mock data', error);
-    const data = await loadMockDashboardData();
-    return data.children.filter((child) => child.parentId === parentId) || [];
+    console.warn('[dashboard] Supabase children fetch failed', error);
+    return [];
   }
 }
 
 export async function getChildProgress(childId) {
   if (!childId) throw new Error('childId is required');
 
-  if (shouldUseMockData()) {
-    const data = await loadMockDashboardData();
-    return data.progress[childId] || null;
-  }
-
   const client = getSupabaseClient();
   if (!client) {
-    const data = await loadMockDashboardData();
-    return data.progress[childId] || null;
+    return null;
   }
 
   try {
@@ -139,9 +109,8 @@ export async function getChildProgress(childId) {
       activity: aggregateActivity(storyProgress || [], quizAttempts || [], chatInteractions || [])
     };
   } catch (error) {
-    console.warn('[dashboard] Supabase progress fetch failed, reverting to mock data', error);
-    const data = await loadMockDashboardData();
-    return data.progress[childId] || null;
+    console.warn('[dashboard] Supabase progress fetch failed', error);
+    return null;
   }
 }
 
@@ -168,28 +137,9 @@ export async function getChildBadges(childId) {
     console.warn('[dashboard] Badge service unavailable, using fallback', error);
 
     // Fallback to mock data directly
-    if (shouldUseMockData()) {
-      const data = await loadMockDashboardData();
-      const coreBadges = data.badges?.coreBadges || [];
-
-      return {
-        coreBadges: coreBadges.map((badge) => ({
-          ...badge,
-          unlocked: badge.unlockedFor?.includes(childId) || false
-        }))
-      };
-    }
-
     const client = getSupabaseClient();
     if (!client) {
-      const data = await loadMockDashboardData();
-      const coreBadges = data.badges?.coreBadges || [];
-      return {
-        coreBadges: coreBadges.map((badge) => ({
-          ...badge,
-          unlocked: badge.unlockedFor?.includes(childId) || false
-        }))
-      };
+      return { coreBadges: [] };
     }
 
     try {
@@ -219,15 +169,8 @@ export async function getChildBadges(childId) {
         }))
       };
     } catch (dbError) {
-      console.warn('[dashboard] Supabase badges fetch failed, reverting to mock data', dbError);
-      const data = await loadMockDashboardData();
-      const coreBadges = data.badges?.coreBadges || [];
-      return {
-        coreBadges: coreBadges.map((badge) => ({
-          ...badge,
-          unlocked: badge.unlockedFor?.includes(childId) || false
-        }))
-      };
+      console.warn('[dashboard] Supabase badges fetch failed', dbError);
+      return { coreBadges: [] };
     }
   }
 }

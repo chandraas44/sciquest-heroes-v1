@@ -3,7 +3,6 @@ import {
   getChildProgress,
   getChildBadges,
   logAnalyticsEvent,
-  isUsingDashboardMocks,
   getCurrentUser
 } from './dashboard-services.js';
 import {
