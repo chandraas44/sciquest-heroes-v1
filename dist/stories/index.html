@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stories | SciQuest Heroes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #ffffff;
+      color: #1e293b;
+    }
+
+    .font-fredoka {
+      font-family: 'Fredoka', sans-serif;
+    }
+
+    .panel-card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .panel-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 45px rgba(139, 92, 246, 0.15);
+    }
+  </style>
+  <script type="module" crossorigin src="/assets/storiesHub-Ck8LCAB1.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/config-N_0HKkEA.js">
+  <link rel="modulepreload" crossorigin href="/assets/story-services-RJgnPI-H.js">
+  <link rel="modulepreload" crossorigin href="/assets/logo-handler-BTCRg4Zu.js">
+  <link rel="modulepreload" crossorigin href="/assets/preload-helper-BXl3LOEh.js">
+</head>
+
+<body class="min-h-screen bg-white text-slate-800">
+  <!-- Header -->
+  <nav class="fixed w-full z-50 backdrop-blur-xl bg-white/95 border-b border-purple-200 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-20">
+        <div class="flex items-center space-x-4">
+          <div
+            class="w-14 h-14 bg-gradient-to-br from-purple-500 via-pink-500 to-pink-600 rounded-3xl flex items-center justify-center border-4 border-purple-200 shadow-lg">
+            <span class="text-3xl">🚀</span>
+          </div>
+          <a href="./index.html"
+            class="font-fredoka text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">SciQuest
+            Heroes</a>
+        </div>
+        <div class="hidden lg:flex items-center space-x-6">
+          <a href="./index.html" class="font-fredoka text-purple-600 font-bold">Stories</a>
+          <a href="../chat/index.html"
+            class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold">Chat</a>
+          <button id="logoutBtn"
+            class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold px-4 py-2 rounded-full border border-purple-200 hover:bg-purple-50">
+            Logout
+          </button>
+        </div>
+        <button id="logoutBtnMobile"
+          class="lg:hidden font-fredoka text-slate-700 hover:text-purple-600 transition font-bold px-3 py-2 rounded-full border border-purple-200 hover:bg-purple-50 text-sm">
+          Logout
+        </button>
+      </div>
+    </div>
+  </nav>
+  <div class="pb-24 pt-24">
+    <header class="max-w-6xl mx-auto px-6 py-10 flex flex-col gap-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="uppercase tracking-widest text-sm font-semibold text-slate-500">Story Hub</p>
+          <h1
+            class="font-fredoka text-4xl md:text-5xl font-bold mt-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            Choose Your Comic Journey</h1>
+        </div>
+      </div>
+      <p class="text-lg md:text-xl max-w-3xl text-slate-600">
+        Explore science adventures crafted for curious minds. Start any story to unlock panel-by-panel narration, quick
+        glossary helpers, and AI chat prompts tied to the action.
+      </p>
+    </header>
+  </div>
+
+  <main class="-mt-16 relative z-10">
+    <section class="max-w-6xl mx-auto px-6 pb-20">
+      <div id="offlineBanner"
+        class="hidden bg-amber-100/90 text-amber-900 border border-amber-300 px-4 py-3 rounded-2xl mb-6 flex items-center gap-3 text-sm font-medium">
+        <span>⚠️</span>
+        <span>You're viewing mock stories while offline. Progress sync will resume when you're back online.</span>
+      </div>
+
+      <div
+        class="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-3xl shadow-[0_0_20px_rgba(139,92,246,0.15)] px-6 py-6 md:px-10 md:py-10 flex flex-col gap-4">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h2 class="font-fredoka text-3xl font-bold text-slate-700">Available Adventures</h2>
+            <p class="text-slate-600 text-sm md:text-base">Updated daily with new science quests.</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-slate-600 text-sm font-medium">Need help?</span>
+            <a href="../profile.html"
+              class="px-4 py-2 rounded-full bg-purple-100 border-2 border-purple-200 text-slate-700 text-sm font-bold hover:bg-purple-200 transition">View
+              Profile</a>
+          </div>
+        </div>
+
+        <div id="storiesGrid" class="grid gap-6 md:grid-cols-2"></div>
+
+        <div id="storyListEmpty" class="hidden text-center py-16 text-slate-500 font-medium text-lg">
+          No stories are available yet. Check back soon!
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <template id="storyCardTemplate">
+    <article
+      class="panel-card bg-white border-2 border-purple-200 rounded-2xl overflow-hidden shadow-[0_0_20px_rgba(139,92,246,0.15)] hover:shadow-[0_0_30px_rgba(139,92,246,0.3)] transition">
+      <div class="relative h-48 bg-purple-50">
+        <img data-cover class="w-full h-full object-cover" alt="" />
+        <div data-topic
+          class="absolute top-3 left-3 bg-purple-100 border-2 border-purple-200 text-slate-700 text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full shadow-lg">
+        </div>
+      </div>
+      <div class="p-5 flex flex-col gap-3">
+        <div>
+          <h3 data-title class="font-fredoka text-2xl text-slate-700 font-bold"></h3>
+          <p data-summary class="text-sm text-slate-600 leading-relaxed mt-2 line-clamp-3"></p>
+        </div>
+        <div class="flex items-center gap-3 text-slate-500 text-xs uppercase font-bold tracking-wide">
+          <span data-readingLevel></span>
+          <span>•</span>
+          <span data-estimatedTime></span>
+        </div>
+        <div
+          class="bg-purple-50 border-2 border-purple-200 rounded-2xl px-4 py-3 flex items-center justify-between text-sm">
+          <div class="flex flex-col">
+            <span class="text-slate-600 text-xs">Progress</span>
+            <span data-progressLabel class="font-bold text-slate-700"></span>
+          </div>
+          <button data-openStory
+            class="px-4 py-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold text-sm shadow-lg hover:from-purple-600 hover:to-pink-600 transition">
+            Continue
+          </button>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <!-- Footer -->
+  <footer class="bg-gradient-to-br from-purple-50 to-pink-50 border-t border-purple-200 mt-auto py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-center items-center">
+        <p class="text-slate-500 text-xs font-medium">© 2025 SciQuest Heroes. Safe learning for curious minds.</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+
+</html>
