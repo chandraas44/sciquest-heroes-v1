@@ -39,73 +39,9 @@ async function loadMockStories() {
   return cachedMockStories;
 }
 
-async function getOrCreatePhotosynthesisStory() {
-  const client = getSupabaseClient();
-  if (!client) {
-    // Return mock story if Supabase not available
-    return {
-      id: 'photosynthesis-adventure',
-      title: 'Photosynthesis Adventure',
-      cover_url: '/images/chlorophotosynthesis.png',
-      topic_tag: 'Photosynthesis',
-      reading_level: 'Ages 7-9',
-      estimated_time: '8 min',
-      summary: 'Join Mr. Chloro as he teaches how plants make food using sunlight, water, and air!',
-      panels: []
-    };
-  }
-
-  try {
-    // Check if Photosynthesis story exists
-    const { data: existing } = await client
-      .from('stories')
-      .select('*')
-      .or('title.ilike.Photosynthesis,topic_tag.ilike.Photosynthesis')
-      .maybeSingle();
-
-    if (existing) {
-      return existing;
-    }
-
-    // Create new Photosynthesis story
-    const { data: newStory, error } = await client
-      .from('stories')
-      .insert({
-        title: 'Photosynthesis Adventure',
-        cover_url: '/images/chlorophotosynthesis.png',
-        topic_tag: 'Photosynthesis',
-        reading_level: 'Ages 7-9',
-        estimated_time: '8 min',
-        summary: 'Join Mr. Chloro as he teaches how plants make food using sunlight, water, and air!',
-        panels: []
-      })
-      .select()
-      .single();
-
-    if (error) throw error;
-    return newStory;
-  } catch (error) {
-    console.warn('[stories] Failed to get/create Photosynthesis story', error);
-    return null;
-  }
-}
-
 export async function getStoryList() {
   if (shouldUseMockData()) {
-    const stories = await loadMockStories();
-    // Ensure Photosynthesis story exists in mock data
-    if (!stories.find(s => s.topicTag === 'Photosynthesis')) {
-      stories.push({
-        id: 'photosynthesis-adventure',
-        title: 'Photosynthesis Adventure',
-        coverUrl: '/images/chlorophotosynthesis.png',
-        topicTag: 'Photosynthesis',
-        readingLevel: 'Ages 7-9',
-        estimatedTime: '8 min',
-        summary: 'Join Mr. Chloro as he teaches how plants make food using sunlight, water, and air!'
-      });
-    }
-    return stories;
+    return loadMockStories();
   }
 
   const client = getSupabaseClient();
@@ -129,7 +65,7 @@ export async function getStoryList() {
 
     if (error) throw error;
 
-    let stories = (data || []).map((story) => ({
+    return (data || []).map((story) => ({
       id: story.id,
       title: story.title,
       coverUrl: story.cover_url,
@@ -138,24 +74,6 @@ export async function getStoryList() {
       estimatedTime: story.estimated_time,
       summary: story.summary
     }));
-
-    // Ensure Photosynthesis story exists
-    if (!stories.find(s => s.topicTag === 'Photosynthesis')) {
-      const photoStory = await getOrCreatePhotosynthesisStory();
-      if (photoStory) {
-        stories.push({
-          id: photoStory.id,
-          title: photoStory.title,
-          coverUrl: photoStory.cover_url || photoStory.coverUrl,
-          topicTag: photoStory.topic_tag || photoStory.topicTag,
-          readingLevel: photoStory.reading_level || photoStory.readingLevel,
-          estimatedTime: photoStory.estimated_time || photoStory.estimatedTime,
-          summary: photoStory.summary
-        });
-      }
-    }
-
-    return stories;
   } catch (error) {
     console.warn('[stories] Supabase stories fetch failed, reverting to mock data', error);
     return loadMockStories();
@@ -342,6 +260,9 @@ export async function flushAnalyticsQueue() {
     if (!stillQueued.length) return;
   }
 
+  // Only try Supabase if not in mock mode
+  if (shouldUseMockData()) return;
+
   const client = getSupabaseClient();
   if (client) {
     await flushQueueWithSupabase(client);
@@ -350,6 +271,18 @@ export async function flushAnalyticsQueue() {
 
 export async function logAnalyticsEvent(eventType, payload = {}) {
   if (!eventType) return;
+  
+  // In mock mode, just queue analytics without trying Supabase
+  if (shouldUseMockData()) {
+    const entry = {
+      eventType,
+      payload,
+      timestamp: new Date().toISOString()
+    };
+    enqueueAnalyticsEntry(entry);
+    return;
+  }
+
   const entry = {
     eventType,
     payload,
@@ -362,7 +295,7 @@ export async function logAnalyticsEvent(eventType, payload = {}) {
   }
 
   const client = getSupabaseClient();
-  if (client && !shouldUseMockData()) {
+  if (client) {
     try {
       const { error } = await client.from('analytics_events').insert({
         event_type: entry.eventType,
@@ -386,7 +319,7 @@ export function isUsingStoryMocks() {
   return shouldUseMockData();
 }
 
-if (typeof window !== 'undefined') {
+if (typeof window !== 'undefined' && !shouldUseMockData()) {
   window.addEventListener('online', () => {
     flushAnalyticsQueue();
   });

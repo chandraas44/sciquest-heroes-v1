@@ -157,7 +157,7 @@ async function getCurrentUserProfile() {
 
 function getGuideName(topicName) {
   const guideMap = {
-    'Photosynthesis': 'Mr. Chloro – Plant Wizard',
+    'Photosynthesis': 'Mr. Chloro',
     'Nature & Animals': 'Flora the Forest Friend',
   };
   return guideMap[topicName] || `${topicName} Guide`;
@@ -237,6 +237,19 @@ function getMockResponse(topicId, message) {
   });
 }
 
+// Generate UUID v4 format
+function generateUUID() {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  // Fallback UUID v4 generator
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
 async function prepareN8nPayload(topicId, message, context, sessionId, messages) {
   // Resolve topic: use topicId OR fallback to Photosynthesis
   let topic;
@@ -289,6 +302,31 @@ async function prepareN8nPayload(topicId, message, context, sessionId, messages)
   
   // Get user profile
   const profile = await getCurrentUserProfile();
+  const userId = profile?.id || 'guest-user';
+  
+  // Generate or extract conversation_id (UUID format)
+  let conversationId;
+  if (sessionId && sessionId.includes('_')) {
+    // Extract conversation_id from existing sessionId format: {user_id}_{conversation_id}
+    conversationId = sessionId.split('_').pop();
+    // Validate it's a UUID format, if not generate new one
+    if (!conversationId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+      conversationId = generateUUID();
+    }
+  } else if (sessionId) {
+    // If sessionId exists but doesn't have underscore, check if it's a UUID
+    if (sessionId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+      conversationId = sessionId;
+    } else {
+      conversationId = generateUUID();
+    }
+  } else {
+    // Generate new UUID for conversation
+    conversationId = generateUUID();
+  }
+  
+  // Format sessionId as {user_id}_{conversation_id}
+  const formattedSessionId = `${userId}_${conversationId}`;
   
   // Transform chat history (remove loading messages, map roles)
   const chatHistory = messages
@@ -299,27 +337,22 @@ async function prepareN8nPayload(topicId, message, context, sessionId, messages)
       timestamp: m.timestamp
     }));
   
-  // Derive conversation_id from sessionId
-  const conversationId = sessionId && sessionId.includes('_') 
-    ? sessionId.split('_').pop()
-    : sessionId || `conv_${Date.now()}`;
-  
   const topicName = topic.name || topic.title || 'Photosynthesis';
-  const topicIdValue = topic.id || 'photosynthesis';
   
-  console.log('[chat] Preparing n8n payload with topic:', topicName, 'topic_id:', topicIdValue);
+  console.log('[chat] Preparing n8n payload with topic:', topicName);
   
+  // Return payload as single object (not array) for n8n Chat Trigger node
+  // The Chat Trigger node expects sessionId at the top level of the object
   return {
-    sessionId: sessionId || generateSessionId(),
+    sessionId: formattedSessionId,
     conversation_id: conversationId,
     user_message: message,
     topic: topicName,
-    topic_id: topicIdValue,
     guide_name: getGuideName(topicName),
     grade_level: profile?.grade_level || '5',
     chat_history: chatHistory,
     timestamp: new Date().toISOString(),
-    user_id: profile?.id || 'guest-user'
+    user_id: userId
   };
 }
 
@@ -349,19 +382,59 @@ async function sendToN8n(payload) {
     }
     
     const data = await response.json();
-    console.log('[chat] n8n response received:', { 
-      hasResponse: !!data.response,
-      hasContent: !!data.content,
-      hasMessage: !!data.message,
-      hasAnswer: !!data.answer
-    });
+    
+    // Log full response structure for debugging
+    console.log('[chat] n8n raw response:', JSON.stringify(data, null, 2));
+    console.log('[chat] n8n response keys:', Object.keys(data));
     
     // Extract AI response (handle various response formats)
-    const aiContent = data.response || data.content || data.message || data.answer || data.ai_response || data.text || "I'm here to help!";
+    // Check multiple possible field names and nested structures
+    let aiContent = null;
     
-    if (!aiContent || aiContent === "I'm here to help!") {
-      console.warn('[chat] n8n response format may be unexpected. Available keys:', Object.keys(data));
+    // Direct fields
+    if (data.response) aiContent = data.response;
+    else if (data.content) aiContent = data.content;
+    else if (data.message) aiContent = data.message;
+    else if (data.answer) aiContent = data.answer;
+    else if (data.ai_response) aiContent = data.ai_response;
+    else if (data.text) aiContent = data.text;
+    else if (data.output) aiContent = data.output;
+    else if (data.result) aiContent = data.result;
+    // Nested structures
+    else if (data.data?.response) aiContent = data.data.response;
+    else if (data.data?.content) aiContent = data.data.content;
+    else if (data.data?.message) aiContent = data.data.message;
+    else if (data.data?.output) aiContent = data.data.output;
+    // Array responses (take first element)
+    else if (Array.isArray(data) && data.length > 0) {
+      const firstItem = data[0];
+      aiContent = firstItem.response || firstItem.content || firstItem.message || firstItem.output || firstItem.text || firstItem;
     }
+    // If data itself is a string
+    else if (typeof data === 'string') {
+      aiContent = data;
+    }
+    
+    // Fallback if nothing found
+    if (!aiContent || (typeof aiContent === 'string' && aiContent.trim() === '')) {
+      console.warn('[chat] ⚠️ Could not extract response from n8n. Full response structure:', data);
+      console.warn('[chat] ⚠️ Available keys:', Object.keys(data));
+      aiContent = "I'm here to help!";
+    }
+    
+    // If aiContent is an object, try to stringify it or extract text
+    if (typeof aiContent === 'object' && aiContent !== null) {
+      if (aiContent.text) {
+        aiContent = aiContent.text;
+      } else if (aiContent.content) {
+        aiContent = aiContent.content;
+      } else {
+        // Try to stringify the object
+        aiContent = JSON.stringify(aiContent);
+      }
+    }
+    
+    console.log('[chat] ✅ Extracted AI content:', aiContent.substring(0, 100) + (aiContent.length > 100 ? '...' : ''));
     
     return {
       role: 'ai',
@@ -415,16 +488,19 @@ export async function sendMessage(topicId, message, context = {}, sessionId = nu
       let payload;
       try {
         payload = await prepareN8nPayload(topicId, message, context, effectiveSessionId, messages);
+        // Payload is now a single object (not array) for n8n Chat Trigger node
         console.log('[chat] n8n payload prepared successfully:', { 
           sessionId: payload.sessionId, 
           conversation_id: payload.conversation_id,
           topic: payload.topic,
-          topic_id: payload.topic_id,
           guide_name: payload.guide_name,
           grade_level: payload.grade_level,
           chat_history_length: payload.chat_history.length,
-          user_id: payload.user_id
+          user_id: payload.user_id,
+          payload_format: 'object'
         });
+        // Log full payload structure for debugging
+        console.log('[chat] Full n8n payload (JSON):', JSON.stringify(payload, null, 2));
       } catch (payloadError) {
         console.error('[chat] Failed to prepare n8n payload:', payloadError);
         throw new Error(`Payload preparation failed: ${payloadError.message}`);

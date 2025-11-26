@@ -87,7 +87,7 @@ function renderChildCard(child) {
       />
       <div class="flex-1">
         <h3 class="font-fredoka text-xl font-bold text-slate-700 mb-1">${child.firstName || child.username}</h3>
-        <p class="text-slate-600 text-sm">${child.gradeLevel || 'Grade N/A'} · Age ${child.age || 'N/A'}</p>
+        <p class="text-slate-600 text-sm">${child.gradeLevel || 'Grade N/A'}</p>
       </div>
     </div>
     <p class="text-slate-600 text-xs font-semibold mb-3">

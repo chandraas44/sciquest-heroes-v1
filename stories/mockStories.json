@@ -3,7 +3,7 @@
     {
       "id": "mystery-moon",
       "title": "Mystery on the Moon",
-      "coverUrl": "../images/chlorophotosynthesis.png",
+      "coverUrl": "../images/placeholder-story.png",
       "topicTag": "Space Science",
       "readingLevel": "Ages 7-9",
       "estimatedTime": "6 min",
@@ -157,12 +157,89 @@
     {
       "id": "photosynthesis-adventure",
       "title": "Photosynthesis Adventure",
-      "coverUrl": "../images/chlorophotosynthesis.png",
+      "coverUrl": "/images/chlorophotosynthesis.png",
       "topicTag": "Photosynthesis",
       "readingLevel": "Ages 7-9",
       "estimatedTime": "8 min",
       "summary": "Join Mr. Chloro as he teaches how plants make food using sunlight, water, and air!",
-      "panels": []
+      "panels": [
+        {
+          "panelId": "panel-01",
+          "imageUrl": "/images/L1P1Photosynthesis.png",
+          "narration": "The leaf glows softly as Mr. Chloro pops in with a cheerful smile. He loves showing kids the secret life of plants! Mr. Chloro: \"Ready for a leaf adventure?\" Child: \"Whoa… plants can do THAT?\"",
+          "glossaryTerms": [
+            "leaf",
+            "plant",
+            "photosynthesis"
+          ],
+          "chatTopicId": "photosynthesis",
+          "ctaLabel": "Ask Mr. Chloro about photosynthesis"
+        },
+        {
+          "panelId": "panel-02",
+          "imageUrl": "/images/L1P2Photosynthesis.png",
+          "narration": "Sunbeams dance across the leaf like tiny golden helpers. Mr. Chloro shows how plants catch this magical light. Mr. Chloro: \"Sunlight is step one!\" Child: \"It's shining right on us!\"",
+          "glossaryTerms": [
+            "sunlight",
+            "sunbeams",
+            "leaves"
+          ],
+          "chatTopicId": "photosynthesis",
+          "ctaLabel": "How do leaves capture sunlight?"
+        },
+        {
+          "panelId": "panel-03",
+          "imageUrl": "/images/L1P3Photosynthesis.png",
+          "narration": "Under the soil, glowing drops of water travel from roots up the stem—like a secret elevator delivering a drink to every leaf. Mr. Chloro: \"Roots sip water!\" Child: \"They DRINK? That's cool!\"",
+          "glossaryTerms": [
+            "roots",
+            "stem",
+            "water",
+            "soil"
+          ],
+          "chatTopicId": "photosynthesis",
+          "ctaLabel": "How do plants drink water?"
+        },
+        {
+          "panelId": "panel-04",
+          "imageUrl": "/images/L1P4Photosynthesis.png",
+          "narration": "Tiny CO₂ bubbles drift into small openings called stomata. It's the plant's way of \"breathing\" the air around us. Mr. Chloro: \"Leaves breathe too!\" Child: \"Those tiny doors move?!\"",
+          "glossaryTerms": [
+            "carbon dioxide",
+            "CO₂",
+            "stomata",
+            "air"
+          ],
+          "chatTopicId": "photosynthesis",
+          "ctaLabel": "What is carbon dioxide?"
+        },
+        {
+          "panelId": "panel-05",
+          "imageUrl": "/images/L1P5Photosynthesis.png",
+          "narration": "Inside the leaf, sunlight, water, and CO₂ swirl together in a bright green spiral. This is photosynthesis—the plant's superpower! Mr. Chloro: \"Mix and swirl!\" Child: \"It looks like magic!\"",
+          "glossaryTerms": [
+            "photosynthesis",
+            "process",
+            "combine",
+            "chlorophyll"
+          ],
+          "chatTopicId": "photosynthesis",
+          "ctaLabel": "How does photosynthesis work?"
+        },
+        {
+          "panelId": "panel-06",
+          "imageUrl": "/images/L1P6Photosynthesis.png",
+          "narration": "The leaf makes sweet plant food (sugar!) and releases fresh oxygen into the air—the same oxygen we breathe every day. Mr. Chloro: \"Sugar for the plant!\" Child: \"And oxygen for US!\"",
+          "glossaryTerms": [
+            "sugar",
+            "oxygen",
+            "food",
+            "plant food"
+          ],
+          "chatTopicId": "photosynthesis",
+          "ctaLabel": "Why do plants make oxygen?"
+        }
+      ]
     }
   ]
 }

@@ -60,7 +60,7 @@ Expected output:
   sessionId: "chat_...",
   conversation_id: "...",
   topic: "Photosynthesis",
-  guide_name: "Mr. Chloro – Plant Wizard",
+  guide_name: "Mr. Chloro",
   grade_level: "5",
   chat_history_length: 1
 }
@@ -138,12 +138,11 @@ This will:
 The system sends this to n8n:
 ```json
 {
-  "sessionId": "chat_1234567890_abc123",
-  "conversation_id": "abc123",
+  "sessionId": "user-uuid_conversation-uuid",
+  "conversation_id": "conversation-uuid",
   "user_message": "What is photosynthesis?",
   "topic": "Photosynthesis",
-  "topic_id": "photosynthesis",
-  "guide_name": "Mr. Chloro – Plant Wizard",
+  "guide_name": "Mr. Chloro",
   "grade_level": "5",
   "chat_history": [
     {

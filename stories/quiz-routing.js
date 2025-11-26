@@ -35,7 +35,7 @@ async function getUserProfile() {
       return null;
     }
 
-    // Fetch user profile - get age instead of grade_level since grade is derived from age
+    // Fetch user profile - get grade_level (primary) and age (fallback for backward compatibility)
     const { data: profile, error: profileError } = await supabase
       .from('user_profiles')
       .select('age, grade_level, account_type')
@@ -57,28 +57,17 @@ async function getUserProfile() {
 }
 
 /**
- * Maps age to quiz difficulty (grade level is derived from age)
- * Age mapping:
- * - Age 5-7: K-2 → beginner
- * - Age 8-9: 3-4 → intermediate
- * - Age 10-12: 5-6 → advanced
- * @param {number} age - User's age (5-12)
- * @param {string} gradeLevel - Optional grade_level from database (fallback if age not available)
+ * Maps grade_level to quiz difficulty (age is fallback for backward compatibility)
+ * Grade mapping:
+ * - Grades 1-2: beginner
+ * - Grades 3-4: intermediate
+ * - Grades 5-6: advanced
+ * @param {string} gradeLevel - User's grade level (primary)
+ * @param {number} age - User's age (5-12) - fallback for backward compatibility
  * @returns {string} Quiz difficulty: "beginner", "intermediate", or "advanced"
  */
-function mapAgeToQuizDifficulty(age, gradeLevel = null) {
-  // First, try to use age if available
-  if (age && typeof age === 'number') {
-    if (age >= 5 && age <= 7) {
-      return 'beginner'; // K-2: Ages 5-7
-    } else if (age >= 8 && age <= 9) {
-      return 'intermediate'; // 3-4: Ages 8-9
-    } else if (age >= 10 && age <= 12) {
-      return 'advanced'; // 5-6: Ages 10-12
-    }
-  }
-
-  // Fallback to grade_level if age is not available
+function mapGradeLevelToQuizDifficulty(gradeLevel = null, age = null) {
+  // First, try to use grade_level if available (primary)
   if (gradeLevel) {
     const grade = String(gradeLevel).toLowerCase().trim();
 
@@ -121,8 +110,19 @@ function mapAgeToQuizDifficulty(age, gradeLevel = null) {
     }
   }
 
-  // Default to beginner if neither age nor grade_level is available
-  console.warn('[quiz-routing] No age or grade_level available, defaulting to beginner');
+  // Fallback to age if grade_level is not available (backward compatibility)
+  if (age && typeof age === 'number') {
+    if (age >= 5 && age <= 7) {
+      return 'beginner'; // K-2: Ages 5-7
+    } else if (age >= 8 && age <= 9) {
+      return 'intermediate'; // 3-4: Ages 8-9
+    } else if (age >= 10 && age <= 12) {
+      return 'advanced'; // 5-6: Ages 10-12
+    }
+  }
+
+  // Default to beginner if neither grade_level nor age is available
+  console.warn('[quiz-routing] No grade_level or age available, defaulting to beginner');
   return 'beginner';
 }
 
@@ -168,13 +168,13 @@ export async function getQuizUrl(story) {
     return `/stories/${story?.id || 'unknown'}/quiz`;
   }
 
-  // Get user profile to determine quiz difficulty (prefer age, fallback to grade_level)
+  // Get user profile to determine quiz difficulty (prefer grade_level, fallback to age for backward compatibility)
   const profile = await getUserProfile();
-  const age = profile?.age || null;
   const gradeLevel = profile?.grade_level || null;
+  const age = profile?.age || null;
 
-  // Map age (or grade_level) to quiz difficulty
-  const difficulty = mapAgeToQuizDifficulty(age, gradeLevel);
+  // Map grade_level (or age as fallback) to quiz difficulty
+  const difficulty = mapGradeLevelToQuizDifficulty(gradeLevel, age);
 
   // Return the appropriate quiz URL
   return `/quizzes/photosynthesis-quiz-${difficulty}.html`;

@@ -43,13 +43,14 @@ const quickPromptsEl = document.getElementById('quickPrompts');
 const safetyBannerEl = document.getElementById('safetyBanner');
 const escalationBtnEl = document.getElementById('escalationBtn');
 const backBtnEl = document.getElementById('backBtn');
-const offlineBannerEl = document.getElementById('offlineBanner');
+// Offline banner removed - no longer needed
+// const offlineBannerEl = document.getElementById('offlineBanner');
 
-function showOfflineBannerIfNeeded() {
-  if (!offlineBannerEl) return;
-  const shouldShow = isUsingChatMocks() || navigator.onLine === false;
-  offlineBannerEl.classList.toggle('hidden', !shouldShow);
-}
+// function showOfflineBannerIfNeeded() {
+//   if (!offlineBannerEl) return;
+//   const shouldShow = isUsingChatMocks() || navigator.onLine === false;
+//   offlineBannerEl.classList.toggle('hidden', !shouldShow);
+// }
 
 function renderTopicPicker(topics) {
   topicPickerEl.innerHTML = '';
@@ -339,9 +340,10 @@ escalationBtnEl.addEventListener('click', () => {
   alert("That's a great question! You can ask a parent or teacher for help with this. They'll be happy to explain it to you! 👨‍👩‍👧‍👦");
 });
 
-showOfflineBannerIfNeeded();
-window.addEventListener('online', showOfflineBannerIfNeeded);
-window.addEventListener('offline', showOfflineBannerIfNeeded);
+// Offline banner functionality removed
+// showOfflineBannerIfNeeded();
+// window.addEventListener('online', showOfflineBannerIfNeeded);
+// window.addEventListener('offline', showOfflineBannerIfNeeded);
 
 initChatSession();
 

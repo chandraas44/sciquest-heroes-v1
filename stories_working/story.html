@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Story Details | SciQuest Heroes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #ffffff;
+      color: #1e293b;
+    }
+
+    .font-fredoka {
+      font-family: 'Fredoka', sans-serif;
+    }
+
+    .panel-preview {
+      border: 2px dashed rgba(139, 92, 246, 0.3);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen bg-white text-slate-800">
+  <!-- Header -->
+  <nav class="fixed w-full z-50 backdrop-blur-xl bg-white/95 border-b border-purple-200 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-20">
+        <div class="flex items-center space-x-4">
+          <div
+            class="w-14 h-14 bg-gradient-to-br from-purple-500 via-pink-500 to-pink-600 rounded-3xl flex items-center justify-center border-4 border-purple-200 shadow-lg">
+            <span class="text-3xl">🚀</span>
+          </div>
+          <a href="../index.html"
+            class="font-fredoka text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">SciQuest
+            Heroes</a>
+        </div>
+        <div class="hidden lg:flex items-center space-x-6">
+          <a href="./index.html" class="font-fredoka text-purple-600 font-bold">Stories</a>
+          <a href="../chat/index.html"
+            class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold">Chat</a>
+          <button id="logoutBtn"
+            class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold px-4 py-2 rounded-full border border-purple-200 hover:bg-purple-50">
+            Logout
+          </button>
+        </div>
+        <button id="logoutBtnMobile"
+          class="lg:hidden font-fredoka text-slate-700 hover:text-purple-600 transition font-bold px-3 py-2 rounded-full border border-purple-200 hover:bg-purple-50 text-sm">
+          Logout
+        </button>
+      </div>
+    </div>
+  </nav>
+  <div class="pb-28 pt-24">
+    <header class="max-w-5xl mx-auto px-6 py-10">
+      <button onclick="window.location.href='./index.html'"
+        class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-slate-600 hover:text-purple-600 transition">
+        ← Back to Stories
+      </button>
+      <p class="text-sm uppercase mt-6 tracking-[0.2em] font-bold text-slate-500">Story Details</p>
+      <h1 id="storyTitle"
+        class="font-fredoka text-4xl md:text-5xl font-bold mt-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+      </h1>
+      <p id="storySummary" class="max-w-3xl text-lg md:text-xl text-slate-600 mt-4"></p>
+      <div class="flex flex-wrap gap-3 mt-4 text-sm font-bold">
+        <span id="storyTopic"
+          class="px-4 py-1 rounded-full bg-purple-100 border-2 border-purple-200 text-slate-700"></span>
+        <span id="storyReadingLevel"
+          class="px-4 py-1 rounded-full bg-purple-100 border-2 border-purple-200 text-slate-700"></span>
+        <span id="storyTime"
+          class="px-4 py-1 rounded-full bg-purple-100 border-2 border-purple-200 text-slate-700"></span>
+      </div>
+    </header>
+  </div>
+
+  <main class="-mt-20 relative z-10 pb-20">
+    <section class="max-w-5xl mx-auto px-6 grid lg:grid-cols-[2fr,1fr] gap-8">
+      <div
+        class="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-3xl shadow-[0_0_20px_rgba(139,92,246,0.15)] p-6 space-y-6">
+        <img id="storyCover" alt="Story cover art"
+          class="w-full h-64 object-cover rounded-2xl border-2 border-purple-200 shadow-lg" />
+        <div>
+          <h2 class="font-fredoka text-2xl text-slate-700 font-bold">What you'll explore</h2>
+          <p id="storyLongSummary" class="text-slate-600 mt-2 leading-relaxed">
+            Each story blends science facts with immersive adventures—perfect for sparking questions and curiosity.
+          </p>
+        </div>
+        <div>
+          <h3 class="font-fredoka text-xl text-slate-700 font-bold">Panel preview</h3>
+          <div id="panelPreview" class="grid grid-cols-2 gap-4 mt-3"></div>
+        </div>
+      </div>
+
+      <aside class="space-y-6">
+        <div
+          class="bg-white border-2 border-purple-200 rounded-3xl shadow-[0_0_20px_rgba(139,92,246,0.15)] p-6 flex flex-col gap-4">
+          <h4 class="font-fredoka text-xl text-slate-700 font-bold">Ready to read?</h4>
+          <p id="progressLabel" class="text-slate-600 text-sm">
+            Loading progress…
+          </p>
+          <button id="startStoryBtn"
+            class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-3 rounded-2xl shadow-lg hover:from-purple-600 hover:to-pink-600 transition">
+            Start Story
+          </button>
+          <button id="resumeStoryBtn"
+            class="w-full bg-purple-100 border-2 border-purple-200 text-slate-700 font-bold py-3 rounded-2xl hover:bg-purple-200 transition hidden">
+            Resume Story
+          </button>
+        </div>
+
+        <div
+          class="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-3xl p-6 space-y-3 shadow-[0_0_20px_rgba(139,92,246,0.15)]">
+          <h4 class="font-fredoka text-xl text-slate-700 font-bold">Talk with the AI Guide</h4>
+          <p class="text-sm text-slate-600">
+            Use the chat companion to ask questions about each panel. A safe prompt is pre-selected for you.
+          </p>
+          <button id="openChatBtn"
+            class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-3 rounded-2xl hover:from-purple-600 hover:to-pink-600 transition shadow-lg">
+            Launch Topic Chat
+          </button>
+        </div>
+
+        <div
+          class="bg-white border-2 border-purple-200 rounded-3xl shadow-[0_0_20px_rgba(139,92,246,0.15)] p-6 space-y-3 text-sm text-slate-600">
+          <p>Need help? Parents can monitor progress in the dashboard and print stories anytime.</p>
+          <a href="/parent/dashboard"
+            class="inline-flex items-center text-purple-600 font-bold hover:text-purple-700 transition">Go to Parent
+            Dashboard →</a>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <template id="panelPreviewTemplate">
+    <div
+      class="panel-preview rounded-2xl bg-white border-2 border-purple-200 min-h-[120px] flex flex-col gap-2 p-4 shadow-[0_0_15px_rgba(139,92,246,0.1)]">
+      <div class="flex items-center justify-between text-xs font-bold text-slate-500 uppercase tracking-wide">
+        <span data-panelId></span>
+        <span>Panel</span>
+      </div>
+      <p data-panelText class="text-sm text-slate-700 leading-relaxed line-clamp-4"></p>
+    </div>
+  </template>
+
+  <!-- Footer -->
+  <footer class="bg-gradient-to-br from-purple-50 to-pink-50 border-t border-purple-200 mt-auto py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-center items-center">
+        <p class="text-slate-500 text-xs font-medium">© 2025 SciQuest Heroes. Safe learning for curious minds.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="./story-detail.js"></script>
+  <script type="module" src="../shared/logo-handler.js"></script>
+  <script type="module">
+    // Logout functionality
+    const handleLogout = async () => {
+      try {
+        // Try Supabase logout if available
+        const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm');
+        const { supabaseConfig } = await import('../config.js');
+
+        if (supabaseConfig?.url && supabaseConfig?.anonKey) {
+          const supabase = createClient(supabaseConfig.url, supabaseConfig.anonKey);
+          const { error } = await supabase.auth.signOut();
+          if (error) throw error;
+        }
+      } catch (error) {
+        console.log('Supabase logout skipped (mock mode)');
+      }
+
+      // Clear all storage
+      localStorage.clear();
+      sessionStorage.clear();
+
+      // Redirect to auth page
+      window.location.href = '../auth/auth.html';
+    };
+
+    document.getElementById('logoutBtn')?.addEventListener('click', handleLogout);
+    document.getElementById('logoutBtnMobile')?.addEventListener('click', handleLogout);
+  </script>
+</body>
+
+</html>

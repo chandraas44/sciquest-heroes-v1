@@ -82,12 +82,11 @@ The system sends this payload to n8n:
 
 ```json
 {
-  "sessionId": "chat_1234567890_abc123",
-  "conversation_id": "abc123",
+  "sessionId": "user-uuid_conversation-uuid",
+  "conversation_id": "conversation-uuid",
   "user_message": "How do plants make food?",
   "topic": "Photosynthesis",
-  "topic_id": "photosynthesis",
-  "guide_name": "Mr. Chloro – Plant Wizard",
+  "guide_name": "Mr. Chloro",
   "grade_level": "5",
   "chat_history": [
     {
