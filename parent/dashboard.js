@@ -3,7 +3,7 @@ import {
   getChildProgress,
   getChildBadges,
   logAnalyticsEvent,
-  isUsingDashboardMocks
+  getCurrentUser
 } from './dashboard-services.js';
 import {
   getBadgeById,
@@ -11,7 +11,8 @@ import {
 } from '../badges/badge-services.js';
 
 // Mock parent ID for now (will be from auth in future)
-const MOCK_PARENT_ID = 'parent-001';
+// MOCK_PARENT_ID removed - using real auth
+
 
 const state = {
   selectedChildId: null,
@@ -64,11 +65,10 @@ function renderChildCard(child) {
   const card = document.createElement('div');
   const isSelected = state.selectedChildId === child.id;
   const status = child.status || calculateChildStatus(child);
-  
-  card.className = `bg-gradient-to-br from-purple-50 to-pink-50 border-2 ${
-    isSelected ? 'border-purple-500 shadow-[0_0_30px_rgba(139,92,246,0.4)]' : 'border-purple-200'
-  } rounded-3xl p-4 mb-4 shadow-[0_0_20px_rgba(139,92,246,0.15)] hover:shadow-[0_0_30px_rgba(139,92,246,0.3)] transition cursor-pointer`;
-  
+
+  card.className = `bg-gradient-to-br from-purple-50 to-pink-50 border-2 ${isSelected ? 'border-purple-500 shadow-[0_0_30px_rgba(139,92,246,0.4)]' : 'border-purple-200'
+    } rounded-3xl p-4 mb-4 shadow-[0_0_20px_rgba(139,92,246,0.15)] hover:shadow-[0_0_30px_rgba(139,92,246,0.3)] transition cursor-pointer`;
+
   // Get stats from progress (only for selected child, otherwise show defaults)
   let stats = { completed: 0, inProgress: 0 };
   let quizAttempts = 0;
@@ -76,7 +76,7 @@ function renderChildCard(child) {
     stats = state.progress.stories || stats;
     quizAttempts = state.progress.quizzes?.attempts || 0;
   }
-  
+
   card.innerHTML = `
     <div class="flex items-center gap-4 mb-3">
       <img
@@ -94,11 +94,10 @@ function renderChildCard(child) {
       Stories: ${stats.completed} · Quizzes: ${quizAttempts}
     </p>
     <div class="flex items-center justify-between mb-3">
-      <span class="px-3 py-1 rounded-full text-xs font-bold ${
-        status === 'On Track'
-          ? 'bg-green-500/30 text-green-100 border border-green-400/50'
-          : 'bg-amber-500/30 text-amber-100 border border-amber-400/50'
-      }">
+      <span class="px-3 py-1 rounded-full text-xs font-bold ${status === 'On Track'
+      ? 'bg-green-500/30 text-green-100 border border-green-400/50'
+      : 'bg-amber-500/30 text-amber-100 border border-amber-400/50'
+    }">
         ${status}
       </span>
     </div>
@@ -106,11 +105,11 @@ function renderChildCard(child) {
       View Progress
     </button>
   `;
-  
+
   card.querySelector('button').addEventListener('click', () => {
     selectChild(child.id);
   });
-  
+
   return card;
 }
 
@@ -120,7 +119,7 @@ function renderChildrenList() {
     childrenListEl.innerHTML = '<p class="text-slate-500 text-sm">No children found.</p>';
     return;
   }
-  
+
   state.children.forEach((child) => {
     childrenListEl.appendChild(renderChildCard(child));
   });
@@ -128,21 +127,21 @@ function renderChildrenList() {
 
 async function selectChild(childId) {
   state.selectedChildId = childId;
-  
+
   // Update URL
   const newUrl = new URL(window.location);
   newUrl.searchParams.set('childId', childId);
   window.history.pushState({ childId }, '', newUrl);
-  
+
   // Log analytics
   await logAnalyticsEvent('parent_child_switch', { childId });
-  
+
   // Load child data
   await loadChildData(childId);
-  
+
   // Re-render children list to show selection
   renderChildrenList();
-  
+
   // Show child detail, hide empty state
   emptyStateEl.classList.add('hidden');
   childDetailEl.classList.remove('hidden');
@@ -155,16 +154,16 @@ async function loadChildData(childId) {
       getChildProgress(childId),
       getChildBadges(childId)
     ]);
-    
+
     state.progress = progress;
     state.badges = badges;
-    
+
     // Re-render all sections
     renderChildHeader();
     renderLearningSnapshot();
     renderProgressTabs();
     renderBadges();
-    
+
     await logAnalyticsEvent('child_progress_viewed', { childId });
   } catch (error) {
     console.error('[dashboard] Failed to load child data', error);
@@ -178,13 +177,13 @@ async function loadChildData(childId) {
 
 function renderChildHeader() {
   if (!state.selectedChildId || !state.children.length) return;
-  
+
   const child = state.children.find((c) => c.id === state.selectedChildId);
   if (!child) return;
-  
+
   const lastActiveRelative = formatRelativeTime(child.lastActive);
   const currentTopic = child.currentTopic || 'None';
-  
+
   childHeaderEl.innerHTML = `
     <div class="flex items-center gap-4">
       <img
@@ -205,12 +204,12 @@ function renderChildHeader() {
 
 function renderLearningSnapshot() {
   if (!state.progress) return;
-  
+
   const stories = state.progress.stories || { completed: 0, inProgress: 0 };
   const quizzes = state.progress.quizzes || { averageScore: 0 };
   const chat = state.progress.chat || { questionsThisWeek: 0 };
   const streak = state.progress.streak || { days: 0 };
-  
+
   learningSnapshotEl.innerHTML = `
     <div class="metric-card bg-white border-2 border-purple-200 rounded-2xl p-4 shadow-[0_0_15px_rgba(139,92,246,0.1)]">
       <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-3">
@@ -256,19 +255,19 @@ function renderProgressTabs() {
 
 function renderOverviewTab() {
   if (!state.progress) return;
-  
+
   const activity = state.progress.activity || { last7Days: [], topicsExplored: [] };
   const child = state.children.find((c) => c.id === state.selectedChildId);
   const childName = child?.firstName || 'Your child';
-  
+
   // Calculate summary
   const topicCount = activity.topicsExplored?.length || 0;
   const storyCount = state.progress.stories?.completed || 0;
-  
+
   // Simple line chart (placeholder - can be enhanced with Chart.js later)
   const maxSessions = Math.max(...activity.last7Days.map((d) => d.sessions), 1);
   const chartHeight = 192; // h-48 = 192px
-  
+
   let lineChartSvg = `
     <svg viewBox="0 0 300 ${chartHeight}" class="w-full h-full">
       <defs>
@@ -278,13 +277,13 @@ function renderOverviewTab() {
         </linearGradient>
       </defs>
   `;
-  
+
   // Draw grid lines and bars
   activity.last7Days.forEach((day, index) => {
     const x = (index * 300) / 7 + 20;
     const barHeight = (day.sessions / maxSessions) * (chartHeight - 40);
     const y = chartHeight - 20 - barHeight;
-    
+
     lineChartSvg += `
       <rect x="${x}" y="${y}" width="30" height="${barHeight}" fill="url(#lineGradient)" rx="4" />
       <text x="${x + 15}" y="${chartHeight - 5}" text-anchor="middle" fill="#475569" font-size="10" opacity="0.7">
@@ -292,20 +291,20 @@ function renderOverviewTab() {
       </text>
     `;
   });
-  
+
   lineChartSvg += '</svg>';
-  
+
   // Bar chart for topics
   const maxTopicCount = Math.max(...(activity.topicsExplored.map((t) => t.count) || [1]), 1);
   let barChartSvg = `
     <svg viewBox="0 0 300 ${chartHeight}" class="w-full h-full">
   `;
-  
+
   activity.topicsExplored.slice(0, 5).forEach((topic, index) => {
     const x = (index * 300) / 5 + 20;
     const barHeight = (topic.count / maxTopicCount) * (chartHeight - 40);
     const y = chartHeight - 20 - barHeight;
-    
+
     barChartSvg += `
       <rect x="${x}" y="${y}" width="40" height="${barHeight}" fill="url(#lineGradient)" rx="4" />
       <text x="${x + 20}" y="${chartHeight - 5}" text-anchor="middle" fill="#475569" font-size="8" opacity="0.7" transform="rotate(-45 ${x + 20} ${chartHeight - 5})">
@@ -313,9 +312,9 @@ function renderOverviewTab() {
       </text>
     `;
   });
-  
+
   barChartSvg += '</svg>';
-  
+
   tabOverviewEl.innerHTML = `
     <div class="grid md:grid-cols-2 gap-4 mb-4">
       <div class="chart-container bg-white rounded-xl p-4 border-2 border-purple-200">
@@ -338,15 +337,15 @@ function renderStoriesTab() {
     tabStoriesEl.innerHTML = '<p class="text-slate-500 text-sm">No story progress data available.</p>';
     return;
   }
-  
+
   const topics = state.progress.stories.byTopic;
-  
+
   let storiesHtml = '<div class="stories-list space-y-3">';
-  
+
   topics.forEach((topic) => {
     const completionPercent = topic.completionPercentage || 0;
     const lastOpenedRelative = formatRelativeTime(topic.lastOpened);
-    
+
     storiesHtml += `
       <div class="topic-progress-row bg-white rounded-xl p-4 hover:bg-purple-50 transition border-2 border-purple-200">
         <div class="flex items-center gap-3 mb-3">
@@ -367,7 +366,7 @@ function renderStoriesTab() {
       </div>
     `;
   });
-  
+
   storiesHtml += '</div>';
   tabStoriesEl.innerHTML = storiesHtml;
 }
@@ -377,18 +376,18 @@ function renderQuizzesTab() {
     tabQuizzesEl.innerHTML = '<p class="text-slate-500 text-sm">No quiz data available.</p>';
     return;
   }
-  
+
   const quizzes = state.progress.quizzes.byTopic || [];
-  
+
   if (!quizzes.length) {
     tabQuizzesEl.innerHTML = '<p class="text-slate-500 text-sm">No quiz attempts yet.</p>';
     return;
   }
-  
+
   // Bar chart for quiz performance
   const maxScore = Math.max(...quizzes.map((q) => q.averageScore || 0), 100);
   const chartHeight = 192;
-  
+
   let quizChartSvg = `
     <svg viewBox="0 0 300 ${chartHeight}" class="w-full h-full">
       <defs>
@@ -398,12 +397,12 @@ function renderQuizzesTab() {
         </linearGradient>
       </defs>
   `;
-  
+
   quizzes.forEach((quiz, index) => {
     const x = (index * 300) / quizzes.length + 20;
     const barHeight = ((quiz.averageScore || 0) / maxScore) * (chartHeight - 40);
     const y = chartHeight - 20 - barHeight;
-    
+
     quizChartSvg += `
       <rect x="${x}" y="${y}" width="40" height="${barHeight}" fill="url(#quizGradient)" rx="4" />
       <text x="${x + 20}" y="${chartHeight - 5}" text-anchor="middle" fill="#475569" font-size="8" opacity="0.7" transform="rotate(-45 ${x + 20} ${chartHeight - 5})">
@@ -411,9 +410,9 @@ function renderQuizzesTab() {
       </text>
     `;
   });
-  
+
   quizChartSvg += '</svg>';
-  
+
   // Table
   let tableHtml = `
     <div class="bg-white rounded-xl p-4 overflow-x-auto border-2 border-purple-200">
@@ -428,7 +427,7 @@ function renderQuizzesTab() {
         </thead>
         <tbody>
   `;
-  
+
   quizzes.forEach((quiz) => {
     const lastAttemptRelative = formatRelativeTime(quiz.lastAttempt);
     tableHtml += `
@@ -440,13 +439,13 @@ function renderQuizzesTab() {
       </tr>
     `;
   });
-  
+
   tableHtml += `
         </tbody>
       </table>
     </div>
   `;
-  
+
   tabQuizzesEl.innerHTML = `
     <div class="chart-container bg-white rounded-xl p-4 mb-4 border-2 border-purple-200">
       <h4 class="font-fredoka text-sm font-bold text-slate-700 mb-3">Quiz Performance by Topic</h4>
@@ -461,51 +460,51 @@ function renderBadges() {
     badgesSectionEl.classList.add('hidden');
     return;
   }
-  
+
   badgesSectionEl.classList.remove('hidden');
-  
+
   const badges = state.badges.coreBadges;
   const unlockedCount = badges.filter((b) => b.unlocked).length;
   const totalCount = badges.length;
-  
+
   const child = state.children.find((c) => c.id === state.selectedChildId);
   const childName = child?.firstName || 'Your child';
-  
+
   badgesSummaryEl.textContent = `${childName} has unlocked ${unlockedCount} of ${totalCount} core curiosity badges.`;
-  
+
   badgesContainerEl.innerHTML = '';
-  
+
   badges.forEach((badge) => {
     const tile = document.createElement('div');
     tile.className = `badge-tile bg-white border-2 border-purple-200 rounded-2xl p-4 min-w-[180px] flex-shrink-0 hover:shadow-[0_0_30px_rgba(139,92,246,0.3)] hover:border-purple-300 transition relative cursor-pointer`;
     tile.dataset.badgeId = badge.id;
-    
+
     const iconClass = badge.unlocked
       ? 'bg-gradient-to-br from-purple-500 to-pink-500 shadow-[0_0_20px_rgba(139,92,246,0.4)]'
       : 'bg-purple-100 border-2 border-purple-200';
-    
+
     const iconOpacity = badge.unlocked ? '' : 'opacity-70';
-    
+
     tile.innerHTML = `
       <div class="badge-icon-container mb-3 flex justify-center relative">
         <div class="badge-icon w-16 h-16 rounded-full flex items-center justify-center ${iconClass}">
           <span class="text-3xl ${iconOpacity}">${badge.icon || '🏆'}</span>
         </div>
         ${badge.unlocked
-          ? '<span class="absolute top-0 right-0 w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-xs">✓</span>'
-          : '<span class="absolute top-0 right-0 w-6 h-6 bg-purple-200 rounded-full flex items-center justify-center text-purple-600 text-xs">🔒</span>'}
+        ? '<span class="absolute top-0 right-0 w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-xs">✓</span>'
+        : '<span class="absolute top-0 right-0 w-6 h-6 bg-purple-200 rounded-full flex items-center justify-center text-purple-600 text-xs">🔒</span>'}
       </div>
       <h4 class="font-fredoka text-base font-bold text-slate-700 mb-2 text-center">${badge.name}</h4>
       <p class="text-slate-600 text-xs text-center ${!badge.unlocked ? 'italic text-slate-500' : ''}">
         ${badge.unlocked ? `Earned on: ${badge.awardedAt ? new Date(badge.awardedAt).toLocaleDateString() : 'Recently'}` : `Hint: ${badge.hint || badge.description}`}
       </p>
     `;
-    
+
     // Click handler to open badge detail modal
     tile.addEventListener('click', () => {
       showBadgeDetailModal(badge.id);
     });
-    
+
     badgesContainerEl.appendChild(tile);
   });
 }
@@ -516,25 +515,25 @@ async function showBadgeDetailModal(badgeId) {
     alert('Badge not found');
     return;
   }
-  
+
   // Check if child has this badge unlocked
   const childBadges = state.badges?.coreBadges || [];
   const childBadge = childBadges.find((b) => b.id === badgeId);
   const isUnlocked = childBadge?.unlocked || false;
-  
+
   // Get progress if locked
   let progress = null;
   if (!isUnlocked && state.selectedChildId) {
     progress = await getBadgeProgress(state.selectedChildId, badgeId);
   }
-  
+
   // Create modal HTML
   const iconClass = isUnlocked
     ? 'bg-gradient-to-br from-purple-500 to-pink-500 shadow-[0_0_20px_rgba(139,92,246,0.4)]'
     : 'bg-purple-100 border-2 border-purple-200';
-  
+
   const iconOpacity = isUnlocked ? '' : 'opacity-70';
-  
+
   let progressHtml = '';
   if (progress) {
     const percentage = Math.round((progress.current / progress.required) * 100);
@@ -547,7 +546,7 @@ async function showBadgeDetailModal(badgeId) {
       </div>
     `;
   }
-  
+
   const modalHtml = `
     <div class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
       <div class="bg-white border-2 border-purple-200 rounded-3xl p-8 max-w-md w-full mx-4 shadow-[0_0_40px_rgba(139,92,246,0.3)] relative">
@@ -563,45 +562,45 @@ async function showBadgeDetailModal(badgeId) {
               <span class="text-6xl ${iconOpacity}">${badge.icon || '🏆'}</span>
             </div>
             ${isUnlocked
-              ? '<span class="absolute top-0 right-0 w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-sm">✓</span>'
-              : '<span class="absolute top-0 right-0 w-8 h-8 bg-purple-200 rounded-full flex items-center justify-center text-purple-600 text-sm">🔒</span>'}
+      ? '<span class="absolute top-0 right-0 w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-sm">✓</span>'
+      : '<span class="absolute top-0 right-0 w-8 h-8 bg-purple-200 rounded-full flex items-center justify-center text-purple-600 text-sm">🔒</span>'}
           </div>
           <h3 class="font-fredoka text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">${badge.name}</h3>
           <p class="text-slate-600 text-lg mb-4">${badge.description}</p>
           ${progressHtml}
-          ${isUnlocked 
-            ? `<p class="text-slate-500 text-sm mb-4">Earned on: ${childBadge?.awardedAt ? new Date(childBadge.awardedAt).toLocaleDateString() : 'Recently'}</p>`
-            : `<p class="text-slate-500 italic text-sm mb-4">Hint: ${badge.hint || badge.description}</p>`
-          }
+          ${isUnlocked
+      ? `<p class="text-slate-500 text-sm mb-4">Earned on: ${childBadge?.awardedAt ? new Date(childBadge.awardedAt).toLocaleDateString() : 'Recently'}</p>`
+      : `<p class="text-slate-500 italic text-sm mb-4">Hint: ${badge.hint || badge.description}</p>`
+    }
         </div>
       </div>
     </div>
   `;
-  
+
   // Remove existing modal if any
   const existingModal = document.getElementById('badgeDetailModal');
   if (existingModal) {
     existingModal.remove();
   }
-  
+
   // Create modal
   const modalEl = document.createElement('div');
   modalEl.id = 'badgeDetailModal';
   modalEl.innerHTML = modalHtml;
   document.body.appendChild(modalEl);
-  
+
   // Close handlers
   const closeBtn = modalEl.querySelector('#closeBadgeModalBtn');
   closeBtn.addEventListener('click', () => {
     modalEl.remove();
   });
-  
+
   modalEl.addEventListener('click', (e) => {
     if (e.target === modalEl) {
       modalEl.remove();
     }
   });
-  
+
   // ESC key to close
   const handleEsc = (e) => {
     if (e.key === 'Escape' && document.getElementById('badgeDetailModal')) {
@@ -610,7 +609,7 @@ async function showBadgeDetailModal(badgeId) {
     }
   };
   document.addEventListener('keydown', handleEsc);
-  
+
   await logAnalyticsEvent('badge_detail_viewed', { badgeId, childId: state.selectedChildId });
 }
 
@@ -619,7 +618,7 @@ document.querySelectorAll('.tab-btn').forEach((btn) => {
   btn.addEventListener('click', async () => {
     const tab = btn.dataset.tab;
     state.activeTab = tab;
-    
+
     // Update active state
     document.querySelectorAll('.tab-btn').forEach((b) => {
       b.className = b.className.replace(/bg-gradient-to-r from-purple-500 to-pink-500 text-white/g, 'bg-purple-100 text-slate-600 hover:bg-purple-200');
@@ -627,12 +626,12 @@ document.querySelectorAll('.tab-btn').forEach((btn) => {
     });
     btn.className = btn.className.replace(/bg-purple-100 text-slate-600 hover:bg-purple-200/g, 'bg-gradient-to-r from-purple-500 to-pink-500 text-white');
     btn.className += ' active';
-    
+
     // Hide all tab contents
     tabOverviewEl.classList.add('hidden');
     tabStoriesEl.classList.add('hidden');
     tabQuizzesEl.classList.add('hidden');
-    
+
     // Show active tab
     if (tab === 'overview') {
       tabOverviewEl.classList.remove('hidden');
@@ -641,7 +640,7 @@ document.querySelectorAll('.tab-btn').forEach((btn) => {
     } else if (tab === 'quizzes') {
       tabQuizzesEl.classList.remove('hidden');
     }
-    
+
     await logAnalyticsEvent('progress_tab_switched', { tab, childId: state.selectedChildId });
     renderProgressTabs();
   });
@@ -656,11 +655,22 @@ document.getElementById('viewBadgeRulesBtn')?.addEventListener('click', () => {
 // Initialize
 async function loadDashboard() {
   try {
+    // Get current user
+    const user = await getCurrentUser();
+
+    if (!user) {
+      console.log('No user found, redirecting to login');
+      window.location.href = '../auth/auth.html';
+      return;
+    }
+
+    const parentId = user.id;
+
     // Load children list
-    const children = await getParentChildren(MOCK_PARENT_ID);
+    const children = await getParentChildren(parentId);
     state.children = children;
     renderChildrenList();
-    
+
     // If childId in URL, select that child
     if (childIdFromUrl) {
       const child = children.find((c) => c.id === childIdFromUrl);
@@ -668,8 +678,8 @@ async function loadDashboard() {
         await selectChild(childIdFromUrl);
       }
     }
-    
-    await logAnalyticsEvent('dashboard_viewed', { parentId: MOCK_PARENT_ID });
+
+    await logAnalyticsEvent('dashboard_viewed', { parentId });
   } catch (error) {
     console.error('[dashboard] Failed to load dashboard', error);
     childrenListEl.innerHTML = '<p class="text-red-600 text-sm">Unable to load dashboard data.</p>';

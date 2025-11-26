@@ -79,6 +79,12 @@ updateUI();
 function toggleMode(e) {
     e.preventDefault();
     isSignUpMode = !isSignUpMode;
+
+    // Update URL to reflect current mode
+    const newUrl = new URL(window.location);
+    newUrl.searchParams.set('mode', isSignUpMode ? 'signup' : 'login');
+    window.history.pushState({}, '', newUrl);
+
     updateUI();
     hideMessages();
 }
