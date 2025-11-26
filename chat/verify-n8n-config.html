@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>n8n Configuration Verification</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .status {
+      padding: 10px;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+    .success { background: #d4edda; color: #155724; }
+    .warning { background: #fff3cd; color: #856404; }
+    .error { background: #f8d7da; color: #721c24; }
+    .info { background: #d1ecf1; color: #0c5460; }
+    pre {
+      background: #f8f9fa;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover { background: #0056b3; }
+    button:disabled { background: #ccc; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+  <h1>🔍 n8n Chat Integration Verification</h1>
+  
+  <div class="card">
+    <h2>Configuration Status</h2>
+    <div id="configStatus"></div>
+    <button onclick="checkConfig()">Check Configuration</button>
+  </div>
+  
+  <div class="card">
+    <h2>Test n8n Connection</h2>
+    <div id="testStatus"></div>
+    <button onclick="testConnection()" id="testBtn">Test n8n Connection</button>
+  </div>
+  
+  <div class="card">
+    <h2>Console Logs</h2>
+    <pre id="logs"></pre>
+  </div>
+
+  <script type="module">
+    let logContainer = document.getElementById('logs');
+    
+    function addLog(message, type = 'info') {
+      const timestamp = new Date().toLocaleTimeString();
+      logContainer.textContent += `[${timestamp}] ${message}\n`;
+      logContainer.scrollTop = logContainer.scrollHeight;
+    }
+    
+    // Override console.log to capture logs
+    const originalLog = console.log;
+    const originalWarn = console.warn;
+    const originalError = console.error;
+    
+    console.log = (...args) => {
+      originalLog.apply(console, args);
+      addLog(args.join(' '), 'info');
+    };
+    console.warn = (...args) => {
+      originalWarn.apply(console, args);
+      addLog('⚠️ ' + args.join(' '), 'warning');
+    };
+    console.error = (...args) => {
+      originalError.apply(console, args);
+      addLog('❌ ' + args.join(' '), 'error');
+    };
+    
+    window.checkConfig = async function() {
+      const statusDiv = document.getElementById('configStatus');
+      statusDiv.innerHTML = '<div class="status info">Checking...</div>';
+      
+      try {
+        const { getN8nStatus, isN8nConfigured } = await import('./chat-services.js');
+        const status = getN8nStatus();
+        
+        let html = '<h3>Configuration Details:</h3>';
+        html += `<div class="status ${status.configured ? 'success' : 'error'}">`;
+        html += `✅ n8n URL: ${status.configured ? 'Configured' : 'Not Configured'}<br>`;
+        html += `URL: ${status.url}<br>`;
+        html += `</div>`;
+        
+        html += `<div class="status ${status.mockMode ? 'warning' : 'success'}">`;
+        html += `${status.mockMode ? '⚠️' : '✅'} Mock Mode: ${status.mockMode ? 'Enabled (n8n will NOT be used)' : 'Disabled'}<br>`;
+        html += `</div>`;
+        
+        html += `<div class="status ${status.willUseN8n ? 'success' : 'warning'}">`;
+        html += `${status.willUseN8n ? '✅' : '⚠️'} Will Use n8n: ${status.willUseN8n ? 'Yes' : 'No'}<br>`;
+        if (!status.willUseN8n && status.configured) {
+          html += `Reason: ${status.mockMode ? 'Mock mode is enabled' : 'Unknown'}`;
+        }
+        html += `</div>`;
+        
+        html += '<h3>Environment Variables:</h3>';
+        html += `<pre>VITE_N8N_CHAT_URL=${status.url}\nVITE_USE_CHAT_MOCKS=${status.mockMode ? 'true' : 'false'}</pre>`;
+        
+        if (!status.willUseN8n && status.configured) {
+          html += '<div class="status warning">';
+          html += '<strong>⚠️ Action Required:</strong><br>';
+          html += 'To use n8n, set VITE_USE_CHAT_MOCKS=false in your .env file and restart the dev server.';
+          html += '</div>';
+        }
+        
+        statusDiv.innerHTML = html;
+        addLog('Configuration check complete');
+      } catch (error) {
+        statusDiv.innerHTML = `<div class="status error">Error: ${error.message}</div>`;
+        addLog('Configuration check failed: ' + error.message);
+      }
+    };
+    
+    window.testConnection = async function() {
+      const statusDiv = document.getElementById('testStatus');
+      const testBtn = document.getElementById('testBtn');
+      testBtn.disabled = true;
+      statusDiv.innerHTML = '<div class="status info">Testing n8n connection...</div>';
+      
+      try {
+        const { getN8nStatus, sendMessage, getTopicCatalog, generateSessionId } = await import('./chat-services.js');
+        const status = getN8nStatus();
+        
+        if (!status.configured) {
+          statusDiv.innerHTML = '<div class="status error">❌ n8n URL not configured</div>';
+          testBtn.disabled = false;
+          return;
+        }
+        
+        if (!status.willUseN8n) {
+          statusDiv.innerHTML = '<div class="status warning">⚠️ n8n is configured but will not be used. Check configuration status above.</div>';
+          testBtn.disabled = false;
+          return;
+        }
+        
+        // Get a topic
+        const topics = await getTopicCatalog();
+        const testTopic = topics[0] || topics.find(t => t.id === 'photosynthesis');
+        
+        if (!testTopic) {
+          statusDiv.innerHTML = '<div class="status error">❌ No topics found</div>';
+          testBtn.disabled = false;
+          return;
+        }
+        
+        addLog(`Testing with topic: ${testTopic.name} (${testTopic.id})`);
+        
+        // Send test message
+        const testMessage = 'Hello, this is a test message';
+        const sessionId = generateSessionId();
+        const messages = [{
+          role: 'ai',
+          content: `Hi! I'm here to help you learn about ${testTopic.name}!`,
+          timestamp: new Date().toISOString()
+        }];
+        
+        addLog(`Sending test message: "${testMessage}"`);
+        const startTime = Date.now();
+        
+        const response = await sendMessage(
+          testTopic.id,
+          testMessage,
+          {},
+          sessionId,
+          messages
+        );
+        
+        const duration = Date.now() - startTime;
+        
+        let html = '<div class="status success">';
+        html += '<h3>✅ Test Successful!</h3>';
+        html += `Response received in ${duration}ms<br>`;
+        html += `Response length: ${response.content.length} characters<br>`;
+        html += `Response preview: ${response.content.substring(0, 100)}...`;
+        html += '</div>';
+        
+        statusDiv.innerHTML = html;
+        addLog(`Test completed successfully in ${duration}ms`);
+        
+      } catch (error) {
+        statusDiv.innerHTML = `<div class="status error">❌ Test failed: ${error.message}</div>`;
+        addLog('Test failed: ' + error.message);
+      } finally {
+        testBtn.disabled = false;
+      }
+    };
+    
+    // Auto-check on load
+    window.addEventListener('load', () => {
+      addLog('Page loaded. Click "Check Configuration" to verify setup.');
+    });
+  </script>
+</body>
+</html>
+

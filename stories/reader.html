@@ -93,34 +93,36 @@
       </div>
     </header>
 
-    <div id="viewerOfflineBanner" class="hidden max-w-3xl mx-auto mt-6 px-6">
-      <div
-        class="bg-amber-50 text-amber-900 rounded-2xl px-4 py-3 text-sm font-medium border border-amber-300 flex items-center gap-3">
-        <span>⚠️</span>
-        <span>Working in mock/offline mode. Progress will sync when online.</span>
-      </div>
-    </div>
+    <main class="max-w-7xl mx-auto px-6 mt-6 space-y-6">
+      <!-- Main Content: Panel Image and Narration Side by Side -->
+      <section class="bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-lg">
+        <!-- Row 1: Panel Image | Narration (Side by Side) -->
+        <div class="grid grid-cols-1 lg:grid-cols-[3fr,2fr] gap-6 mb-6">
+          <!-- Panel Image Section -->
+          <div class="flex flex-col">
+            <div class="relative aspect-[4/3] bg-slate-100 rounded-2xl overflow-hidden border border-slate-200 shadow-md" id="panelImageContainer">
+              <img id="panelImage" src="" alt="Comic panel" class="w-full h-full object-cover" />
+              <div
+                class="absolute top-3 right-3 bg-black/60 text-white px-3 py-1 rounded-full text-xs font-semibold tracking-wide"
+                id="panelTag"></div>
+            </div>
+            <div class="flex items-center justify-between text-xs uppercase tracking-widest text-slate-600 mt-3">
+              <span id="panelPositionLabel"></span>
+              <button id="openGlossaryBtn" class="text-amber-600 hover:text-amber-700 font-semibold">Glossary</button>
+            </div>
+          </div>
 
-    <main class="max-w-5xl mx-auto px-6 mt-6 grid lg:grid-cols-[3fr,2fr] gap-8 items-start">
-      <section class="bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 flex flex-col gap-4 shadow-lg">
-        <div class="relative aspect-[4/3] bg-slate-100 rounded-2xl overflow-hidden border border-slate-200 shadow-md">
-          <img id="panelImage" src="" alt="Comic panel" class="w-full h-full object-cover" />
-          <div
-            class="absolute top-3 right-3 bg-black/60 text-white px-3 py-1 rounded-full text-xs font-semibold tracking-wide"
-            id="panelTag"></div>
+          <!-- Narration Section -->
+          <div class="flex flex-col">
+            <div id="panelNarration"
+              class="bg-indigo-50 border border-indigo-200 rounded-3xl text-slate-800 text-lg leading-relaxed p-5 shadow-md overflow-y-auto">
+              Loading panel…
+            </div>
+          </div>
         </div>
 
-        <div class="flex items-center justify-between text-xs uppercase tracking-widest text-slate-600">
-          <span id="panelPositionLabel"></span>
-          <button id="openGlossaryBtn" class="text-amber-600 hover:text-amber-700 font-semibold">Glossary</button>
-        </div>
-
-        <p id="panelNarration"
-          class="bg-indigo-50 border border-indigo-200 rounded-3xl text-slate-800 text-lg leading-relaxed p-5 shadow-md">
-          Loading panel…
-        </p>
-
-        <div class="flex items-center justify-between mt-2">
+        <!-- Row 2: Navigation Controls -->
+        <div class="flex items-center justify-between mb-6 pt-4 border-t border-slate-200">
           <button id="prevPanelBtn"
             class="px-4 py-3 rounded-full bg-slate-100 text-slate-700 font-semibold border border-slate-300 hover:bg-slate-200 transition disabled:opacity-40 disabled:cursor-not-allowed">
             ← Previous
@@ -132,36 +134,37 @@
           </button>
         </div>
 
-        <!-- Action Buttons Section -->
-        <div class="mt-4 pt-4 border-t border-slate-200 flex flex-wrap gap-3">
+        <!-- Row 3: Action Buttons -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-4 border-t border-slate-200">
           <button id="readWithVoiceBtn"
-            class="flex-1 min-w-[140px] px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-semibold border border-slate-300 hover:bg-slate-200 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            class="w-full px-5 py-3 rounded-xl bg-slate-100 text-slate-700 font-semibold border border-slate-300 hover:bg-slate-200 transition disabled:opacity-50 disabled:cursor-not-allowed text-sm"
             disabled title="Coming soon">
             🔊 Read with Voice
           </button>
           <button id="takeQuizBtn"
-            class="flex-1 min-w-[140px] px-4 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold hover:from-purple-600 hover:to-pink-600 transition shadow-md text-sm">
+            class="w-full px-5 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold hover:from-purple-600 hover:to-pink-600 transition shadow-md text-sm">
             📝 Take Quiz
           </button>
           <button id="downloadPdfBtn"
-            class="flex-1 min-w-[140px] px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-semibold border border-slate-300 hover:bg-slate-200 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            class="w-full px-5 py-3 rounded-xl bg-slate-100 text-slate-700 font-semibold border border-slate-300 hover:bg-slate-200 transition disabled:opacity-50 disabled:cursor-not-allowed text-sm"
             disabled title="Coming soon">
             📥 Download PDF
+          </button>
+          <button id="chatCtaBtn"
+            class="w-full px-5 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold hover:from-purple-600 hover:to-pink-600 transition shadow-lg text-sm">
+            Ask Mr. Chloro about Photosynthesis
           </button>
         </div>
       </section>
 
-      <aside class="flex flex-col gap-6">
+      <!-- Sidebar: Helper and Progress Info -->
+      <div class="grid lg:grid-cols-2 gap-6">
         <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-lg">
           <p class="text-xs uppercase tracking-[0.3em] text-slate-500">Panel helper</p>
           <h2 id="helperTitle" class="font-fredoka text-2xl mt-2 text-slate-900">Stay curious!</h2>
           <p id="helperText" class="text-slate-700 mt-2 text-sm">
             Panel insights and guiding questions will appear here.
           </p>
-          <button id="chatCtaBtn"
-            class="mt-4 w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-3 rounded-2xl hover:from-purple-600 hover:to-pink-600 transition shadow-lg">
-            Ask the AI about this panel
-          </button>
         </div>
 
         <div class="bg-purple-50 border border-purple-200 rounded-3xl p-5 text-sm text-slate-800 space-y-3 shadow-md">
@@ -175,7 +178,7 @@
               later.</p>
           </div>
         </div>
-      </aside>
+      </div>
     </main>
   </div>
 
@@ -185,7 +188,7 @@
         <h3 class="font-fredoka text-xl text-slate-900">Glossary</h3>
         <button id="closeGlossaryBtn" class="text-slate-600 hover:text-slate-900 font-bold">Close ✕</button>
       </div>
-      <div id="glossaryList" class="p-6 flex flex-wrap gap-3 text-sm font-semibold text-slate-700"></div>
+      <div id="glossaryList" class="p-6 space-y-3"></div>
     </div>
   </dialog>
 

@@ -260,6 +260,9 @@ export async function flushAnalyticsQueue() {
     if (!stillQueued.length) return;
   }
 
+  // Only try Supabase if not in mock mode
+  if (shouldUseMockData()) return;
+
   const client = getSupabaseClient();
   if (client) {
     await flushQueueWithSupabase(client);
@@ -268,6 +271,18 @@ export async function flushAnalyticsQueue() {
 
 export async function logAnalyticsEvent(eventType, payload = {}) {
   if (!eventType) return;
+  
+  // In mock mode, just queue analytics without trying Supabase
+  if (shouldUseMockData()) {
+    const entry = {
+      eventType,
+      payload,
+      timestamp: new Date().toISOString()
+    };
+    enqueueAnalyticsEntry(entry);
+    return;
+  }
+
   const entry = {
     eventType,
     payload,
@@ -280,7 +295,7 @@ export async function logAnalyticsEvent(eventType, payload = {}) {
   }
 
   const client = getSupabaseClient();
-  if (client && !shouldUseMockData()) {
+  if (client) {
     try {
       const { error } = await client.from('analytics_events').insert({
         event_type: entry.eventType,
@@ -304,7 +319,7 @@ export function isUsingStoryMocks() {
   return shouldUseMockData();
 }
 
-if (typeof window !== 'undefined') {
+if (typeof window !== 'undefined' && !shouldUseMockData()) {
   window.addEventListener('online', () => {
     flushAnalyticsQueue();
   });
