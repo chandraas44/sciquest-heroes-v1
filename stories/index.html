@@ -34,35 +34,9 @@
 </head>
 
 <body class="min-h-screen bg-white text-slate-800">
-  <!-- Header -->
-  <nav class="fixed w-full z-50 backdrop-blur-xl bg-white/95 border-b border-purple-200 shadow-lg">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-20">
-        <div class="flex items-center space-x-4">
-          <div
-            class="w-14 h-14 bg-gradient-to-br from-purple-500 via-pink-500 to-pink-600 rounded-3xl flex items-center justify-center border-4 border-purple-200 shadow-lg">
-            <span class="text-3xl">🚀</span>
-          </div>
-          <a href="./index.html"
-            class="font-fredoka text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">SciQuest
-            Heroes</a>
-        </div>
-        <div class="hidden lg:flex items-center space-x-6">
-          <a href="./index.html" class="font-fredoka text-purple-600 font-bold">Stories</a>
-          <a href="../chat/index.html"
-            class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold">Chat</a>
-          <button id="logoutBtn"
-            class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold px-4 py-2 rounded-full border border-purple-200 hover:bg-purple-50">
-            Logout
-          </button>
-        </div>
-        <button id="logoutBtnMobile"
-          class="lg:hidden font-fredoka text-slate-700 hover:text-purple-600 transition font-bold px-3 py-2 rounded-full border border-purple-200 hover:bg-purple-50 text-sm">
-          Logout
-        </button>
-      </div>
-    </div>
-  </nav>
+  <!-- Shared Navigation -->
+  <div id="nav-container"></div>
+  <script type="module" src="../components/nav.js"></script>
   <div class="pb-24 pt-24">
     <header class="max-w-6xl mx-auto px-6 py-10 flex flex-col gap-6">
       <div class="flex items-center justify-between">

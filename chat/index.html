@@ -25,35 +25,9 @@
 </head>
 
 <body class="min-h-screen bg-white text-slate-800">
-  <!-- Header -->
-  <nav class="fixed w-full z-50 backdrop-blur-xl bg-white/95 border-b border-purple-200 shadow-lg">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-20">
-        <div class="flex items-center space-x-4">
-          <div
-            class="w-14 h-14 bg-gradient-to-br from-purple-500 via-pink-500 to-pink-600 rounded-3xl flex items-center justify-center border-4 border-purple-200 shadow-lg">
-            <span class="text-3xl">🚀</span>
-          </div>
-          <a href="./index.html"
-            class="font-fredoka text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">SciQuest
-            Heroes</a>
-        </div>
-        <div class="hidden lg:flex items-center space-x-6">
-          <a href="../stories/index.html"
-            class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold">Stories</a>
-          <a href="./index.html" class="font-fredoka text-purple-600 font-bold">Chat</a>
-          <button id="logoutBtn"
-            class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold px-4 py-2 rounded-full border border-purple-200 hover:bg-purple-50">
-            Logout
-          </button>
-        </div>
-        <button id="logoutBtnMobile"
-          class="lg:hidden font-fredoka text-slate-700 hover:text-purple-600 transition font-bold px-3 py-2 rounded-full border border-purple-200 hover:bg-purple-50 text-sm">
-          Logout
-        </button>
-      </div>
-    </div>
-  </nav>
+  <!-- Shared Navigation -->
+  <div id="nav-container"></div>
+  <script type="module" src="../components/nav.js"></script>
 
   <!-- Chat Lobby (Topic Picker) -->
   <div id="topicPicker" class="hidden max-w-6xl mx-auto px-6 pt-24 pb-20">
@@ -123,34 +97,6 @@
 
   <script type="module" src="./chat-session.js"></script>
   <script type="module" src="../shared/logo-handler.js"></script>
-  <script type="module">
-    // Logout functionality
-    const handleLogout = async () => {
-      try {
-        // Try Supabase logout if available
-        const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm');
-        const { supabaseConfig } = await import('../config.js');
-
-        if (supabaseConfig?.url && supabaseConfig?.anonKey) {
-          const supabase = createClient(supabaseConfig.url, supabaseConfig.anonKey);
-          const { error } = await supabase.auth.signOut();
-          if (error) throw error;
-        }
-      } catch (error) {
-        console.log('Supabase logout skipped (mock mode)');
-      }
-
-      // Clear all storage
-      localStorage.clear();
-      sessionStorage.clear();
-
-      // Redirect to auth page
-      window.location.href = '../auth/auth.html';
-    };
-
-    document.getElementById('logoutBtn')?.addEventListener('click', handleLogout);
-    document.getElementById('logoutBtnMobile')?.addEventListener('click', handleLogout);
-  </script>
 </body>
 
 </html>

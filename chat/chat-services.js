@@ -1,5 +1,5 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
-import { supabaseConfig } from '../config.js';
+import { supabaseConfig } from '/config.js';
 
 const EDGE_ANALYTICS_URL = import.meta.env?.VITE_EDGE_ANALYTICS_URL || '';
 const N8N_CHAT_URL = import.meta.env?.VITE_N8N_CHAT_URL?.trim() || '';
