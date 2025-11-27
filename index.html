@@ -292,55 +292,6 @@
                 20px 20px 40px rgba(0, 0, 0, 0.3);
         }
 
-        .btn-3d {
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-            border: 4px solid #1e293b;
-            border-radius: 60px;
-            padding: 20px 40px;
-            font-weight: 800;
-            font-size: 20px;
-            color: #1e293b;
-            box-shadow:
-                0 8px 0 #92400e,
-                0 12px 30px rgba(0, 0, 0, 0.3);
-            transition: all 0.2s ease;
-            cursor: pointer;
-            font-family: 'Fredoka', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-3d::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn-3d:hover::before {
-            left: 100%;
-        }
-
-        .btn-3d:hover {
-            transform: translateY(-5px);
-            box-shadow:
-                0 13px 0 #92400e,
-                0 17px 40px rgba(0, 0, 0, 0.4);
-        }
-
-        .btn-3d:active {
-            transform: translateY(4px);
-            box-shadow:
-                0 4px 0 #92400e,
-                0 6px 15px rgba(0, 0, 0, 0.3);
-        }
-
         .particles {
             position: absolute;
             width: 100%;
@@ -680,26 +631,6 @@
     <!-- Shared Navigation -->
     <div id="nav-container"></div>
     <script type="module" src="/components/nav.js"></script>
-
-    <div class="mobile-menu fixed top-0 right-0 h-full w-80 bg-white/95 backdrop-blur-xl border-l-4 border-slate-800 z-50 p-8 lg:hidden shadow-2xl"
-        id="mobileMenu">
-        <button onclick="toggleMobileMenu()"
-            class="absolute top-6 right-6 text-4xl text-slate-800 hover:scale-110 transition-transform">
-            <i class="fas fa-times"></i>
-        </button>
-        <div class="flex flex-col space-y-8 mt-20 font-fredoka text-xl font-bold">
-            <a href="stories/index.html" onclick="toggleMobileMenu()"
-                class="text-slate-700 hover:text-purple-600 transition">Stories</a>
-            <a href="#how-it-works" onclick="toggleMobileMenu()"
-                class="text-slate-700 hover:text-purple-600 transition">How It Works</a>
-            <a href="#topics" onclick="toggleMobileMenu()"
-                class="text-slate-700 hover:text-purple-600 transition">Topics</a>
-            <a href="#for-parents" onclick="toggleMobileMenu()"
-                class="text-slate-700 hover:text-purple-600 transition">For Parents</a>
-            <button class="btn-3d w-full mt-4" onclick="window.location.href='auth/account-type-selection.html'">Start
-                Free Trial</button>
-        </div>
-    </div>
 
     <section class="hero-gradient min-h-screen flex items-center relative overflow-hidden pt-32 pb-20">
         <div class="particles"></div>

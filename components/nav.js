@@ -70,14 +70,7 @@ function getBasePath() {
  * Get the correct path to config.js based on current page location
  */
 function getConfigPath() {
-  const currentPath = window.location.pathname;
-  const depth = currentPath.split('/').filter(p => p && !p.includes('.html')).length - 1;
-  
-  if (depth === 0) {
     return '/config.js';
-  } else {
-    return '../'.repeat(depth) + 'config.js';
-  }
 }
 
 /**
@@ -272,20 +265,14 @@ function buildNavLinks(isAuthenticated, basePath, currentPage) {
   } else {
     // Public navigation (home page)
     links.push(`
-      <a href="${basePath}stories/index.html" class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold text-lg">
-        Stories
-      </a>
-      <a href="#how-it-works" class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold text-lg">
+      <a href="/index.html#how-it-works" class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold text-lg">
         How It Works
       </a>
-      <a href="#topics" class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold text-lg">
-        Topics
-      </a>
-      <a href="#for-parents" class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold text-lg">
+      <a href="/index.html#for-parents" class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold text-lg">
         For Parents
       </a>
-      <button class="btn-3d" onclick="window.location.href='${basePath}auth/account-type-selection.html'">
-        Start Free Trial
+      <button class="btn-3d" onclick="window.location.href='${basePath}auth/auth.html'">
+        Sign In / Sign Up
       </button>
     `);
   }
@@ -318,7 +305,7 @@ async function handleLogout() {
   
   // Redirect to auth page
   const basePath = getBasePath();
-  window.location.href = `${basePath}auth/auth.html`;
+  window.location.href = `/`;
 }
 
 /**
@@ -360,7 +347,7 @@ async function loadNavigation() {
     // Set brand link
     const brandLink = document.getElementById('navBrandLink');
     if (brandLink) {
-      brandLink.href = basePath ? `${basePath}index.html` : './index.html';
+      brandLink.href = '/index.html';
     }
     
     // Build and inject navigation links

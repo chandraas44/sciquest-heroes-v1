@@ -1,17 +1,6 @@
 {
   "topics": [
     {
-      "id": "moon-physics",
-      "name": "Moon & Gravity",
-      "description": "Learn about the moon and how gravity works",
-      "icon": "🌙",
-      "quickPrompts": [
-        "Why does the moon change shape?",
-        "How far away is the moon?",
-        "What is gravity?"
-      ]
-    },
-    {
       "id": "photosynthesis",
       "name": "Photosynthesis",
       "description": "Discover how plants make food from sunlight",
@@ -21,62 +10,9 @@
         "What is photosynthesis?",
         "Why do plants need sunlight?"
       ]
-    },
-    {
-      "id": "ocean-life",
-      "name": "Ocean Creatures",
-      "description": "Explore amazing animals that live in the ocean",
-      "icon": "🌊",
-      "quickPrompts": [
-        "What animals live in the ocean?",
-        "How do fish breathe underwater?",
-        "What is the biggest ocean animal?"
-      ]
-    },
-    {
-      "id": "dinosaurs",
-      "name": "Dinosaur Discovery",
-      "description": "Travel back in time to meet the dinosaurs",
-      "icon": "🦖",
-      "quickPrompts": [
-        "What did dinosaurs eat?",
-        "How big were dinosaurs?",
-        "Why did dinosaurs disappear?"
-      ]
-    },
-    {
-      "id": "solar-system",
-      "name": "Our Solar System",
-      "description": "Journey through space and learn about planets",
-      "icon": "🪐",
-      "quickPrompts": [
-        "How many planets are there?",
-        "What is the biggest planet?",
-        "Why is Earth special?"
-      ]
-    },
-    {
-      "id": "robotics-basics",
-      "name": "Robots & Technology",
-      "description": "Learn how robots work and help us",
-      "icon": "🤖",
-      "quickPrompts": [
-        "What can robots do?",
-        "How do robots move?",
-        "Do robots have brains?"
-      ]
     }
   ],
   "responses": {
-    "moon-physics": {
-      "patterns": {
-        "how far|distance": "The moon is about 238,900 miles away! That's like traveling around Earth 10 times! 🌙",
-        "why|shape|phase": "The moon changes shape because of how sunlight hits it as it orbits Earth. Cool, right? 🌓",
-        "gravity|pull": "Gravity is the invisible force that pulls things together. The moon's gravity makes ocean tides! 🌊",
-        "what is|what's": "The moon is Earth's closest neighbor in space! It's a big rock that orbits our planet. 🌙"
-      },
-      "default": "That's a great question about the moon! The moon is Earth's closest neighbor in space. What else would you like to know? 🌙"
-    },
     "photosynthesis": {
       "patterns": {
         "how do|how does|make food": "Plants make food using sunlight, water, and air! This amazing process is called photosynthesis. 🌿",
@@ -85,44 +21,6 @@
         "chlorophyll|green": "Chlorophyll is the green stuff in leaves that catches sunlight! It's what makes plants green. 🍃"
       },
       "default": "Plants are amazing! They use sunlight to make food and give us oxygen. What would you like to learn about plants? 🌱"
-    },
-    "ocean-life": {
-      "patterns": {
-        "what animals|creatures|fish": "The ocean is full of amazing animals! There are fish, whales, dolphins, sharks, and so many more! 🐠",
-        "how do|breathe underwater": "Fish breathe using gills! They take oxygen from the water, just like we take it from the air. 🐟",
-        "biggest|largest|whale": "The blue whale is the biggest ocean animal! It's even bigger than dinosaurs were! 🐋",
-        "shark|dangerous": "Sharks are important ocean animals! Most sharks are not dangerous to people. They help keep the ocean healthy. 🦈"
-      },
-      "default": "The ocean is full of incredible creatures! What would you like to know about ocean animals? 🌊"
-    },
-    "dinosaurs": {
-      "patterns": {
-        "what did|eat|food": "Different dinosaurs ate different things! Some ate plants (herbivores) and some ate meat (carnivores). 🦕",
-        "how big|size|tall": "Dinosaurs came in all sizes! Some were as small as chickens, and others were taller than buildings! 🦖",
-        "why|disappear|extinct": "Scientists think a huge asteroid hit Earth and changed the climate. Most dinosaurs couldn't survive. 💥",
-        "when|live|time": "Dinosaurs lived millions of years ago! They were on Earth for about 165 million years. That's a long time! 🦕"
-      },
-      "default": "Dinosaurs are so cool! They lived millions of years ago and came in all shapes and sizes. What else do you want to know? 🦖"
-    },
-    "solar-system": {
-      "patterns": {
-        "how many|planets": "There are 8 planets in our solar system! Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, and Neptune! 🪐",
-        "biggest|largest|jupiter": "Jupiter is the biggest planet! It's so huge that all the other planets could fit inside it! 🪐",
-        "why|earth special|life": "Earth is special because it has water, air, and the right temperature for life! It's our home! 🌍",
-        "sun|star": "The sun is a star! It's the center of our solar system and gives us light and heat. ☀️"
-      },
-      "default": "Our solar system is amazing! There are 8 planets orbiting the sun. What would you like to learn about? 🪐"
-    },
-    "robotics-basics": {
-      "patterns": {
-        "what can|do|robots": "Robots can do many things! They help build cars, explore space, and even help doctors. They're super helpful! 🤖",
-        "how do|move|walk": "Robots move using motors and sensors! Some have wheels, some have legs, and some can even fly! 🚁",
-        "brains|think|smart": "Robots have computers that act like brains! They follow instructions called programs to do their jobs. 💻",
-        "future|help": "Robots will help us more in the future! They can do jobs that are too dangerous or boring for people. 🚀"
-      },
-      "default": "Robots are fascinating! They're machines that can do tasks automatically. What would you like to know about robots? 🤖"
     }
   }
 }
-
-

@@ -65,15 +65,8 @@
             "inProgress": 0,
             "lastOpened": "2025-01-14T09:30:00Z",
             "completionPercentage": 100
-          },
-          {
-            "topic": "Moon & Gravity",
-            "icon": "🌙",
-            "storiesRead": 0,
-            "inProgress": 1,
-            "lastOpened": "2025-01-15T14:00:00Z",
-            "completionPercentage": 40
           }
+         
         ]
       },
       "quizzes": {
