@@ -57,6 +57,11 @@ async function buildStoryCard(story) {
       progressLabelEl.textContent = 'Not started';
     }
 
+    if (!story.enabled) {
+      openBtn.disabled = true;
+      openBtn.textContent = 'Coming Soon';
+    }
+
     openBtn.addEventListener('click', () => {
       if (!story.id) {
         console.error('[stories] Story ID is missing, cannot navigate', story);
