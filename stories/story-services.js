@@ -15,7 +15,7 @@ function hasSupabaseConfig() {
   return Boolean(supabaseConfig?.url && supabaseConfig?.anonKey);
 }
 
-function getSupabaseClient() {
+export function getSupabaseClient() {
   if (!hasSupabaseConfig()) return null;
   if (!supabaseClient) {
     supabaseClient = createClient(supabaseConfig.url, supabaseConfig.anonKey);
