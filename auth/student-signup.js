@@ -1,5 +1,5 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
-import { supabaseConfig } from '../config.js';
+import { supabaseConfig } from '/config.js';
 
 const supabaseUrl = supabaseConfig.url;
 const supabaseAnonKey = supabaseConfig.anonKey;
@@ -243,7 +243,7 @@ panel2Form.addEventListener('submit', async (e) => {
             showSuccess('Account created successfully! Redirecting to avatar selection...');
 
             setTimeout(() => {
-                window.location.href = '../avatar-selection.html';
+                window.location.href = '/avatar-selection.html';
             }, 1500);
         }
     } catch (error) {

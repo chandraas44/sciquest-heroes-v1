@@ -151,13 +151,13 @@ async function showBadgeDetailModal(badgeId) {
     let linkText = '';
     
     if (badge.category === 'stories') {
-      linkUrl = '../stories/index.html';
+      linkUrl = '/stories/index.html';
       linkText = 'Explore Stories';
     } else if (badge.category === 'chat') {
-      linkUrl = '../chat/index.html';
+      linkUrl = '/chat/index.html';
       linkText = 'Start Chatting';
     } else if (badge.category === 'quizzes') {
-      linkUrl = '../stories/index.html'; // Placeholder for future quiz feature
+      linkUrl = '/stories/index.html'; // Placeholder for future quiz feature
       linkText = 'Take Quizzes';
     }
     

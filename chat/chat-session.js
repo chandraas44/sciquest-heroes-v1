@@ -11,10 +11,10 @@ import {
 import {
   evaluateBadgeRules,
   getBadgeById
-} from '../badges/badge-services.js';
+} from '/badges/badge-services.js';
 import {
   showBadgeCelebration
-} from '../shared/badge-celebration.js';
+} from '/shared/badge-celebration.js';
 
 const params = new URLSearchParams(window.location.search);
 const topicId = params.get('topicId');
@@ -154,12 +154,10 @@ function updateContextBadge() {
     if (state.context.storyRef) {
       let panelParam = '';
       if (state.context.panelId) {
-        const panelNum = state.context.panelId.replace(/^panel-?/i, '').replace(/^panel/i, '');
-        if (panelNum) {
-          panelParam = `?panel=${panelNum}`;
-        }
+        const panelId = state.context.panelId ? Number(state.context.panelId.replace(/^panel-?/i, '').replace(/^panel/i, '')) - 1 : 0;
+        panelParam = `panel=${panelId}`;
       }
-      window.location.href = `/stories/${state.context.storyRef}/read${panelParam}`;
+      window.location.href = `/stories/reader.html?storyId=${state.context.storyRef}&${panelParam}`;
     }
   };
 }
@@ -230,7 +228,7 @@ async function handleSendMessage() {
 async function loadStoryTitle(storyId) {
   if (!storyId) return;
   try {
-    const { getStoryById } = await import('../stories/story-services.js');
+    const { getStoryById } = await import('/stories/story-services.js');
     const story = await getStoryById(storyId);
     if (story) {
       state.storyTitle = story.title;
@@ -322,16 +320,12 @@ backBtnEl.addEventListener('click', async () => {
     });
   }
   if (state.context.storyRef) {
-    let panelParam = '';
-    if (state.context.panelId) {
-      const panelNum = state.context.panelId.replace(/^panel-?/i, '').replace(/^panel/i, '');
-      if (panelNum) {
-        panelParam = `?panel=${panelNum}`;
-      }
-    }
-    window.location.href = `/stories/${state.context.storyRef}/read${panelParam}`;
+    const panelId = state.context.panelId ? Number(state.context.panelId.replace(/^panel-?/i, '').replace(/^panel/i, '')) - 1 : 0;
+    const panelParam = state.context.panelId ? `&panel=${panelId}` : '';
+    const path = state.context.panelId ? "reader.html" : "story.html";
+    window.location.href = `/stories/${path}?storyId=${state.context.storyRef}${panelParam}`;
   } else {
-    window.location.href = './index.html';
+    window.location.href = '/stories/index.html';
   }
 });
 
