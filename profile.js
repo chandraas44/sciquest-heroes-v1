@@ -101,9 +101,6 @@ async function loadUserProfile(userId) {
             } else if (profile.account_type === 'parent') {
                 accountTypeBadge.className = 'badge badge-parent';
                 accountTypeBadge.textContent = 'Parent';
-            } else if (profile.account_type === 'teacher') {
-                accountTypeBadge.className = 'badge badge-teacher';
-                accountTypeBadge.textContent = 'Teacher';
             }
 
             if (profile.avatar_url) {
