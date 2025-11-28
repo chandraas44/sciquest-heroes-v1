@@ -117,12 +117,44 @@ export async function getChildProgress(childId) {
   
   try {
     // Aggregate story progress
+    console.log('[dashboard] Querying story_progress for childId:', childId);
     const { data: storyProgress, error: storyError } = await client
       .from('story_progress')
       .select('*')
       .eq('user_id', childId);
 
-    if (storyError) throw storyError;
+    if (storyError) {
+      console.error('[dashboard] Story progress query error:', storyError);
+      throw storyError;
+    }
+    
+    console.log('[dashboard] Found story progress records:', storyProgress?.length || 0);
+    
+    // Get topic_tag from stories table for each story_id
+    let mappedProgress = storyProgress || [];
+    if (mappedProgress.length > 0) {
+      const storyIds = [...new Set(mappedProgress.map(sp => sp.story_id))];
+      try {
+        const { data: stories } = await client
+          .from('stories')
+          .select('id, topic_tag')
+          .in('id', storyIds);
+        
+        const topicMap = {};
+        (stories || []).forEach(s => { topicMap[s.id] = s.topic_tag; });
+        
+        mappedProgress = mappedProgress.map(sp => ({
+          ...sp,
+          topic_tag: topicMap[sp.story_id] || null
+        }));
+      } catch (topicError) {
+        console.warn('[dashboard] Failed to fetch topic_tags, continuing without them:', topicError);
+      }
+      
+      if (mappedProgress.length > 0) {
+        console.log('[dashboard] Sample record:', mappedProgress[0]);
+      }
+    }
 
     // Aggregate quiz attempts
     const { data: quizAttempts, error: quizError } = await client
@@ -158,7 +190,7 @@ export async function getChildProgress(childId) {
     }
 
     // Check if all arrays are empty (Supabase available but no data)
-    const storyData = storyProgress || [];
+    const storyData = mappedProgress || [];
     const quizData = quizAttempts || [];
     const chatData = chatInteractions || [];
     
