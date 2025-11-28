@@ -2,6 +2,8 @@ import {
   getParentChildren,
   getChildProgress,
   getChildBadges,
+  createChildAccount,
+  signOutUser,
   logAnalyticsEvent,
   getCurrentUser
 } from './dashboard-services.js';
@@ -80,10 +82,10 @@ function renderChildCard(child) {
   card.innerHTML = `
     <div class="flex items-center gap-4 mb-3">
       <img
-        src="${child.avatarUrl || '/avatars/child1.png'}"
+        src="${child.avatarUrl || `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${child.firstName || 'Child'}`}"
         alt="${child.firstName}"
         class="w-16 h-16 rounded-full border-4 border-purple-200 object-cover"
-        onerror="this.src='/avatars/child1.png'"
+        onerror="this.src='https://api.dicebear.com/7.x/fun-emoji/svg?seed=fallback'"
       />
       <div class="flex-1">
         <h3 class="font-fredoka text-xl font-bold text-slate-700 mb-1">${child.firstName || child.username}</h3>
@@ -115,10 +117,7 @@ function renderChildCard(child) {
 
 function renderChildrenList() {
   childrenListEl.innerHTML = '';
-  if (!state.children.length) {
-    childrenListEl.innerHTML = '<p class="text-slate-500 text-sm">No children found.</p>';
-    return;
-  }
+  // if (!state.children.length) check removed to always show Add Child card
 
   state.children.forEach((child) => {
     childrenListEl.appendChild(renderChildCard(child));
@@ -163,6 +162,7 @@ async function loadChildData(childId) {
     renderLearningSnapshot();
     renderProgressTabs();
     renderBadges();
+    renderSettingsTab();
 
     await logAnalyticsEvent('child_progress_viewed', { childId });
   } catch (error) {
@@ -187,10 +187,10 @@ function renderChildHeader() {
   childHeaderEl.innerHTML = `
     <div class="flex items-center gap-4">
       <img
-        src="${child.avatarUrl || '/avatars/child1.png'}"
+        src="${child.avatarUrl || `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${child.firstName || 'Child'}`}"
         alt="${child.firstName}"
         class="w-16 h-16 rounded-full border-4 border-purple-200 object-cover"
-        onerror="this.src='/avatars/child1.png'"
+        onerror="this.src='https://api.dicebear.com/7.x/fun-emoji/svg?seed=fallback'"
       />
       <div>
         <h2 class="font-fredoka text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">${child.firstName || child.username}</h2>
@@ -688,3 +688,150 @@ async function loadDashboard() {
 
 loadDashboard();
 
+// Handle Settings Tab Buttons
+const settingsTab = document.getElementById('tabSettings');
+if (settingsTab) {
+  settingsTab.addEventListener('click', async (e) => {
+    const target = e.target.closest('button');
+    if (!target) return;
+
+    const text = target.textContent.trim();
+
+    if (text === 'Change Avatar') {
+      alert('Avatar selection coming soon! 🎨');
+    } else if (text === 'Edit') {
+      alert('Editing login info coming soon! 🔐');
+    } else if (text === 'Log In Child Account') {
+      const confirmLogout = confirm('To log in as your child, you need to sign out of your parent account first. Continue?');
+      if (confirmLogout) {
+        const { error } = await signOutUser();
+        if (!error) {
+          window.location.href = '../auth/auth.html';
+        }
+      }
+    }
+  });
+}
+
+
+function renderSettingsTab() {
+  const child = state.children.find(c => c.id === state.selectedChildId);
+  if (!child) return;
+
+  const nameEl = document.getElementById('settingsChildName');
+  const usernameEl = document.getElementById('settingsUsername');
+  const avatarEl = document.getElementById('settingsAvatar');
+
+  if (nameEl) nameEl.textContent = child.firstName || child.username;
+  if (usernameEl) usernameEl.textContent = child.username;
+  if (avatarEl) avatarEl.src = child.avatarUrl || `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${child.firstName || 'Child'}`;
+}
+
+// Handle Add Child Modal
+const addChildModal = document.getElementById('addChildModal');
+const addChildSidebarBtn = document.getElementById('addChildSidebarBtn');
+const addChildEmptyStateBtn = document.getElementById('addChildEmptyStateBtn');
+const closeAddChildModalBtn = document.getElementById('closeAddChildModalBtn');
+
+function openAddChildModal() {
+  if (addChildModal) {
+    addChildModal.classList.remove('hidden');
+    document.getElementById('newChildFirstName')?.focus();
+  }
+}
+
+function closeAddChildModal() {
+  if (addChildModal) {
+    addChildModal.classList.add('hidden');
+    // Reset form
+    const form = document.getElementById('addChildForm');
+    if (form) form.reset();
+    // Reset error
+    const errorEl = document.getElementById('addChildError');
+    if (errorEl) errorEl.classList.add('hidden');
+  }
+}
+
+// Expose close function globally for the form handler
+window.closeAddChildModal = closeAddChildModal;
+
+if (addChildSidebarBtn) {
+  addChildSidebarBtn.addEventListener('click', (e) => {
+    e.stopPropagation(); // Prevent bubbling if needed
+    openAddChildModal();
+  });
+}
+
+if (addChildEmptyStateBtn) {
+  addChildEmptyStateBtn.addEventListener('click', openAddChildModal);
+}
+
+if (closeAddChildModalBtn) {
+  closeAddChildModalBtn.addEventListener('click', closeAddChildModal);
+}
+
+// Close on click outside
+if (addChildModal) {
+  addChildModal.addEventListener('click', (e) => {
+    if (e.target === addChildModal) {
+      closeAddChildModal();
+    }
+  });
+}
+
+// Handle Add Child Form Submission
+const addChildForm = document.getElementById('addChildForm');
+if (addChildForm) {
+  addChildForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const saveBtn = document.getElementById('saveChildBtn');
+    const errorEl = document.getElementById('addChildError');
+
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'CREATING...';
+    errorEl.classList.add('hidden');
+
+    try {
+      const user = await getCurrentUser();
+      if (!user) throw new Error('Parent not logged in');
+
+      const formData = {
+        firstName: document.getElementById('newChildFirstName').value.trim(),
+        lastName: document.getElementById('newChildLastName').value.trim(),
+        email: document.getElementById('newChildEmail').value.trim(),
+        password: document.getElementById('newChildPassword').value,
+        age: document.getElementById('newChildAge').value,
+        grade: document.getElementById('newChildGrade').value,
+        parentId: user.id
+      };
+
+      // Basic validation
+      if (document.getElementById('newChildPassword').value !== document.getElementById('newChildRetypePassword').value) {
+        throw new Error('Passwords do not match');
+      }
+
+      const { data, error } = await createChildAccount(formData);
+
+      if (error) throw new Error(error);
+
+      // Success
+      closeAddChildModal();
+
+      // Refresh list
+      await loadDashboard();
+
+      // Select new child
+      if (data && data.id) {
+        await selectChild(data.id);
+      }
+
+    } catch (err) {
+      console.error('Add child error:', err);
+      errorEl.textContent = err.message;
+      errorEl.classList.remove('hidden');
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'SAVE CHILD ACCOUNT';
+    }
+  });
+}

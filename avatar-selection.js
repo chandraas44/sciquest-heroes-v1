@@ -99,7 +99,7 @@ async function renderAvatars() {
 
         card.innerHTML = `
             <div class="avatar-image-wrapper">
-                <img src="${avatar.image}" alt="${avatar.name}" onerror="this.src='assets/avatars/Bolt.png'">
+                <img src="${avatar.image}" alt="${avatar.name}" onerror="this.src='https://api.dicebear.com/7.x/fun-emoji/svg?seed=${avatar.name}'">
             </div>
             <div class="avatar-name">${avatar.name}</div>
         `;

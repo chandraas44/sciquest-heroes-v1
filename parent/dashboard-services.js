@@ -382,3 +382,79 @@ export function logAnalyticsEvent(eventName, eventData = {}) {
   }
 }
 
+
+export async function createChildAccount(childData) {
+  if (!hasSupabaseConfig()) return { error: 'Supabase not configured' };
+
+  const { firstName, lastName, email, password, age, grade, parentId } = childData;
+
+  // Create a temporary client to avoid logging out the parent
+  const tempClient = createClient(supabaseConfig.url, supabaseConfig.anonKey, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false
+    }
+  });
+
+  // Generate a username from the email (part before @)
+  const username = email.split('@')[0];
+
+  try {
+    // 1. Sign up the child
+    const { data: authData, error: authError } = await tempClient.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          first_name: firstName,
+          username: username,
+          account_type: 'student'
+        }
+      }
+    });
+
+    if (authError) {
+      return { error: authError.message };
+    }
+
+    if (!authData.user) {
+      return { error: 'Failed to create user' };
+    }
+
+    const childUserId = authData.user.id;
+    const client = getSupabaseClient(); // Parent's client
+
+    // 2. Create user profile linked to parent
+    const { error: profileError } = await client
+      .from('user_profiles')
+      .insert({
+        id: childUserId,
+        email: email,
+        username: username,
+        first_name: firstName,
+
+        account_type: 'student',
+        grade_level: grade,
+        age: age ? parseInt(age) : null,
+        avatar_url: `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${firstName}`,
+        parent_id: parentId
+      });
+
+    if (profileError) {
+      console.error('Profile creation error:', profileError);
+      return { error: 'Account created but profile failed: ' + profileError.message };
+    }
+
+    return { data: { id: childUserId, firstName, username, grade } };
+  } catch (error) {
+    console.error('Create child error:', error);
+    return { error: error.message };
+  }
+}
+
+export async function signOutUser() {
+  const client = getSupabaseClient();
+  if (!client) return { error: 'No client' };
+  return await client.auth.signOut();
+}

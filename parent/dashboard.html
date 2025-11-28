@@ -46,7 +46,13 @@
         <aside class="w-full lg:w-auto">
           <div
             class="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-3xl p-6 shadow-[0_0_20px_rgba(139,92,246,0.15)] sticky top-28">
-            <h2 class="font-fredoka text-3xl font-bold text-slate-700 mb-6">Your Young Heroes</h2>
+            <div class="flex justify-between items-center mb-6">
+              <h2 class="font-fredoka text-2xl font-bold text-slate-700">Your Young Heroes</h2>
+              <button id="addChildSidebarBtn"
+                class="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-2 px-4 rounded-full hover:from-purple-600 hover:to-pink-600 transition shadow-md text-sm flex items-center gap-2">
+                <span class="text-lg leading-none">+</span> Add
+              </button>
+            </div>
             <div id="childrenList" class="space-y-4">
               <!-- Child cards will be rendered here -->
             </div>
@@ -59,7 +65,7 @@
           <div id="emptyState"
             class="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-3xl p-12 text-center shadow-[0_0_20px_rgba(139,92,246,0.15)]">
             <div class="text-6xl mb-4">🦸</div>
-            <p class="text-slate-600 text-lg font-medium">Select a hero on the left to see their progress.</p>
+            <p class="text-slate-600 text-lg font-medium mb-6">Select a hero on the left to see their progress.</p>
           </div>
 
           <!-- Selected Child Detail -->
@@ -147,6 +153,97 @@
 
   <script type="module" src="./dashboard.js"></script>
   <script type="module" src="../shared/logo-handler.js"></script>
+
+  <!-- Add Child Modal -->
+  <div id="addChildModal"
+    class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div
+      class="bg-white border-2 border-purple-200 rounded-3xl p-8 max-w-2xl w-full mx-4 shadow-[0_0_40px_rgba(139,92,246,0.3)] relative max-h-[90vh] overflow-y-auto">
+      <button id="closeAddChildModalBtn"
+        class="absolute top-4 right-4 text-slate-600 hover:text-slate-900 text-2xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-purple-50 transition">
+        ×
+      </button>
+
+      <div class="text-center mb-8">
+        <h3
+          class="font-fredoka text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+          Add a New Hero</h3>
+        <p class="text-slate-600">Create a profile for your child to start their learning journey.</p>
+      </div>
+
+      <form id="addChildForm" class="space-y-6">
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-slate-700 font-bold mb-2 text-sm" for="newChildFirstName">First Name</label>
+            <input type="text" id="newChildFirstName" required
+              class="w-full px-4 py-3 rounded-xl border-2 border-purple-100 focus:border-purple-400 focus:outline-none transition bg-purple-50/30"
+              placeholder="e.g. Alex" />
+          </div>
+          <div>
+            <label class="block text-slate-700 font-bold mb-2 text-sm" for="newChildLastName">Last Name
+              (Optional)</label>
+            <input type="text" id="newChildLastName"
+              class="w-full px-4 py-3 rounded-xl border-2 border-purple-100 focus:border-purple-400 focus:outline-none transition bg-purple-50/30"
+              placeholder="e.g. Smith" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-slate-700 font-bold mb-2 text-sm" for="newChildEmail">Email Address</label>
+          <input type="email" id="newChildEmail" required
+            class="w-full px-4 py-3 rounded-xl border-2 border-purple-100 focus:border-purple-400 focus:outline-none transition bg-purple-50/30"
+            placeholder="child@example.com" />
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-slate-700 font-bold mb-2 text-sm" for="newChildPassword">Password</label>
+            <input type="password" id="newChildPassword" required
+              class="w-full px-4 py-3 rounded-xl border-2 border-purple-100 focus:border-purple-400 focus:outline-none transition bg-purple-50/30"
+              placeholder="••••••••" />
+          </div>
+          <div>
+            <label class="block text-slate-700 font-bold mb-2 text-sm" for="newChildRetypePassword">Confirm
+              Password</label>
+            <input type="password" id="newChildRetypePassword" required
+              class="w-full px-4 py-3 rounded-xl border-2 border-purple-100 focus:border-purple-400 focus:outline-none transition bg-purple-50/30"
+              placeholder="••••••••" />
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6">
+          <div>
+            <label class="block text-slate-700 font-bold mb-2 text-sm" for="newChildAge">Age</label>
+            <input type="number" id="newChildAge" required min="4" max="16"
+              class="w-full px-4 py-3 rounded-xl border-2 border-purple-100 focus:border-purple-400 focus:outline-none transition bg-purple-50/30"
+              placeholder="Age" />
+          </div>
+          <div>
+            <label class="block text-slate-700 font-bold mb-2 text-sm" for="newChildGrade">Grade</label>
+            <select id="newChildGrade" required
+              class="w-full px-4 py-3 rounded-xl border-2 border-purple-100 focus:border-purple-400 focus:outline-none transition bg-purple-50/30 appearance-none">
+              <option value="1">1st Grade</option>
+              <option value="2">2nd Grade</option>
+              <option value="3">3rd Grade</option>
+              <option value="4">4th Grade</option>
+              <option value="5">5th Grade</option>
+              <option value="6">6th Grade</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="addChildError"
+          class="hidden bg-red-50 text-red-600 p-4 rounded-xl text-sm font-medium border border-red-200"></div>
+
+        <div class="pt-4">
+          <button type="submit" id="saveChildBtn"
+            class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-4 rounded-2xl hover:from-purple-600 hover:to-pink-600 transition shadow-lg text-lg">
+            SAVE CHILD ACCOUNT
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 </body>
 
 </html>

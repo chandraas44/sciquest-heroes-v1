@@ -245,11 +245,15 @@ function buildNavLinks(isAuthenticated, basePath, currentPage) {
 
   if (isAuthenticated) {
     // Authenticated navigation (no logout button - it's in dropdown)
+    const homeActive = currentPage === 'parent-dashboard' ? 'text-purple-600 font-bold' : 'text-slate-700 hover:text-purple-600 transition font-bold';
     const storiesActive = currentPage === 'stories' || currentPage === 'stories-reader' || currentPage === 'stories-detail' ? 'text-purple-600 font-bold' : 'text-slate-700 hover:text-purple-600 transition font-bold';
     const chatActive = currentPage === 'chat' ? 'text-purple-600 font-bold' : 'text-slate-700 hover:text-purple-600 transition font-bold';
     const badgesActive = currentPage === 'badges' ? 'text-purple-600 font-bold' : 'text-slate-700 hover:text-purple-600 transition font-bold';
 
     links.push(`
+      <a href="${basePath}parent/dashboard.html" class="font-fredoka ${homeActive}">
+        Home
+      </a>
       <a href="${basePath}stories/index.html" class="font-fredoka ${storiesActive}">
         Stories
       </a>
