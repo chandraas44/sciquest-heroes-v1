@@ -5,8 +5,10 @@ const EDGE_ANALYTICS_URL = import.meta.env?.VITE_EDGE_ANALYTICS_URL || '';
 
 const USE_ANALYTICS_QUEUE = true;
 const ANALYTICS_QUEUE_KEY = 'sqh_analytics_queue_v1';
+const DASHBOARD_PROGRESS_KEY = 'sqh_dashboard_progress_v1';
 
 let supabaseClient = null;
+let cachedMockDashboardData = null;
 
 
 function hasSupabaseConfig() {
@@ -21,6 +23,48 @@ function getSupabaseClient() {
   return supabaseClient;
 }
 
+function buildEmptyChildProgress(childId, reason = "fallback") {
+   return {
+    stories: aggregateStoryProgress([]),
+    quizzes: aggregateQuizProgress([]),
+    chat: aggregateChatProgress([]),
+    streak: calculateStreak([], [], []),
+    activity: aggregateActivity([], [], [])
+  };
+}
+
+function getStoredDashboardProgress(childId) {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = window.localStorage.getItem(DASHBOARD_PROGRESS_KEY);
+    if (!raw) return null;
+    const store = JSON.parse(raw);
+    return store[childId] || null;
+  } catch (error) {
+    console.warn('[dashboard] Unable to read stored dashboard progress', error);
+    return null;
+  }
+}
+
+async function getMockDashboardProgress(childId) {
+  if (cachedMockDashboardData) {
+    return cachedMockDashboardData.progress?.[childId] || null;
+  }
+
+  try {
+    const response = await fetch('/parent/mockDashboardData.json');
+    if (!response.ok) {
+      console.warn('[dashboard] Failed to load mock dashboard data');
+      return null;
+    }
+    cachedMockDashboardData = await response.json();
+    return cachedMockDashboardData.progress?.[childId] || null;
+  } catch (error) {
+    console.warn('[dashboard] Error loading mock dashboard data', error);
+    return null;
+  }
+}
+
 export async function getCurrentUser() {
   const client = getSupabaseClient();
   if (!client) return null;
@@ -28,10 +72,6 @@ export async function getCurrentUser() {
   const { data: { user } } = await client.auth.getUser();
   return user;
 }
-
-
-
-
 
 export async function getParentChildren(parentId) {
   if (!parentId) throw new Error('parentId is required');
@@ -72,9 +112,9 @@ export async function getChildProgress(childId) {
 
   const client = getSupabaseClient();
   if (!client) {
-    return null;
+    return buildEmptyChildProgress(childId, "no_supabase_client");
   }
-
+  
   try {
     // Aggregate story progress
     const { data: storyProgress, error: storyError } = await client
@@ -100,19 +140,49 @@ export async function getChildProgress(childId) {
 
     if (chatError) throw chatError;
 
+    // Check if all arrays are empty (Supabase available but no data)
+    const storyData = storyProgress || [];
+    const quizData = quizAttempts || [];
+    const chatData = chatInteractions || [];
+    
+    const isEmpty = storyData.length === 0 && quizData.length === 0 && chatData.length === 0;
+    
+    if (isEmpty) {
+      // Fallback order: localStorage -> mock data -> empty progress
+      console.log('[dashboard] Supabase returned empty arrays, checking fallbacks...');
+      
+      // a) Check localStorage
+      const storedProgress = getStoredDashboardProgress(childId);
+      if (storedProgress) {
+        console.log('[dashboard] Using stored dashboard progress from localStorage');
+        return storedProgress;
+      }
+      
+      // b) Check mock data
+      const mockProgress = await getMockDashboardProgress(childId);
+      if (mockProgress) {
+        console.log('[dashboard] Using mock dashboard progress');
+        return mockProgress;
+      }
+      
+      // c) Return empty fallback
+      console.log('[dashboard] Using empty progress fallback');
+      return buildEmptyChildProgress(childId, "empty_data_fallback");
+    }
+
     // Transform to match mock structure
     return {
-      stories: aggregateStoryProgress(storyProgress || []),
-      quizzes: aggregateQuizProgress(quizAttempts || []),
-      chat: aggregateChatProgress(chatInteractions || []),
-      streak: calculateStreak(storyProgress || [], quizAttempts || [], chatInteractions || []),
-      activity: aggregateActivity(storyProgress || [], quizAttempts || [], chatInteractions || [])
+      stories: aggregateStoryProgress(storyData),
+      quizzes: aggregateQuizProgress(quizData),
+      chat: aggregateChatProgress(chatData),
+      streak: calculateStreak(storyData, quizData, chatData),
+      activity: aggregateActivity(storyData, quizData, chatData)
     };
-  } catch (error) {
-    console.warn('[dashboard] Supabase progress fetch failed', error);
-    return null;
+  } catch (err) {
+    console.warn("getChildProgress fallback:", err);
+    return buildEmptyChildProgress(childId, "supabase_error");
   }
-}
+  }
 
 export async function getChildBadges(childId) {
   if (!childId) throw new Error('childId is required');
