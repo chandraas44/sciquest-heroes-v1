@@ -193,15 +193,31 @@ export async function saveStoryProgress({
   const client = getSupabaseClient();
   if (client && !shouldUseMockData()) {
     try {
-      await client.from('story_progress').upsert({
+      console.log('[stories] Saving progress to Supabase:', { user_id: childId, story_id: storyId, last_panel_index: lastPanelIndex, completed });
+      const result = await client.from('story_progress').upsert({
         user_id: childId,
         story_id: storyId,
         last_panel_index: lastPanelIndex,
         completed_at: completed ? new Date().toISOString() : null
+      }, {
+        onConflict: 'user_id,story_id'
       });
+      console.log('[stories] Progress saved successfully to Supabase');
     } catch (error) {
-      console.warn('[stories] Supabase progress upsert failed', error);
+      console.error('[stories] ❌ CRITICAL: Supabase progress upsert failed:', error);
+      console.error('[stories] Error details:', {
+        message: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint
+      });
+      if (error.code === '42P01' || error.message?.includes('does not exist')) {
+        console.error('[stories] ❌ TABLE MISSING: story_progress table does not exist in Supabase!');
+        console.error('[stories] ❌ ACTION REQUIRED: Create the story_progress table in Supabase SQL Editor');
+      }
     }
+  } else {
+    console.warn('[stories] Not saving to Supabase - mock mode:', shouldUseMockData(), 'client:', !!client);
   }
 }
 

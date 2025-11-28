@@ -117,14 +117,62 @@ export async function getChildProgress(childId) {
   
   try {
     // Aggregate story progress
-    console.log('[dashboard] Querying story_progress for childId:', childId);
-    const { data: storyProgress, error: storyError } = await client
+    console.log('[dashboard] ===== STORY PROGRESS DEBUG =====');
+    console.log('[dashboard] Querying for childId (user_id):', childId);
+    console.log('[dashboard] childId type:', typeof childId);
+    
+    // First, check what columns exist and what data is in the table
+    const { data: allProgress, error: allError } = await client
+      .from('story_progress')
+      .select('*')
+      .limit(10);
+    
+    console.log('[dashboard] ALL story_progress records (sample):', allProgress);
+    console.log('[dashboard] Total records in table:', allProgress?.length || 0);
+    
+    if (allProgress && allProgress.length > 0) {
+      const firstRecord = allProgress[0];
+      console.log('[dashboard] Sample record structure:', Object.keys(firstRecord));
+      console.log('[dashboard] Sample record user_id:', firstRecord.user_id, 'Type:', typeof firstRecord.user_id);
+      console.log('[dashboard] Sample record child_id:', firstRecord.child_id, 'Type:', typeof firstRecord.child_id);
+      console.log('[dashboard] Comparing - Querying for:', childId, 'Type:', typeof childId);
+      allProgress.forEach((record, idx) => {
+        const recordUserId = record.user_id || record.child_id;
+        console.log(`[dashboard] Record ${idx}: user_id=${record.user_id}, child_id=${record.child_id}, matches=${String(recordUserId) === String(childId)}`);
+      });
+    }
+    
+    // Try querying with user_id first
+    let storyProgress = null;
+    let storyError = null;
+    
+    const { data: progressByUserId, error: errorByUserId } = await client
       .from('story_progress')
       .select('*')
       .eq('user_id', childId);
-
+    
+    if (!errorByUserId && progressByUserId) {
+      storyProgress = progressByUserId;
+      console.log('[dashboard] Found', storyProgress.length, 'records with user_id match');
+    } else {
+      console.warn('[dashboard] Query by user_id failed or returned empty, trying child_id...');
+      // Fallback: try child_id if user_id doesn't work
+      const { data: progressByChildId, error: errorByChildId } = await client
+        .from('story_progress')
+        .select('*')
+        .eq('child_id', childId);
+      
+      if (!errorByChildId && progressByChildId) {
+        storyProgress = progressByChildId;
+        console.log('[dashboard] Found', storyProgress.length, 'records with child_id match');
+      } else {
+        storyError = errorByChildId || errorByUserId;
+        console.error('[dashboard] Both queries failed');
+      }
+    }
+    
     if (storyError) {
-      console.error('[dashboard] Story progress query error:', storyError);
+      console.error('[dashboard] ❌ Story progress query error:', storyError);
       throw storyError;
     }
     
