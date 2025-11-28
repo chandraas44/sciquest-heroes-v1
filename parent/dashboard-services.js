@@ -132,13 +132,30 @@ export async function getChildProgress(childId) {
 
     if (quizError) throw quizError;
 
-    // Aggregate chat interactions
-    const { data: chatInteractions, error: chatError } = await client
-      .from('chat_messages')
+    // Aggregate chat interactions from chat_sessions
+    // Chat sessions store messages as JSON array, so we need to extract them
+    const { data: chatSessions, error: chatError } = await client
+      .from('chat_sessions')
       .select('*')
       .eq('user_id', childId);
 
     if (chatError) throw chatError;
+    
+    // Extract individual messages from chat sessions for dashboard aggregation
+    const chatInteractions = [];
+    if (chatSessions) {
+      chatSessions.forEach((session) => {
+        if (session.messages && Array.isArray(session.messages)) {
+          session.messages.forEach((msg) => {
+            chatInteractions.push({
+              role: msg.role,
+              topic_id: session.topic_id,
+              created_at: msg.timestamp || session.updated_at || session.created_at
+            });
+          });
+        }
+      });
+    }
 
     // Check if all arrays are empty (Supabase available but no data)
     const storyData = storyProgress || [];
@@ -261,8 +278,9 @@ export async function getChildBadges(childId) {
 
 // Helper functions for Supabase aggregation (future use)
 function aggregateStoryProgress(storyProgress) {
-  const completed = storyProgress.filter((sp) => sp.completed).length;
-  const inProgress = storyProgress.filter((sp) => !sp.completed && sp.last_panel_index > 0).length;
+  // Fixed: Use completed_at (timestamp) instead of completed (boolean)
+  const completed = storyProgress.filter((sp) => sp.completed_at != null).length;
+  const inProgress = storyProgress.filter((sp) => sp.completed_at == null && sp.last_panel_index > 0).length;
 
   // Group by topic
   const byTopic = {};
@@ -271,7 +289,7 @@ function aggregateStoryProgress(storyProgress) {
     if (!byTopic[topic]) {
       byTopic[topic] = { storiesRead: 0, inProgress: 0, lastOpened: null, completionPercentage: 0 };
     }
-    if (sp.completed) {
+    if (sp.completed_at != null) {
       byTopic[topic].storiesRead++;
     } else if (sp.last_panel_index > 0) {
       byTopic[topic].inProgress++;
