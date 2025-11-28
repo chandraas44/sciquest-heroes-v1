@@ -181,29 +181,44 @@ export async function getChildProgress(childId) {
     
     console.log('[dashboard] Found story progress records:', storyProgress?.length || 0);
     
-    // Get topic_tag from stories table for each story_id
+    // Get topic_tag and title from stories table for each story_id
     let mappedProgress = storyProgress || [];
     if (mappedProgress.length > 0) {
       const storyIds = [...new Set(mappedProgress.map(sp => sp.story_id))];
       try {
         const { data: stories } = await client
           .from('stories')
-          .select('id, topic_tag')
+          .select('id, topic_tag, title')
           .in('id', storyIds);
         
-        const topicMap = {};
-        (stories || []).forEach(s => { topicMap[s.id] = s.topic_tag; });
+        const storyMap = {};
+        (stories || []).forEach(s => { 
+          storyMap[s.id] = { topic_tag: s.topic_tag, title: s.title };
+        });
         
         mappedProgress = mappedProgress.map(sp => ({
           ...sp,
-          topic_tag: topicMap[sp.story_id] || null
+          topic_tag: storyMap[sp.story_id]?.topic_tag || 'General',
+          story_title: storyMap[sp.story_id]?.title || sp.story_id
         }));
+        
+        console.log('[dashboard] Mapped progress with story data:', mappedProgress.length, 'records');
+        if (mappedProgress.length > 0) {
+          console.log('[dashboard] Sample record:', {
+            story_id: mappedProgress[0].story_id,
+            story_title: mappedProgress[0].story_title,
+            topic_tag: mappedProgress[0].topic_tag,
+            last_panel_index: mappedProgress[0].last_panel_index,
+            completed_at: mappedProgress[0].completed_at
+          });
+        }
       } catch (topicError) {
-        console.warn('[dashboard] Failed to fetch topic_tags, continuing without them:', topicError);
-      }
-      
-      if (mappedProgress.length > 0) {
-        console.log('[dashboard] Sample record:', mappedProgress[0]);
+        console.warn('[dashboard] Failed to fetch story data, using defaults:', topicError);
+        mappedProgress = mappedProgress.map(sp => ({
+          ...sp,
+          topic_tag: sp.topic_tag || 'General',
+          story_title: sp.story_id
+        }));
       }
     }
 
@@ -385,34 +400,40 @@ function aggregateStoryProgress(storyProgress) {
         lastOpened: null, 
         completionPercentage: 0,
         totalStories: 0,
-        totalPanels: 0,
-        completedPanels: 0
+        completedPanels: 0,
+        totalPanels: 0
       };
     }
     
     byTopic[topic].totalStories++;
     
+    // Count completed stories
     if (sp.completed_at != null) {
       byTopic[topic].storiesRead++;
-      byTopic[topic].completedPanels += (sp.last_panel_index || 0);
-    } else if (sp.last_panel_index > 0) {
+    } 
+    // Count in-progress stories (has progress but not completed)
+    else if (sp.last_panel_index > 0) {
       byTopic[topic].inProgress++;
-      byTopic[topic].completedPanels += sp.last_panel_index;
     }
     
-    // Assume average story has 10 panels for percentage calculation
-    const avgPanelsPerStory = 10;
-    byTopic[topic].totalPanels += avgPanelsPerStory;
+    // Track panel progress for percentage
+    const currentPanels = sp.last_panel_index || 0;
+    byTopic[topic].completedPanels += currentPanels;
+    // Assume stories have ~10 panels on average for percentage calculation
+    byTopic[topic].totalPanels += 10;
     
-    if (!byTopic[topic].lastOpened || new Date(sp.updated_at || sp.created_at) > new Date(byTopic[topic].lastOpened)) {
-      byTopic[topic].lastOpened = sp.updated_at || sp.created_at;
+    // Track most recent activity
+    const recordDate = sp.updated_at || sp.created_at;
+    if (recordDate && (!byTopic[topic].lastOpened || new Date(recordDate) > new Date(byTopic[topic].lastOpened))) {
+      byTopic[topic].lastOpened = recordDate;
     }
   });
 
   // Calculate completion percentage for each topic
   const byTopicArray = Object.entries(byTopic).map(([topic, data]) => {
+    // Calculate percentage based on panels completed vs total panels
     const completionPercent = data.totalPanels > 0 
-      ? Math.round((data.completedPanels / data.totalPanels) * 100)
+      ? Math.min(100, Math.round((data.completedPanels / data.totalPanels) * 100))
       : 0;
     
     return {
