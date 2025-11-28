@@ -5,45 +5,537 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Photosynthesis Quiz - Beginner | SciQuest Heroes</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+
+
         body {
             font-family: 'Inter', sans-serif;
+            color: #1e293b;
+            min-height: 100vh;
         }
+
         .font-fredoka {
             font-family: 'Fredoka', sans-serif;
         }
+
+        .quiz-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #e2e8f0;
+        }
+
+        .quiz-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 36px;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 12px;
+        }
+
+        .quiz-subtitle {
+            font-size: 18px;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .question-card {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .question-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        .question-number {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin: 8px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateX(4px);
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: #e0e7ff;
+            font-weight: 600;
+        }
+
+        .option.correct {
+            background: #d1fae5;
+            border-color: #22c55e;
+            color: #166534;
+        }
+
+        .option.incorrect {
+            background: #fee2e2;
+            border-color: #ef4444;
+            color: #991b1b;
+        }
+
+        .option.disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .submit-btn {
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 16px 32px;
+            font-weight: 700;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Fredoka', sans-serif;
+            width: 100%;
+            margin-top: 24px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .results-section {
+            display: none;
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 3px solid #e2e8f0;
+        }
+
+        .results-section.show {
+            display: block;
+        }
+
+        .score-display {
+            text-align: center;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+        }
+
+        .score-text {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .score-label {
+            font-size: 20px;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .answer-key {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 24px;
+        }
+
+        .answer-key-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 20px;
+        }
+
+        .answer-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .answer-item:last-child {
+            border-bottom: none;
+        }
+
+        .answer-question {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .answer-correct {
+            color: #22c55e;
+            font-weight: 600;
+        }
+
+        .back-btn {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 24px;
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .back-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .quiz-container {
+                padding: 24px;
+            }
+
+            .quiz-title {
+                font-size: 28px;
+            }
+
+            .question-text {
+                font-size: 16px;
+            }
+        }
     </style>
 </head>
-<body class="bg-white min-h-screen">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl mb-4">
-                <span class="text-3xl">✅</span>
+<body class="min-h-screen bg-white text-slate-800">
+      <!-- Shared Navigation -->
+    <div id="nav-container"></div>
+    <script type="module" src="/components/nav.js"></script>
+    
+    <div class="pb-24 pt-24">
+        <div class="quiz-container">
+            <div class="quiz-header">
+                <h1 class="quiz-title">🌱 Photosynthesis Quiz - Beginner</h1>
+                <p class="quiz-subtitle">Test your understanding of how plants make food!</p>
             </div>
-            <h1 class="font-fredoka text-4xl font-bold text-slate-900 mb-2">Photosynthesis Quiz - Beginner</h1>
-            <p class="text-lg text-slate-600 mb-4">Grade Level: <span class="font-bold text-purple-600">K-2</span></p>
-            <p class="text-slate-700">🎉 Successfully routed from story reader!</p>
-            <p class="text-sm text-slate-500 mt-2">Quiz content coming soon...</p>
-        </div>
-        
-        <div class="bg-purple-50 border-2 border-purple-200 rounded-3xl p-6 mt-8">
-            <h2 class="font-fredoka text-2xl font-bold text-slate-900 mb-4">Quiz Routing Test Result</h2>
-            <ul class="space-y-2 text-slate-700">
-                <li>✅ Route: <code class="bg-white px-2 py-1 rounded text-sm">/quizzes/photosynthesis-quiz-beginner.html</code></li>
-                <li>✅ Grade Level Detected: <code class="bg-white px-2 py-1 rounded text-sm">K-2</code></li>
-                <li>✅ Difficulty Level: <code class="bg-white px-2 py-1 rounded text-sm">Beginner</code></li>
-            </ul>
-        </div>
 
-        <div class="mt-8 text-center">
-            <a href="/stories/index.html" class="inline-block px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold rounded-xl hover:from-purple-600 hover:to-pink-600 transition shadow-lg">
-                ← Back to Stories
-            </a>
+            <form id="quizForm">
+                <!-- Question 1 -->
+                <div class="question-card">
+                    <div class="question-number">Question 1</div>
+                    <div class="question-text">What do plants need most to grow and make food?</div>
+                    <div class="option" data-value="A" data-correct="false">A. Only water</div>
+                    <div class="option" data-value="B" data-correct="true">B. Sunlight, water, and air</div>
+                    <div class="option" data-value="C" data-correct="false">C. Only soil</div>
+                    <div class="option" data-value="D" data-correct="false">D. Only sunlight</div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="question-card">
+                    <div class="question-number">Question 2</div>
+                    <div class="question-text">Why do we see green leaves on trees and plants?</div>
+                    <div class="option" data-value="A" data-correct="false">A. Because they like the color green</div>
+                    <div class="option" data-value="B" data-correct="true">B. Because they have a special green color inside them</div>
+                    <div class="option" data-value="C" data-correct="false">C. Because they are painted green</div>
+                    <div class="option" data-value="D" data-correct="false">D. Because they grow in green places</div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="question-card">
+                    <div class="question-number">Question 3</div>
+                    <div class="question-text">When you see a tree in your backyard making new leaves in spring, what is it doing?</div>
+                    <div class="option" data-value="A" data-correct="false">A. Just resting</div>
+                    <div class="option" data-value="B" data-correct="true">B. Making food from sunlight</div>
+                    <div class="option" data-value="C" data-correct="false">C. Sleeping</div>
+                    <div class="option" data-value="D" data-correct="false">D. Nothing special</div>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="question-card">
+                    <div class="question-number">Question 4</div>
+                    <div class="question-text">What happens to a plant if you put it in a dark room with no windows?</div>
+                    <div class="option" data-value="A" data-correct="true">A. It won't grow well because it needs sunlight</div>
+                    <div class="option" data-value="B" data-correct="false">B. It will grow faster</div>
+                    <div class="option" data-value="C" data-correct="false">C. It will turn blue</div>
+                    <div class="option" data-value="D" data-correct="false">D. Nothing will happen</div>
+                </div>
+
+                <!-- Question 5 -->
+                <div class="question-card">
+                    <div class="question-number">Question 5</div>
+                    <div class="question-text">When you water a plant, what does the plant use that water for?</div>
+                    <div class="option" data-value="A" data-correct="false">A. To wash itself</div>
+                    <div class="option" data-value="B" data-correct="true">B. To help make food with sunlight</div>
+                    <div class="option" data-value="C" data-correct="false">C. To drink like we do</div>
+                    <div class="option" data-value="D" data-correct="false">D. To keep cool only</div>
+                </div>
+
+                <!-- Question 6 -->
+                <div class="question-card">
+                    <div class="question-number">Question 6</div>
+                    <div class="question-text">Why do farmers plant crops in fields where there is lots of sunshine?</div>
+                    <div class="option" data-value="A" data-correct="false">A. Because it looks pretty</div>
+                    <div class="option" data-value="B" data-correct="false">B. Because they like sunny days</div>
+                    <div class="option" data-value="C" data-correct="true">C. Because plants need sunlight to make food and grow</div>
+                    <div class="option" data-value="D" data-correct="false">D. Because it's easier to see the plants</div>
+                </div>
+
+                <!-- Question 7 -->
+                <div class="question-card">
+                    <div class="question-number">Question 7</div>
+                    <div class="question-text">What do plants give us that we need to breathe?</div>
+                    <div class="option" data-value="A" data-correct="false">A. Water</div>
+                    <div class="option" data-value="B" data-correct="true">B. Oxygen (the air we breathe)</div>
+                    <div class="option" data-value="C" data-correct="false">C. Food only</div>
+                    <div class="option" data-value="D" data-correct="false">D. Nothing</div>
+                </div>
+
+                <!-- Question 8 -->
+                <div class="question-card">
+                    <div class="question-number">Question 8</div>
+                    <div class="question-text">If you have a houseplant near a window, why does it grow better there?</div>
+                    <div class="option" data-value="A" data-correct="false">A. Because windows are pretty</div>
+                    <div class="option" data-value="B" data-correct="true">B. Because it gets more sunlight to make food</div>
+                    <div class="option" data-value="C" data-correct="false">C. Because it can see outside</div>
+                    <div class="option" data-value="D" data-correct="false">D. Because windows keep it warm only</div>
+                </div>
+
+                <!-- Question 9 -->
+                <div class="question-card">
+                    <div class="question-number">Question 9</div>
+                    <div class="question-text">What do plants make that helps them grow bigger and stronger?</div>
+                    <div class="option" data-value="A" data-correct="false">A. Only water</div>
+                    <div class="option" data-value="B" data-correct="true">B. Food (sugar) from sunlight, water, and air</div>
+                    <div class="option" data-value="C" data-correct="false">C. Only air</div>
+                    <div class="option" data-value="D" data-correct="false">D. Nothing special</div>
+                </div>
+
+                <!-- Question 10 -->
+                <div class="question-card">
+                    <div class="question-number">Question 10</div>
+                    <div class="question-text">Why is it important to have plants and trees in our neighborhoods and parks?</div>
+                    <div class="option" data-value="A" data-correct="false">A. Only because they look nice</div>
+                    <div class="option" data-value="B" data-correct="true">B. Because they make the air we breathe and help us stay healthy</div>
+                    <div class="option" data-value="C" data-correct="false">C. Because they don't need any care</div>
+                    <div class="option" data-value="D" data-correct="false">D. Only because animals live in them</div>
+                </div>
+
+                <button type="submit" class="submit-btn w-full px-5 py-3 rounded-xl from-purple-500 to-pink-500 text-white font-semibold hover:from-purple-600 hover:to-pink-600 transition shadow-md disabled:opacity-50 disabled:cursor-not-allowed text-sm bg-gradient-to-r" id="submitBtn">
+                    <i class="fas fa-check-circle mr-2"></i>Submit Quiz
+                </button>
+            </form>
+
+            <div class="results-section" id="resultsSection">
+                <div class="score-display">
+                    <div class="score-text" id="scoreText">0/10</div>
+                    <div class="score-label" id="scoreLabel">Great job!</div>
+                </div>
+
+                <div class="answer-key">
+                    <h2 class="answer-key-title">Answer Key</h2>
+                    <div class="answer-item">
+                        <div class="answer-question">Question 1: What do plants need most to grow and make food?</div>
+                        <div class="answer-correct">Correct Answer: B</div>
+                    </div>
+                    <div class="answer-item">
+                        <div class="answer-question">Question 2: Why do we see green leaves on trees and plants?</div>
+                        <div class="answer-correct">Correct Answer: B</div>
+                    </div>
+                    <div class="answer-item">
+                        <div class="answer-question">Question 3: When you see a tree in your backyard making new leaves in spring, what is it doing?</div>
+                        <div class="answer-correct">Correct Answer: B</div>
+                    </div>
+                    <div class="answer-item">
+                        <div class="answer-question">Question 4: What happens to a plant if you put it in a dark room with no windows?</div>
+                        <div class="answer-correct">Correct Answer: A</div>
+                    </div>
+                    <div class="answer-item">
+                        <div class="answer-question">Question 5: When you water a plant, what does the plant use that water for?</div>
+                        <div class="answer-correct">Correct Answer: B</div>
+                    </div>
+                    <div class="answer-item">
+                        <div class="answer-question">Question 6: Why do farmers plant crops in fields where there is lots of sunshine?</div>
+                        <div class="answer-correct">Correct Answer: C</div>
+                    </div>
+                    <div class="answer-item">
+                        <div class="answer-question">Question 7: What do plants give us that we need to breathe?</div>
+                        <div class="answer-correct">Correct Answer: B</div>
+                    </div>
+                    <div class="answer-item">
+                        <div class="answer-question">Question 8: If you have a houseplant near a window, why does it grow better there?</div>
+                        <div class="answer-correct">Correct Answer: B</div>
+                    </div>
+                    <div class="answer-item">
+                        <div class="answer-question">Question 9: What do plants make that helps them grow bigger and stronger?</div>
+                        <div class="answer-correct">Correct Answer: B</div>
+                    </div>
+                    <div class="answer-item">
+                        <div class="answer-question">Question 10: Why is it important to have plants and trees in our neighborhoods and parks?</div>
+                        <div class="answer-correct">Correct Answer: B</div>
+                    </div>
+                </div>
+
+                <a href="../dashboards/student-dashboard.html" class="back-btn">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+                </a>
+            </div>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="bg-gradient-to-br from-purple-50 to-pink-50 border-t border-purple-200 mt-auto py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-center items-center">
+            <p class="text-slate-500 text-xs font-medium">© 2025 SciQuest Heroes. Safe learning for curious minds.</p>
+        </div>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { saveQuizResult, getCurrentUserId } from '../quiz-handler.js';
+
+        const quizForm = document.getElementById('quizForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const resultsSection = document.getElementById('resultsSection');
+        const scoreText = document.getElementById('scoreText');
+        const scoreLabel = document.getElementById('scoreLabel');
+        const options = document.querySelectorAll('.option');
+        let selectedAnswers = {};
+        let quizSubmitted = false;
+
+        // Handle option selection
+        options.forEach(option => {
+            option.addEventListener('click', function() {
+                if (quizSubmitted) return;
+
+                const questionCard = this.closest('.question-card');
+                const questionOptions = questionCard.querySelectorAll('.option');
+                
+                // Remove selected class from all options in this question
+                questionOptions.forEach(opt => opt.classList.remove('selected'));
+                
+                // Add selected class to clicked option
+                this.classList.add('selected');
+                
+                // Store the answer
+                const questionNumber = questionCard.querySelector('.question-number').textContent;
+                selectedAnswers[questionNumber] = this.dataset.value;
+            });
+        });
+
+        // Handle form submission
+        quizForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (quizSubmitted) return;
+
+            // Check if all questions are answered
+            const totalQuestions = document.querySelectorAll('.question-card').length;
+            if (Object.keys(selectedAnswers).length < totalQuestions) {
+                alert('Please answer all questions before submitting!');
+                return;
+            }
+
+            quizSubmitted = true;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            // Calculate score
+            let score = 0;
+            options.forEach(option => {
+                const questionCard = option.closest('.question-card');
+                const isSelected = option.classList.contains('selected');
+                const isCorrect = option.dataset.correct === 'true';
+
+                if (isSelected && isCorrect) {
+                    score++;
+                    option.classList.add('correct');
+                } else if (isSelected && !isCorrect) {
+                    option.classList.add('incorrect');
+                }
+
+                // Show correct answer
+                if (isCorrect) {
+                    option.classList.add('correct');
+                }
+
+                option.classList.add('disabled');
+            });
+
+            // Display results
+            scoreText.textContent = `${score}/10`;
+            if (score === 10) {
+                scoreLabel.textContent = "Perfect! You're a photosynthesis expert! 🌟";
+            } else if (score >= 7) {
+                scoreLabel.textContent = 'Excellent work! You understand photosynthesis well! 🌱';
+            } else if (score >= 5) {
+                scoreLabel.textContent = 'Good job! Keep learning about plants! 🌿';
+            } else {
+                scoreLabel.textContent = 'Nice try! Review the answers and try again! 💪';
+            }
+
+            resultsSection.classList.add('show');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Save results to database
+            try {
+                const userId = await getCurrentUserId();
+                if (userId) {
+                    const result = await saveQuizResult(userId, 'photosynthesis', 'beginner', score);
+                    if (result.success) {
+                        console.log('Quiz results saved successfully');
+                    } else {
+                        console.error('Failed to save quiz results:', result.error);
+                    }
+                }
+            } catch (error) {
+                console.error('Error saving quiz results:', error);
+            }
+        });
+    </script>
 </body>
 </html>
 

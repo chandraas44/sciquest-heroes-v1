@@ -1,5 +1,6 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
 import { supabaseConfig } from '../config.js';
+import { determineQuizLevel } from '../quiz-handler.js';
 
 const supabaseUrl = supabaseConfig.url;
 const supabaseAnonKey = supabaseConfig.anonKey;
@@ -76,9 +77,23 @@ async function loadChildProfile(profile) {
             currentGrade.textContent = profile.grade_level;
         }
 
+        // Set up quiz navigation based on grade level
+        setupQuizNavigation(profile.grade_level);
+
     } catch (error) {
         console.error('Error loading profile:', error);
     }
+}
+
+function setupQuizNavigation(gradeLevel) {
+    const quizCard = document.getElementById('photosynthesisQuizCard');
+    if (!quizCard) return;
+
+    quizCard.addEventListener('click', () => {
+        const quizLevel = determineQuizLevel(gradeLevel);
+        const quizPath = `../quizzes/photosynthesis-quiz-${quizLevel}.html`;
+        window.location.href = quizPath;
+    });
 }
 
 userMenuTrigger.addEventListener('click', (e) => {
