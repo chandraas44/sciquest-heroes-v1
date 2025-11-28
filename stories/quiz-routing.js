@@ -12,7 +12,7 @@ let userProfileCache = null;
  * Gets user profile from Supabase to extract grade level
  * @returns {Promise<Object|null>} User profile or null if not found
  */
-async function getUserProfile() {
+export async function getUserProfile() {
   // Return cached profile if available
   if (userProfileCache) {
     return userProfileCache;

@@ -195,11 +195,10 @@ async function handleSendMessage() {
   state.isLoading = false;
   sendBtnEl.disabled = false;
 
-  saveTranscript(state.sessionId, {
+  await saveTranscript(state.sessionId, {
     topicId: state.topicId,
     messages: state.messages,
     context: state.context,
-    childId: 'guest-child',
     createdAt: state.messages[0]?.timestamp || new Date().toISOString()
   });
   
@@ -295,11 +294,10 @@ async function initChatSession() {
     panelId: state.context.panelId
   });
 
-  saveTranscript(state.sessionId, {
+  await saveTranscript(state.sessionId, {
     topicId: state.topicId,
     messages: state.messages,
     context: state.context,
-    childId: 'guest-child',
     createdAt: state.messages[0]?.timestamp || new Date().toISOString()
   });
 }
