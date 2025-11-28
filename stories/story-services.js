@@ -193,31 +193,40 @@ export async function saveStoryProgress({
   const client = getSupabaseClient();
   if (client && !shouldUseMockData()) {
     try {
-      console.log('[stories] Saving progress to Supabase:', { user_id: childId, story_id: storyId, last_panel_index: lastPanelIndex, completed });
-      const result = await client.from('story_progress').upsert({
+      // Try saving with user_id first
+      const payload = {
         user_id: childId,
         story_id: storyId,
         last_panel_index: lastPanelIndex,
         completed_at: completed ? new Date().toISOString() : null
-      }, {
-        onConflict: 'user_id,story_id'
-      });
-      console.log('[stories] Progress saved successfully to Supabase');
-    } catch (error) {
-      console.error('[stories] ❌ CRITICAL: Supabase progress upsert failed:', error);
-      console.error('[stories] Error details:', {
-        message: error.message,
-        code: error.code,
-        details: error.details,
-        hint: error.hint
-      });
-      if (error.code === '42P01' || error.message?.includes('does not exist')) {
-        console.error('[stories] ❌ TABLE MISSING: story_progress table does not exist in Supabase!');
-        console.error('[stories] ❌ ACTION REQUIRED: Create the story_progress table in Supabase SQL Editor');
+      };
+      
+      try {
+        await client.from('story_progress').upsert(payload, {
+          onConflict: 'user_id,story_id'
+        });
+        console.log('[stories] Progress saved with user_id');
+      } catch (userIdError) {
+        // If user_id fails, try with child_id as fallback
+        if (userIdError.code === '42703' || userIdError.message?.includes('user_id')) {
+          console.warn('[stories] user_id column not found, trying child_id...');
+          const childIdPayload = {
+            child_id: childId,
+            story_id: storyId,
+            last_panel_index: lastPanelIndex,
+            completed_at: completed ? new Date().toISOString() : null
+          };
+          await client.from('story_progress').upsert(childIdPayload, {
+            onConflict: 'child_id,story_id'
+          });
+          console.log('[stories] Progress saved with child_id');
+        } else {
+          throw userIdError;
+        }
       }
+    } catch (error) {
+      console.error('[stories] ❌ Supabase progress upsert failed:', error);
     }
-  } else {
-    console.warn('[stories] Not saving to Supabase - mock mode:', shouldUseMockData(), 'client:', !!client);
   }
 }
 
