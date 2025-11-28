@@ -610,7 +610,23 @@ function persistTranscripts(store) {
   }
 }
 
-export function saveTranscript(sessionId, transcript) {
+/**
+ * Get current logged-in user ID from Supabase session
+ * @returns {Promise<string|null>} User ID or null if not logged in
+ */
+async function getCurrentUserId() {
+  try {
+    const client = getSupabaseClient();
+    if (!client) return null;
+    const { data: { session } } = await client.auth.getSession();
+    return session?.user?.id || null;
+  } catch (error) {
+    console.warn('[chat] Failed to get current user ID', error);
+    return null;
+  }
+}
+
+export async function saveTranscript(sessionId, transcript) {
   if (!sessionId) throw new Error('sessionId is required');
   const store = getStoredTranscripts();
   store[sessionId] = {
@@ -621,11 +637,17 @@ export function saveTranscript(sessionId, transcript) {
 
   const client = getSupabaseClient();
   if (client && !shouldUseMockData()) {
+    // Get actual user ID if not provided in transcript
+    let userId = transcript.childId;
+    if (!userId) {
+      userId = await getCurrentUserId() || DEFAULT_CHILD_ID;
+    }
+    
     client
       .from('chat_sessions')
       .upsert({
         session_id: sessionId,
-        child_id: transcript.childId || DEFAULT_CHILD_ID,
+        user_id: userId,
         topic_id: transcript.topicId,
         messages: transcript.messages,
         context: transcript.context,

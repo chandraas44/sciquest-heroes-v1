@@ -117,12 +117,110 @@ export async function getChildProgress(childId) {
   
   try {
     // Aggregate story progress
-    const { data: storyProgress, error: storyError } = await client
+    console.log('[dashboard] ===== STORY PROGRESS DEBUG =====');
+    console.log('[dashboard] Querying for childId (user_id):', childId);
+    console.log('[dashboard] childId type:', typeof childId);
+    
+    // First, check what columns exist and what data is in the table
+    const { data: allProgress, error: allError } = await client
       .from('story_progress')
       .select('*')
-      .eq('user_id', childId);
-
-    if (storyError) throw storyError;
+      .limit(10);
+    
+    console.log('[dashboard] ALL story_progress records (sample):', allProgress);
+    console.log('[dashboard] Total records in table:', allProgress?.length || 0);
+    
+    if (allProgress && allProgress.length > 0) {
+      const firstRecord = allProgress[0];
+      console.log('[dashboard] Sample record structure:', Object.keys(firstRecord));
+      console.log('[dashboard] Sample record user_id:', firstRecord.user_id, 'Type:', typeof firstRecord.user_id);
+      console.log('[dashboard] Sample record child_id:', firstRecord.child_id, 'Type:', typeof firstRecord.child_id);
+      console.log('[dashboard] Comparing - Querying for:', childId, 'Type:', typeof childId);
+      allProgress.forEach((record, idx) => {
+        const recordUserId = record.user_id || record.child_id;
+        console.log(`[dashboard] Record ${idx}: user_id=${record.user_id}, child_id=${record.child_id}, matches=${String(recordUserId) === String(childId)}`);
+      });
+    }
+    
+    // Query all records and filter manually to handle both user_id and child_id
+    let storyProgress = [];
+    
+    if (allProgress && allProgress.length > 0) {
+      // Check which field exists in the table
+      const hasUserId = 'user_id' in allProgress[0];
+      const hasChildId = 'child_id' in allProgress[0];
+      
+      // Filter records that match the childId
+      storyProgress = allProgress.filter(record => {
+        const recordUserId = hasUserId ? record.user_id : (hasChildId ? record.child_id : null);
+        return recordUserId && String(recordUserId) === String(childId);
+      });
+      
+      console.log('[dashboard] Filtered', storyProgress.length, 'matching records');
+    } else {
+      // If no records at all, try direct query
+      const { data: directQuery, error: directError } = await client
+        .from('story_progress')
+        .select('*')
+        .eq('user_id', childId);
+      
+      if (!directError && directQuery) {
+        storyProgress = directQuery;
+      } else {
+        // Try child_id as fallback
+        const { data: childIdQuery, error: childIdError } = await client
+          .from('story_progress')
+          .select('*')
+          .eq('child_id', childId);
+        
+        if (!childIdError && childIdQuery) {
+          storyProgress = childIdQuery;
+        }
+      }
+    }
+    
+    console.log('[dashboard] Found story progress records:', storyProgress?.length || 0);
+    
+    // Get topic_tag and title from stories table for each story_id
+    let mappedProgress = storyProgress || [];
+    if (mappedProgress.length > 0) {
+      const storyIds = [...new Set(mappedProgress.map(sp => sp.story_id))];
+      try {
+        const { data: stories } = await client
+          .from('stories')
+          .select('id, topic_tag, title')
+          .in('id', storyIds);
+        
+        const storyMap = {};
+        (stories || []).forEach(s => { 
+          storyMap[s.id] = { topic_tag: s.topic_tag, title: s.title };
+        });
+        
+        mappedProgress = mappedProgress.map(sp => ({
+          ...sp,
+          topic_tag: storyMap[sp.story_id]?.topic_tag || 'General',
+          story_title: storyMap[sp.story_id]?.title || sp.story_id
+        }));
+        
+        console.log('[dashboard] Mapped progress with story data:', mappedProgress.length, 'records');
+        if (mappedProgress.length > 0) {
+          console.log('[dashboard] Sample record:', {
+            story_id: mappedProgress[0].story_id,
+            story_title: mappedProgress[0].story_title,
+            topic_tag: mappedProgress[0].topic_tag,
+            last_panel_index: mappedProgress[0].last_panel_index,
+            completed_at: mappedProgress[0].completed_at
+          });
+        }
+      } catch (topicError) {
+        console.warn('[dashboard] Failed to fetch story data, using defaults:', topicError);
+        mappedProgress = mappedProgress.map(sp => ({
+          ...sp,
+          topic_tag: sp.topic_tag || 'General',
+          story_title: sp.story_id
+        }));
+      }
+    }
 
     // Aggregate quiz attempts
     const { data: quizAttempts, error: quizError } = await client
@@ -132,16 +230,33 @@ export async function getChildProgress(childId) {
 
     if (quizError) throw quizError;
 
-    // Aggregate chat interactions
-    const { data: chatInteractions, error: chatError } = await client
-      .from('chat_messages')
+    // Aggregate chat interactions from chat_sessions
+    // Chat sessions store messages as JSON array, so we need to extract them
+    const { data: chatSessions, error: chatError } = await client
+      .from('chat_sessions')
       .select('*')
       .eq('user_id', childId);
 
     if (chatError) throw chatError;
+    
+    // Extract individual messages from chat sessions for dashboard aggregation
+    const chatInteractions = [];
+    if (chatSessions) {
+      chatSessions.forEach((session) => {
+        if (session.messages && Array.isArray(session.messages)) {
+          session.messages.forEach((msg) => {
+            chatInteractions.push({
+              role: msg.role,
+              topic_id: session.topic_id,
+              created_at: msg.timestamp || session.updated_at || session.created_at
+            });
+          });
+        }
+      });
+    }
 
     // Check if all arrays are empty (Supabase available but no data)
-    const storyData = storyProgress || [];
+    const storyData = mappedProgress || [];
     const quizData = quizAttempts || [];
     const chatData = chatInteractions || [];
     
@@ -261,35 +376,81 @@ export async function getChildBadges(childId) {
 
 // Helper functions for Supabase aggregation (future use)
 function aggregateStoryProgress(storyProgress) {
-  const completed = storyProgress.filter((sp) => sp.completed).length;
-  const inProgress = storyProgress.filter((sp) => !sp.completed && sp.last_panel_index > 0).length;
+  if (!storyProgress || storyProgress.length === 0) {
+    return {
+      completed: 0,
+      inProgress: 0,
+      total: 0,
+      byTopic: []
+    };
+  }
 
-  // Group by topic
+  // Fixed: Use completed_at (timestamp) instead of completed (boolean)
+  const completed = storyProgress.filter((sp) => sp.completed_at != null).length;
+  const inProgress = storyProgress.filter((sp) => sp.completed_at == null && sp.last_panel_index > 0).length;
+
+  // Group by topic and calculate completion percentage
   const byTopic = {};
   storyProgress.forEach((sp) => {
-    const topic = sp.topic_tag || 'Unknown';
+    const topic = sp.topic_tag || 'General';
     if (!byTopic[topic]) {
-      byTopic[topic] = { storiesRead: 0, inProgress: 0, lastOpened: null, completionPercentage: 0 };
+      byTopic[topic] = { 
+        storiesRead: 0, 
+        inProgress: 0, 
+        lastOpened: null, 
+        completionPercentage: 0,
+        totalStories: 0,
+        completedPanels: 0,
+        totalPanels: 0
+      };
     }
-    if (sp.completed) {
+    
+    byTopic[topic].totalStories++;
+    
+    // Count completed stories
+    if (sp.completed_at != null) {
       byTopic[topic].storiesRead++;
-    } else if (sp.last_panel_index > 0) {
+    } 
+    // Count in-progress stories (has progress but not completed)
+    else if (sp.last_panel_index > 0) {
       byTopic[topic].inProgress++;
     }
-    if (!byTopic[topic].lastOpened || new Date(sp.updated_at) > new Date(byTopic[topic].lastOpened)) {
-      byTopic[topic].lastOpened = sp.updated_at;
+    
+    // Track panel progress for percentage
+    const currentPanels = sp.last_panel_index || 0;
+    byTopic[topic].completedPanels += currentPanels;
+    // Assume stories have ~10 panels on average for percentage calculation
+    byTopic[topic].totalPanels += 10;
+    
+    // Track most recent activity
+    const recordDate = sp.updated_at || sp.created_at;
+    if (recordDate && (!byTopic[topic].lastOpened || new Date(recordDate) > new Date(byTopic[topic].lastOpened))) {
+      byTopic[topic].lastOpened = recordDate;
     }
+  });
+
+  // Calculate completion percentage for each topic
+  const byTopicArray = Object.entries(byTopic).map(([topic, data]) => {
+    // Calculate percentage based on panels completed vs total panels
+    const completionPercent = data.totalPanels > 0 
+      ? Math.min(100, Math.round((data.completedPanels / data.totalPanels) * 100))
+      : 0;
+    
+    return {
+      topic,
+      icon: getTopicIcon(topic),
+      storiesRead: data.storiesRead,
+      inProgress: data.inProgress,
+      lastOpened: data.lastOpened,
+      completionPercentage: completionPercent
+    };
   });
 
   return {
     completed,
     inProgress,
     total: storyProgress.length,
-    byTopic: Object.entries(byTopic).map(([topic, data]) => ({
-      topic,
-      icon: getTopicIcon(topic),
-      ...data
-    }))
+    byTopic: byTopicArray
   };
 }
 

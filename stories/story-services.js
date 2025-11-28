@@ -59,7 +59,8 @@ export async function getStoryList() {
         topic_tag,
         reading_level,
         estimated_time,
-        summary
+        summary,
+        enabled
       `)
       .order('title');
 
@@ -72,7 +73,8 @@ export async function getStoryList() {
       topicTag: story.topic_tag,
       readingLevel: story.reading_level,
       estimatedTime: story.estimated_time,
-      summary: story.summary
+      summary: story.summary,
+      enabled: story.enabled !== false  // Default to true if not specified
     }));
   } catch (error) {
     console.warn('[stories] Supabase stories fetch failed, reverting to mock data', error);
@@ -151,13 +153,35 @@ export function getStoryProgressSummary(storyId, childId = DEFAULT_CHILD_ID) {
   return store[childId]?.[storyId] || { lastPanelIndex: 0, completedAt: null };
 }
 
+/**
+ * Get current logged-in user ID from Supabase session
+ * @returns {Promise<string|null>} User ID or null if not logged in
+ */
+async function getCurrentUserId() {
+  try {
+    const client = getSupabaseClient();
+    if (!client) return null;
+    const { data: { session } } = await client.auth.getSession();
+    return session?.user?.id || null;
+  } catch (error) {
+    console.warn('[stories] Failed to get current user ID', error);
+    return null;
+  }
+}
+
 export async function saveStoryProgress({
   storyId,
   lastPanelIndex = 0,
   completed = false,
-  childId = DEFAULT_CHILD_ID
+  childId = null
 }) {
   if (!storyId) throw new Error('storyId is required to save progress');
+  
+  // Get actual user ID if not provided
+  if (!childId) {
+    childId = await getCurrentUserId() || DEFAULT_CHILD_ID;
+  }
+  
   const store = getStoredProgress();
   if (!store[childId]) store[childId] = {};
   store[childId][storyId] = {
@@ -169,14 +193,39 @@ export async function saveStoryProgress({
   const client = getSupabaseClient();
   if (client && !shouldUseMockData()) {
     try {
-      await client.from('story_progress').upsert({
-        child_id: childId,
+      // Try saving with user_id first
+      const payload = {
+        user_id: childId,
         story_id: storyId,
         last_panel_index: lastPanelIndex,
         completed_at: completed ? new Date().toISOString() : null
-      });
+      };
+      
+      try {
+        await client.from('story_progress').upsert(payload, {
+          onConflict: 'user_id,story_id'
+        });
+        console.log('[stories] Progress saved with user_id');
+      } catch (userIdError) {
+        // If user_id fails, try with child_id as fallback
+        if (userIdError.code === '42703' || userIdError.message?.includes('user_id')) {
+          console.warn('[stories] user_id column not found, trying child_id...');
+          const childIdPayload = {
+            child_id: childId,
+            story_id: storyId,
+            last_panel_index: lastPanelIndex,
+            completed_at: completed ? new Date().toISOString() : null
+          };
+          await client.from('story_progress').upsert(childIdPayload, {
+            onConflict: 'child_id,story_id'
+          });
+          console.log('[stories] Progress saved with child_id');
+        } else {
+          throw userIdError;
+        }
+      }
     } catch (error) {
-      console.warn('[stories] Supabase progress upsert failed', error);
+      console.error('[stories] ❌ Supabase progress upsert failed:', error);
     }
   }
 }
