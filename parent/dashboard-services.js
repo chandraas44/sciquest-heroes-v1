@@ -153,18 +153,32 @@ export async function getChildProgress(childId) {
       
       // a) Check localStorage
       const storedProgress = getStoredDashboardProgress(childId);
-      if (storedProgress) {
+      if (
+        storedProgress &&
+        storedProgress.stories &&
+        storedProgress.quizzes &&
+        storedProgress.chat &&
+        storedProgress.streak &&
+        storedProgress.activity
+      ) {
         console.log('[dashboard] Using stored dashboard progress from localStorage');
         return storedProgress;
       }
-      
+            
       // b) Check mock data
       const mockProgress = await getMockDashboardProgress(childId);
-      if (mockProgress) {
+      if (
+        mockProgress &&
+        mockProgress.stories &&
+        mockProgress.quizzes &&
+        mockProgress.chat &&
+        mockProgress.streak &&
+        mockProgress.activity
+      ) {
         console.log('[dashboard] Using mock dashboard progress');
         return mockProgress;
       }
-      
+            
       // c) Return empty fallback
       console.log('[dashboard] Using empty progress fallback');
       return buildEmptyChildProgress(childId, "empty_data_fallback");
