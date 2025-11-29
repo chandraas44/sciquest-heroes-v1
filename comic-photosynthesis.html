@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Photosynthesis Adventure | SciQuest Heroes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #030712;
+      color: #030712;
+    }
+
+    .font-fredoka {
+      font-family: 'Fredoka', sans-serif;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: #cbd5e1;
+      transition: transform 0.2s ease, background 0.2s ease;
+      cursor: pointer;
+    }
+
+    .dot.active {
+      transform: scale(1.2);
+      background: #f59e0b;
+    }
+
+    .dot:hover {
+      background: #94a3b8;
+    }
+
+    .glossary-pill {
+      border: 1px solid #cbd5e1;
+    }
+
+    dialog::backdrop {
+      background: rgba(0, 0, 0, 0.5);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen bg-white text-slate-900">
+  <!-- Header -->
+  <nav class="fixed w-full z-50 backdrop-blur-xl bg-white/80 border-b border-slate-200 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-20">
+        <div class="flex items-center space-x-4">
+          <div
+            class="w-14 h-14 bg-gradient-to-br from-purple-500 via-pink-500 to-pink-600 rounded-3xl flex items-center justify-center border-4 border-white/30 shadow-2xl">
+            <span class="text-3xl">🌿</span>
+          </div>
+          <a href="index.html"
+            class="font-fredoka text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">SciQuest
+            Heroes</a>
+        </div>
+        <div class="hidden lg:flex items-center space-x-6">
+          <a href="stories/index.html"
+            class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold">Stories</a>
+          <a href="chat/index.html"
+            class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold">Chat</a>
+          <a href="index.html"
+            class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold">Home</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div class="min-h-screen pb-16 pt-24 bg-white">
+    <header class="max-w-5xl mx-auto px-6 pt-10 flex items-center justify-between gap-4">
+      <button onclick="window.location.href='index.html'"
+        class="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-slate-600 hover:text-slate-900 transition">
+        ← Home
+      </button>
+      <div class="text-right">
+        <p class="text-xs uppercase tracking-[0.3em] text-slate-500">Comic</p>
+        <p id="viewerStoryTitle" class="font-fredoka text-lg font-semibold text-slate-900">The Photosynthesis Adventure</p>
+      </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-6 mt-6 grid lg:grid-cols-[3fr,2fr] gap-8 items-start">
+      <section class="bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 flex flex-col gap-4 shadow-lg">
+        <div class="relative aspect-[4/3] bg-slate-100 rounded-2xl overflow-hidden border border-slate-200 shadow-md">
+          <img id="panelImage" src="images/L1P1Photosynthesis.png" alt="Comic panel" class="w-full h-full object-cover" />
+          <div
+            class="absolute top-3 right-3 bg-black/60 text-white px-3 py-1 rounded-full text-xs font-semibold tracking-wide"
+            id="panelTag">Panel 1</div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs uppercase tracking-widest text-slate-600">
+          <span id="panelPositionLabel">Panel 1 of 6</span>
+          <button id="openGlossaryBtn" class="text-amber-600 hover:text-amber-700 font-semibold">Glossary</button>
+        </div>
+
+        <p id="panelNarration"
+          class="bg-indigo-50 border border-indigo-200 rounded-3xl text-slate-800 text-lg leading-relaxed p-5 shadow-md">
+          The leaf glows softly as Mr. Chloro pops in with a cheerful smile. He loves showing kids the secret life of plants! Mr. Chloro: "Ready for a leaf adventure?" Child: "Whoa… plants can do THAT?"
+        </p>
+
+        <div class="flex items-center justify-between mt-2">
+          <button id="prevPanelBtn"
+            class="px-4 py-3 rounded-full bg-slate-100 text-slate-700 font-semibold border border-slate-300 hover:bg-slate-200 transition disabled:opacity-40 disabled:cursor-not-allowed"
+            disabled>
+            ← Previous
+          </button>
+          <div id="progressDots" class="flex items-center gap-2"></div>
+          <button id="nextPanelBtn"
+            class="px-4 py-3 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold shadow hover:from-purple-600 hover:to-pink-600 transition disabled:opacity-50 disabled:cursor-not-allowed">
+            Next →
+          </button>
+        </div>
+      </section>
+
+      <aside class="flex flex-col gap-6">
+        <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-lg">
+          <p class="text-xs uppercase tracking-[0.3em] text-slate-500">Panel helper</p>
+          <h2 id="helperTitle" class="font-fredoka text-2xl mt-2 text-slate-900">Stay curious!</h2>
+          <p id="helperText" class="text-slate-700 mt-2 text-sm">
+            Panel insights and guiding questions will appear here.
+          </p>
+          <button id="chatCtaBtn"
+            class="mt-4 w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-3 rounded-2xl hover:from-purple-600 hover:to-pink-600 transition shadow-lg">
+            Ask the AI about this panel
+          </button>
+        </div>
+
+        <div class="bg-purple-50 border border-purple-200 rounded-3xl p-5 text-sm text-slate-800 space-y-3 shadow-md">
+          <div>
+            <p class="uppercase text-xs tracking-[0.3em] text-slate-600">Progress</p>
+            <p id="progressSummary" class="font-bold text-lg mt-1 text-slate-900">Panel 1/6</p>
+          </div>
+          <div>
+            <p class="uppercase text-xs tracking-[0.3em] text-slate-600">Tips</p>
+            <p class="text-slate-700">Tap Next when you finish reading. Completing all panels unlocks curiosity badges
+              later.</p>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <dialog id="glossaryDialog" class="rounded-3xl border-0 p-0 max-w-lg w-full">
+    <div class="bg-white border border-slate-200 rounded-3xl shadow-xl overflow-hidden">
+      <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <h3 class="font-fredoka text-xl text-slate-900">Glossary</h3>
+        <button id="closeGlossaryBtn" class="text-slate-600 hover:text-slate-900 font-bold">Close ✕</button>
+      </div>
+      <div id="glossaryList" class="p-6 flex flex-wrap gap-3 text-sm font-semibold text-slate-700"></div>
+    </div>
+  </dialog>
+
+  <!-- Footer -->
+  <footer class="bg-slate-50 border-t border-slate-200 mt-auto py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="flex items-center space-x-3">
+          <div
+            class="w-10 h-10 bg-gradient-to-br from-purple-500 via-pink-500 to-pink-600 rounded-2xl flex items-center justify-center border-2 border-purple-300">
+            <span class="text-2xl">🌿</span>
+          </div>
+          <span class="font-fredoka text-lg font-bold text-slate-900">SciQuest Heroes</span>
+        </div>
+        <div class="flex items-center gap-6 text-slate-600 text-sm font-semibold">
+          <a href="index.html" class="hover:text-slate-900 transition">Home</a>
+          <a href="stories/index.html" class="hover:text-slate-900 transition">Stories</a>
+          <a href="chat/index.html" class="hover:text-slate-900 transition">Chat</a>
+        </div>
+        <p class="text-slate-500 text-xs font-medium">© 2025 SciQuest Heroes. Safe learning for curious minds.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module">
+    // Panel data structure
+    const panels = [
+      {
+        panelId: "panel-01",
+        imageUrl: "images/L1P1Photosynthesis.png",
+        narration: "The leaf glows softly as Mr. Chloro pops in with a cheerful smile. He loves showing kids the secret life of plants! Mr. Chloro: \"Ready for a leaf adventure?\" Child: \"Whoa… plants can do THAT?\"",
+        title: "Introduction: Meet Mr. Chloro",
+        glossaryTerms: ["leaf", "plant", "photosynthesis"],
+        ctaLabel: "Ask Mr. Chloro about photosynthesis"
+      },
+      {
+        panelId: "panel-02",
+        imageUrl: "images/L1P2Photosynthesis.png",
+        narration: "Sunbeams dance across the leaf like tiny golden helpers. Mr. Chloro shows how plants catch this magical light. Mr. Chloro: \"Sunlight is step one!\" Child: \"It's shining right on us!\"",
+        title: "Sunlight: The First Ingredient",
+        glossaryTerms: ["sunlight", "sunbeams", "leaves"],
+        ctaLabel: "How do leaves capture sunlight?"
+      },
+      {
+        panelId: "panel-03",
+        imageUrl: "images/L1P3Photosynthesis.png",
+        narration: "Under the soil, glowing drops of water travel from roots up the stem—like a secret elevator delivering a drink to every leaf. Mr. Chloro: \"Roots sip water!\" Child: \"They DRINK? That's cool!\"",
+        title: "Water: The Underground Drink",
+        glossaryTerms: ["roots", "stem", "water", "soil"],
+        ctaLabel: "How do plants drink water?"
+      },
+      {
+        panelId: "panel-04",
+        imageUrl: "images/L1P4Photosynthesis.png",
+        narration: "Tiny CO₂ bubbles drift into small openings called stomata. It's the plant's way of \"breathing\" the air around us. Mr. Chloro: \"Leaves breathe too!\" Child: \"Those tiny doors move?!\"",
+        title: "Carbon Dioxide: Air for Plants",
+        glossaryTerms: ["carbon dioxide", "CO₂", "stomata", "air"],
+        ctaLabel: "What is carbon dioxide?"
+      },
+      {
+        panelId: "panel-05",
+        imageUrl: "images/L1P5Photosynthesis.png",
+        narration: "Inside the leaf, sunlight, water, and CO₂ swirl together in a bright green spiral. This is photosynthesis—the plant's superpower! Mr. Chloro: \"Mix and swirl!\" Child: \"It looks like magic!\"",
+        title: "The Magic Mix: Photosynthesis",
+        glossaryTerms: ["photosynthesis", "process", "combine", "chlorophyll"],
+        ctaLabel: "How does photosynthesis work?"
+      },
+      {
+        panelId: "panel-06",
+        imageUrl: "images/L1P6Photosynthesis.png",
+        narration: "The leaf makes sweet plant food (sugar!) and releases fresh oxygen into the air—the same oxygen we breathe every day. Mr. Chloro: \"Sugar for the plant!\" Child: \"And oxygen for us!\"",
+        title: "Results: Sugar & Oxygen",
+        glossaryTerms: ["sugar", "oxygen", "food", "plant food"],
+        ctaLabel: "Why do plants make oxygen?"
+      }
+    ];
+
+    // State management
+    const state = {
+      currentPanelIndex: 0,
+      panelCount: panels.length
+    };
+
+    // DOM elements
+    const panelImageEl = document.getElementById('panelImage');
+    const panelTagEl = document.getElementById('panelTag');
+    const panelNarrationEl = document.getElementById('panelNarration');
+    const panelPositionLabelEl = document.getElementById('panelPositionLabel');
+    const progressDotsEl = document.getElementById('progressDots');
+    const helperTitleEl = document.getElementById('helperTitle');
+    const helperTextEl = document.getElementById('helperText');
+    const progressSummaryEl = document.getElementById('progressSummary');
+    const chatCtaBtn = document.getElementById('chatCtaBtn');
+    const prevBtn = document.getElementById('prevPanelBtn');
+    const nextBtn = document.getElementById('nextPanelBtn');
+    const glossaryBtn = document.getElementById('openGlossaryBtn');
+    const glossaryDialog = document.getElementById('glossaryDialog');
+    const glossaryList = document.getElementById('glossaryList');
+    const glossaryCloseBtn = document.getElementById('closeGlossaryBtn');
+
+    // Render progress dots
+    function renderProgressDots() {
+      progressDotsEl.innerHTML = '';
+      panels.forEach((_, idx) => {
+        const dot = document.createElement('span');
+        dot.className = 'dot' + (idx === state.currentPanelIndex ? ' active' : '');
+        dot.title = `Panel ${idx + 1}: ${panels[idx]?.title || `Panel ${idx + 1}`}`;
+        dot.addEventListener('click', () => {
+          jumpToPanel(idx);
+        });
+        progressDotsEl.appendChild(dot);
+      });
+    }
+
+    // Update glossary
+    function updateGlossary(terms = []) {
+      glossaryList.innerHTML = '';
+      if (!terms.length) {
+        glossaryList.innerHTML = '<p class="text-slate-500 text-sm">No glossary terms on this panel.</p>';
+        return;
+      }
+      terms.forEach((term) => {
+        const pill = document.createElement('span');
+        pill.className = 'glossary-pill px-3 py-1 rounded-full bg-indigo-100 border border-indigo-200 text-indigo-700 font-semibold';
+        pill.textContent = term;
+        glossaryList.appendChild(pill);
+      });
+    }
+
+    // Update panel UI
+    function updatePanelUI() {
+      const panel = panels[state.currentPanelIndex];
+      if (!panel) return;
+
+      panelImageEl.src = panel.imageUrl;
+      panelTagEl.textContent = panel.panelId.toUpperCase();
+      panelNarrationEl.textContent = panel.narration;
+      panelPositionLabelEl.textContent = `Panel ${state.currentPanelIndex + 1} of ${state.panelCount}`;
+      helperTitleEl.textContent = panel.ctaLabel || 'Ask a question';
+      helperTextEl.textContent = 'Use the chat companion to dig deeper into this scene.';
+      progressSummaryEl.textContent = `Panel ${state.currentPanelIndex + 1}/${state.panelCount}`;
+      chatCtaBtn.textContent = panel.ctaLabel || 'Ask the AI about this panel';
+
+      chatCtaBtn.onclick = () => {
+        const chatUrl = new URL('chat/index.html', window.location.origin);
+        chatUrl.searchParams.set('topicId', 'photosynthesis');
+        chatUrl.searchParams.set('panelId', panel.panelId);
+        window.location.href = `${chatUrl.pathname}${chatUrl.search}`;
+      };
+
+      prevBtn.disabled = state.currentPanelIndex === 0;
+      nextBtn.disabled = state.currentPanelIndex === state.panelCount - 1;
+
+      renderProgressDots();
+      updateGlossary(panel.glossaryTerms || []);
+
+      // Update URL without reload
+      const newUrl = new URL(window.location);
+      newUrl.searchParams.set('panel', state.currentPanelIndex);
+      window.history.replaceState({ panel: state.currentPanelIndex }, '', newUrl);
+    }
+
+    // Jump to specific panel
+    function jumpToPanel(targetIndex) {
+      if (targetIndex < 0 || targetIndex >= state.panelCount) return;
+      state.currentPanelIndex = targetIndex;
+      updatePanelUI();
+    }
+
+    // Navigate to next panel
+    function goToNextPanel() {
+      if (state.currentPanelIndex >= state.panelCount - 1) return;
+      jumpToPanel(state.currentPanelIndex + 1);
+    }
+
+    // Navigate to previous panel
+    function goToPreviousPanel() {
+      if (state.currentPanelIndex === 0) return;
+      jumpToPanel(state.currentPanelIndex - 1);
+    }
+
+    // Wire up controls
+    function wireControls() {
+      nextBtn.addEventListener('click', goToNextPanel);
+      prevBtn.addEventListener('click', goToPreviousPanel);
+      glossaryBtn.addEventListener('click', () => {
+        if (glossaryDialog) glossaryDialog.showModal();
+      });
+      glossaryCloseBtn.addEventListener('click', () => glossaryDialog?.close());
+    }
+
+    // Initialize
+    function init() {
+      // Check URL for panel parameter
+      const params = new URLSearchParams(window.location.search);
+      const panelParam = Number(params.get('panel')) || 0;
+      if (panelParam >= 0 && panelParam < panels.length) {
+        state.currentPanelIndex = panelParam;
+      }
+
+      wireControls();
+      updatePanelUI();
+    }
+
+    init();
+  </script>
+</body>
+
+</html>

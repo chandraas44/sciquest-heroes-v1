@@ -6,25 +6,16 @@ const supabaseAnonKey = supabaseConfig.anonKey;
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-const avatars = [
-    { id: 'bolt', name: 'Bolt', image: 'assets/avatars/Bolt.png' },
-    { id: 'echo', name: 'Echo', image: 'assets/avatars/Echo.png' },
-    { id: 'finn', name: 'Finn', image: 'assets/avatars/Finn.png' },
-    { id: 'kira', name: 'Kira', image: 'assets/avatars/Kira.png' },
-    { id: 'leo', name: 'Leo', image: 'assets/avatars/Leo.png' },
-    { id: 'max', name: 'Max', image: 'assets/avatars/Max.png' },
-    { id: 'ruby', name: 'Ruby', image: 'assets/avatars/Ruby.png' },
-    { id: 'stella', name: 'Stella', image: 'assets/avatars/Stella_flora.png' },
-    { id: 'rex', name: 'Rex', image: 'assets/avatars/Dino_rexexplorer.png' }
-];
 
-let selectedAvatar = null;
 
 const avatarGrid = document.getElementById('avatarGrid');
 const confirmBtn = document.getElementById('confirmBtn');
 const confirmBtnText = document.getElementById('confirmBtnText');
 const skipBtn = document.getElementById('skipBtn');
 const errorMessage = document.getElementById('errorMessage');
+
+let selectedAvatar = null;
+let avatars = [];
 
 function showError(message) {
     errorMessage.textContent = message;
@@ -36,7 +27,71 @@ function hideError() {
     errorMessage.classList.remove('show');
 }
 
-function renderAvatars() {
+async function fetchAvatarsFromStorage() {
+    try {
+        const { data, error } = await supabase
+            .storage
+            .from('avatars')
+            .list('', {
+                limit: 100,
+                offset: 0,
+                sortBy: { column: 'name', order: 'asc' },
+            });
+
+        console.log('Supabase Storage List Response:', { data, error });
+
+        if (error) {
+            throw error;
+        }
+
+        if (!data || data.length === 0) {
+            console.warn('No avatars found in storage bucket "avatars".');
+            return [];
+        }
+
+        // Filter for image files and map to avatar objects
+        const avatarFiles = data.filter(file =>
+            file.name.match(/\.(png|jpg|jpeg|gif|webp)$/i)
+        );
+
+        return avatarFiles.map(file => {
+            const { data: publicUrlData } = supabase
+                .storage
+                .from('avatars')
+                .getPublicUrl(file.name);
+
+            // Create a display name from the filename (e.g., "Bolt.png" -> "Bolt")
+            const name = file.name.split('.')[0];
+            // Create an ID from the name (e.g., "Bolt" -> "bolt")
+            const id = name.toLowerCase();
+
+            return {
+                id: id,
+                name: name,
+                image: publicUrlData.publicUrl
+            };
+        });
+
+    } catch (error) {
+        console.error('Error fetching avatars:', error);
+        showError('Failed to load avatars. Please refresh the page.');
+        return [];
+    }
+}
+
+async function renderAvatars() {
+    // Show loading state
+    avatarGrid.innerHTML = '<div class="loading-spinner" style="margin: 20px auto;"></div>';
+
+    avatars = await fetchAvatarsFromStorage();
+
+    avatarGrid.innerHTML = ''; // Clear loading spinner
+
+    if (avatars.length === 0) {
+        avatarGrid.innerHTML = '<p style="color: white; text-align: center; grid-column: 1/-1;">No avatars available.</p>';
+        return;
+    }
+
     avatars.forEach(avatar => {
         const card = document.createElement('div');
         card.className = 'avatar-card';
@@ -106,7 +161,7 @@ confirmBtn.addEventListener('click', async () => {
         localStorage.removeItem('newStudentSignup');
 
         setTimeout(() => {
-            window.location.href = 'dashboards/student-dashboard.html';
+            window.location.href = 'stories/index.html';
         }, 500);
     } catch (error) {
         showError('Failed to save avatar. Please try again.');
@@ -116,8 +171,7 @@ confirmBtn.addEventListener('click', async () => {
 });
 
 skipBtn.addEventListener('click', () => {
-    localStorage.removeItem('newStudentSignup');
-    window.location.href = 'dashboards/student-dashboard.html';
+    window.location.href = 'stories/index.html';
 });
 
 async function checkAuth() {
@@ -140,5 +194,8 @@ async function checkAuth() {
     }
 }
 
-checkAuth();
-renderAvatars();
+// Initialize
+(async () => {
+    await checkAuth();
+    await renderAvatars();
+})();

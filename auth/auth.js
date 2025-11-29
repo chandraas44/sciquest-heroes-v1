@@ -1,5 +1,5 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
-import { supabaseConfig } from '../config.js';
+import { supabaseConfig } from '/config.js';
 
 const supabaseUrl = supabaseConfig.url;
 const supabaseAnonKey = supabaseConfig.anonKey;
@@ -79,6 +79,12 @@ updateUI();
 function toggleMode(e) {
     e.preventDefault();
     isSignUpMode = !isSignUpMode;
+
+    // Update URL to reflect current mode
+    const newUrl = new URL(window.location);
+    newUrl.searchParams.set('mode', isSignUpMode ? 'signup' : 'login');
+    window.history.pushState({}, '', newUrl);
+
     updateUI();
     hideMessages();
 }
@@ -189,13 +195,13 @@ authForm.addEventListener('submit', async (e) => {
 
                 setTimeout(() => {
                     if (userAccountType === 'parent') {
-                        window.location.href = '../dashboards/parent-dashboard.html';
+                        window.location.href = '/parent/dashboard.html';
                     } else if (userAccountType === 'teacher') {
-                        window.location.href = '../dashboards/teacher-dashboard.html';
+                        window.location.href = '/dashboards/teacher-dashboard.html';
                     } else if (userAccountType === 'student') {
-                        window.location.href = '../dashboards/student-dashboard.html';
+                        window.location.href = '/stories/index.html';
                     } else {
-                        window.location.href = '../index.html';
+                        window.location.href = '/index.html';
                     }
                 }, 1500);
             }
@@ -204,7 +210,7 @@ authForm.addEventListener('submit', async (e) => {
             console.log('=== Login Attempt ===');
             console.log('Email:', email);
             console.log('Account type from context:', accountType || 'not specified');
-            
+
             const { data, error } = await supabase.auth.signInWithPassword({
                 email: email,
                 password: password
@@ -222,7 +228,7 @@ authForm.addEventListener('submit', async (e) => {
                 console.log('User ID:', data.user.id);
                 console.log('User email:', data.user.email);
                 console.log('Fetching user profile...');
-                
+
                 const { data: profile, error: profileError } = await supabase
                     .from('user_profiles')
                     .select('account_type')
@@ -244,13 +250,13 @@ authForm.addEventListener('submit', async (e) => {
                         accountTypeFromContext: accountType,
                         timestamp: new Date().toISOString()
                     });
-                    
+
                     // Check if it's an RLS policy error
-                    const isRLSError = profileError.code === '42501' || 
-                                      profileError.message?.toLowerCase().includes('permission denied') || 
-                                      profileError.message?.toLowerCase().includes('policy') ||
-                                      profileError.message?.toLowerCase().includes('row-level security');
-                    
+                    const isRLSError = profileError.code === '42501' ||
+                        profileError.message?.toLowerCase().includes('permission denied') ||
+                        profileError.message?.toLowerCase().includes('policy') ||
+                        profileError.message?.toLowerCase().includes('row-level security');
+
                     if (isRLSError) {
                         console.error('=== RLS Policy Error Detected ===');
                         console.error('This indicates a Row Level Security (RLS) policy configuration issue.');
@@ -260,33 +266,33 @@ authForm.addEventListener('submit', async (e) => {
                         console.error('  2. Conflicting RLS policies');
                         console.error('  3. Recursive RLS checks in parent-child policies');
                         console.error('Solution: Run fix_rls_login_error.sql in Supabase SQL Editor');
-                        
+
                         const errorCode = 'RLS-' + Date.now();
                         console.error('Error code for support:', errorCode);
-                        
+
                         // Provide helpful error message with instructions
                         showError(`Account access error. Please contact support with error code: ${errorCode}. This is a database configuration issue that needs to be fixed by an administrator.`);
                     } else {
                         // For non-RLS errors, use accountType from URL/localStorage as fallback
                         console.warn('Non-RLS profile fetch error, attempting fallback based on account type context');
-                        
+
                         if (accountType === 'student') {
                             console.warn('Profile fetch error, redirecting to student dashboard (fallback)');
                             showSuccess('Login successful! Redirecting...');
                             setTimeout(() => {
-                                window.location.href = '../dashboards/student-dashboard.html';
+                                window.location.href = '/stories/index.html';
                             }, 1500);
                         } else if (accountType === 'parent') {
                             console.warn('Profile fetch error, redirecting to parent dashboard (fallback)');
                             showSuccess('Login successful! Redirecting...');
                             setTimeout(() => {
-                                window.location.href = '../dashboards/parent-dashboard.html';
+                                window.location.href = '/parent/dashboard.html';
                             }, 1500);
                         } else if (accountType === 'teacher') {
                             console.warn('Profile fetch error, redirecting to teacher dashboard (fallback)');
                             showSuccess('Login successful! Redirecting...');
                             setTimeout(() => {
-                                window.location.href = '../dashboards/teacher-dashboard.html';
+                                window.location.href = '/dashboards/teacher-dashboard.html';
                             }, 1500);
                         } else {
                             console.warn('Profile fetch error, showing error message (no fallback available)');
@@ -304,25 +310,25 @@ authForm.addEventListener('submit', async (e) => {
                         userEmail: data.user.email,
                         accountTypeFromContext: accountType
                     });
-                    
+
                     // Use accountType from URL/localStorage as fallback for all account types
                     if (accountType === 'student') {
                         console.warn('User profile not found, redirecting to student dashboard (fallback)');
                         showSuccess('Login successful! Redirecting...');
                         setTimeout(() => {
-                            window.location.href = '../dashboards/student-dashboard.html';
+                            window.location.href = '/stories/index.html';
                         }, 1500);
                     } else if (accountType === 'parent') {
                         console.warn('User profile not found, redirecting to parent dashboard (fallback)');
                         showSuccess('Login successful! Redirecting...');
                         setTimeout(() => {
-                            window.location.href = '../dashboards/parent-dashboard.html';
+                            window.location.href = '/parent/dashboard.html';
                         }, 1500);
                     } else if (accountType === 'teacher') {
                         console.warn('User profile not found, redirecting to teacher dashboard (fallback)');
                         showSuccess('Login successful! Redirecting...');
                         setTimeout(() => {
-                            window.location.href = '../dashboards/teacher-dashboard.html';
+                            window.location.href = '/dashboards/teacher-dashboard.html';
                         }, 1500);
                     } else {
                         console.warn('User profile not found, showing error message (no fallback available)');
@@ -339,25 +345,25 @@ authForm.addEventListener('submit', async (e) => {
                         profileData: profile,
                         accountTypeFromContext: accountType
                     });
-                    
+
                     // Use accountType from URL/localStorage as fallback for all account types
                     if (accountType === 'student') {
                         console.warn('Account type missing in profile, redirecting to student dashboard (fallback)');
                         showSuccess('Login successful! Redirecting...');
                         setTimeout(() => {
-                            window.location.href = '../dashboards/student-dashboard.html';
+                            window.location.href = '/stories/index.html';
                         }, 1500);
                     } else if (accountType === 'parent') {
                         console.warn('Account type missing in profile, redirecting to parent dashboard (fallback)');
                         showSuccess('Login successful! Redirecting...');
                         setTimeout(() => {
-                            window.location.href = '../dashboards/parent-dashboard.html';
+                            window.location.href = '/parent/dashboard.html';
                         }, 1500);
                     } else if (accountType === 'teacher') {
                         console.warn('Account type missing in profile, redirecting to teacher dashboard (fallback)');
                         showSuccess('Login successful! Redirecting...');
                         setTimeout(() => {
-                            window.location.href = '../dashboards/teacher-dashboard.html';
+                            window.location.href = '/dashboards/teacher-dashboard.html';
                         }, 1500);
                     } else {
                         console.warn('Account type missing in profile, showing error message (no fallback available)');
@@ -372,24 +378,24 @@ authForm.addEventListener('submit', async (e) => {
                 console.log('=== Profile Retrieved Successfully ===');
                 console.log('User account type from profile:', accountTypeFromProfile);
                 console.log('Account type from context:', accountType);
-                
+
                 // All valid account types - show success and redirect after delay
                 if (accountTypeFromProfile === 'parent') {
                     showSuccess('Login successful! Redirecting...');
                     setTimeout(() => {
-                        window.location.href = '../dashboards/parent-dashboard.html';
+                        window.location.href = '/parent/dashboard.html';
                     }, 1500);
                     return;
                 } else if (accountTypeFromProfile === 'teacher') {
                     showSuccess('Login successful! Redirecting...');
                     setTimeout(() => {
-                        window.location.href = '../dashboards/teacher-dashboard.html';
+                        window.location.href = '/dashboards/teacher-dashboard.html';
                     }, 1500);
                     return;
                 } else if (accountTypeFromProfile === 'student') {
                     showSuccess('Login successful! Redirecting...');
                     setTimeout(() => {
-                        window.location.href = '../dashboards/student-dashboard.html';
+                        window.location.href = '/stories/index.html';
                     }, 1500);
                     return;
                 } else {
@@ -398,7 +404,7 @@ authForm.addEventListener('submit', async (e) => {
                         console.warn('Invalid account_type:', accountTypeFromProfile, 'redirecting to student dashboard');
                         showSuccess('Login successful! Redirecting...');
                         setTimeout(() => {
-                            window.location.href = '../dashboards/student-dashboard.html';
+                            window.location.href = '/stories/index.html';
                         }, 1500);
                     } else {
                         console.warn('Invalid account_type:', accountTypeFromProfile, 'showing error message');
@@ -460,7 +466,7 @@ googleSignInBtn.addEventListener('click', async () => {
         const { data, error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: window.location.origin + '/index.html',
+                redirectTo: window.location.origin + '/auth/callback.html',
                 queryParams: {
                     prompt: 'select_account'
                 }
@@ -485,7 +491,7 @@ function openForgotPasswordModal() {
     document.getElementById('resetEmail').value = document.getElementById('email').value;
 }
 
-window.closeForgotPasswordModal = function() {
+window.closeForgotPasswordModal = function () {
     const modal = document.getElementById('forgotPasswordModal');
     modal.style.display = 'none';
     document.getElementById('resetErrorMessage').classList.remove('show');
@@ -541,7 +547,7 @@ supabase.auth.onAuthStateChange((event, session) => {
             console.log('=== Auth State Change: SIGNED_IN ===');
             console.log('User ID:', session.user.id);
             console.log('User email:', session.user.email);
-            
+
             const { data: profile, error: profileError } = await supabase
                 .from('user_profiles')
                 .select('*')
@@ -553,13 +559,13 @@ supabase.auth.onAuthStateChange((event, session) => {
                 console.error('Error:', profileError);
                 console.error('Error code:', profileError.code);
                 console.error('Error message:', profileError.message);
-                
+
                 // Check if it's an RLS error
-                const isRLSError = profileError.code === '42501' || 
-                                  profileError.message?.toLowerCase().includes('permission denied') || 
-                                  profileError.message?.toLowerCase().includes('policy') ||
-                                  profileError.message?.toLowerCase().includes('row-level security');
-                
+                const isRLSError = profileError.code === '42501' ||
+                    profileError.message?.toLowerCase().includes('permission denied') ||
+                    profileError.message?.toLowerCase().includes('policy') ||
+                    profileError.message?.toLowerCase().includes('row-level security');
+
                 if (isRLSError) {
                     console.error('RLS policy error detected in auth state change handler');
                     console.error('This may prevent profile creation. Check RLS policies.');
@@ -570,7 +576,7 @@ supabase.auth.onAuthStateChange((event, session) => {
                 console.warn('Profile not found during auth state change, attempting to create');
                 const storedAccountType = accountType || localStorage.getItem('accountType') || 'student';
                 console.log('Creating profile with account type:', storedAccountType);
-                
+
                 try {
                     await createUserProfile(session.user.id, session.user.email, storedAccountType);
                     console.log('Profile created successfully during auth state change');

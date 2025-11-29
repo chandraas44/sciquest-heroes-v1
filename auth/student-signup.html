@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Student signup - Join SciQuest Heroes">
-    <title>Student Signup - SciQuest Heroes</title>
+    <meta name="description" content="Child signup - Join SciQuest Heroes">
+    <title>Child Signup - SciQuest Heroes</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fredoka:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -44,7 +47,7 @@
             position: absolute;
             width: 500px;
             height: 500px;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
             border-radius: 50%;
             top: -100px;
             left: -100px;
@@ -56,7 +59,7 @@
             position: absolute;
             width: 400px;
             height: 400px;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
             border-radius: 50%;
             bottom: -150px;
             right: -100px;
@@ -64,9 +67,19 @@
         }
 
         @keyframes float {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(100px, -100px) scale(1.1); }
-            66% { transform: translate(-100px, 100px) scale(0.9); }
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                transform: translate(100px, -100px) scale(1.1);
+            }
+
+            66% {
+                transform: translate(-100px, 100px) scale(0.9);
+            }
         }
 
         .particles {
@@ -81,7 +94,7 @@
             position: absolute;
             width: 4px;
             height: 4px;
-            background: rgba(255,255,255,0.6);
+            background: rgba(255, 255, 255, 0.6);
             border-radius: 50%;
             animation: particleFloat 15s infinite;
         }
@@ -91,8 +104,15 @@
                 transform: translateY(0) translateX(0) scale(1);
                 opacity: 0;
             }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
             100% {
                 transform: translateY(-100vh) translateX(100px) scale(0.5);
                 opacity: 0;
@@ -106,9 +126,9 @@
             border-radius: 32px;
             padding: 40px 36px;
             box-shadow:
-                0 25px 50px rgba(0,0,0,0.4),
-                0 10px 30px rgba(0,0,0,0.3),
-                inset 0 1px 0 rgba(255,255,255,0.5);
+                0 25px 50px rgba(0, 0, 0, 0.4),
+                0 10px 30px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
             max-width: 520px;
             width: 100%;
             position: relative;
@@ -153,7 +173,7 @@
             color: #1e293b;
             box-shadow:
                 0 8px 0 #92400e,
-                0 12px 30px rgba(0,0,0,0.3);
+                0 12px 30px rgba(0, 0, 0, 0.3);
             transition: all 0.2s ease;
             cursor: pointer;
             font-family: 'Fredoka', sans-serif;
@@ -169,14 +189,14 @@
             transform: translateY(-3px);
             box-shadow:
                 0 11px 0 #92400e,
-                0 15px 35px rgba(0,0,0,0.4);
+                0 15px 35px rgba(0, 0, 0, 0.4);
         }
 
         .btn-3d:active {
             transform: translateY(4px);
             box-shadow:
                 0 4px 0 #92400e,
-                0 6px 15px rgba(0,0,0,0.3);
+                0 6px 15px rgba(0, 0, 0, 0.3);
         }
 
         .btn-3d:disabled {
@@ -196,7 +216,7 @@
             cursor: pointer;
             font-family: 'Inter', sans-serif;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .btn-secondary:hover {
@@ -275,7 +295,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .link-text {
@@ -304,6 +326,7 @@
                 opacity: 0;
                 transform: translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -385,6 +408,7 @@
         }
     </style>
 </head>
+
 <body>
     <section class="hero-gradient">
         <div class="particles"></div>
@@ -412,32 +436,25 @@
             <div class="error-message" id="errorMessage"></div>
             <div class="success-message" id="successMessage"></div>
 
+            <!-- Panel 1: Grade Level and Parent Email -->
             <div class="panel active" id="panel1">
                 <form id="panel1Form">
-                    <div class="mb-5">
-                        <label for="studentAge" class="form-label">Student's Age</label>
-                        <select id="studentAge" class="form-input" required>
-                            <option value="">Select age...</option>
-                            <option value="5">5 years old</option>
-                            <option value="6">6 years old</option>
-                            <option value="7">7 years old</option>
-                            <option value="8">8 years old</option>
-                            <option value="9">9 years old</option>
-                            <option value="10">10 years old</option>
-                            <option value="11">11 years old</option>
-                            <option value="12">12 years old</option>
+                    <div class="mb-6">
+                        <label for="studentGradeLevel" class="form-label">What grade are you in?</label>
+                        <select id="studentGradeLevel" class="form-input" required>
+                            <option value="">Select your grade</option>
+                            <option value="1">Grade 1</option>
+                            <option value="2">Grade 2</option>
+                            <option value="3">Grade 3</option>
+                            <option value="4">Grade 4</option>
+                            <option value="5">Grade 5</option>
+                            <option value="6">Grade 6</option>
                         </select>
                     </div>
 
                     <div class="mb-6">
                         <label for="parentEmail" class="form-label">Parent's Email</label>
-                        <input
-                            type="email"
-                            id="parentEmail"
-                            class="form-input"
-                            placeholder="parent@email.com"
-                            required
-                        >
+                        <input type="email" id="parentEmail" class="form-input" placeholder="parent@email.com" required>
                         <p class="text-xs text-slate-500 font-semibold mt-2">
                             We'll send updates to your parent about your progress
                         </p>
@@ -449,28 +466,18 @@
                 </form>
             </div>
 
+            <!-- Panel 2: Child Details, Password, and Captcha -->
             <div class="panel" id="panel2">
                 <form id="panel2Form">
                     <div class="mb-4">
-                        <label for="firstName" class="form-label">Student's First Name</label>
-                        <input
-                            type="text"
-                            id="firstName"
-                            class="form-input"
-                            placeholder="Enter your first name"
-                            required
-                        >
+                        <label for="firstName" class="form-label">Child's First Name</label>
+                        <input type="text" id="firstName" class="form-input" placeholder="Enter your first name"
+                            required>
                     </div>
 
                     <div class="mb-4">
-                        <label for="email" class="form-label">Student's Email Address</label>
-                        <input
-                            type="email"
-                            id="email"
-                            class="form-input"
-                            placeholder="student@email.com"
-                            required
-                        >
+                        <label for="email" class="form-label">Child's Email Address</label>
+                        <input type="email" id="email" class="form-input" placeholder="student@email.com" required>
                         <p class="text-xs text-slate-500 font-semibold mt-2">
                             This email will be used to sign in to your account
                         </p>
@@ -478,25 +485,13 @@
 
                     <div class="mb-4">
                         <label for="password" class="form-label">Create a Password</label>
-                        <input
-                            type="password"
-                            id="password"
-                            class="form-input"
-                            placeholder="Create a secure password"
-                            required
-                            minlength="6"
-                        >
+                        <input type="password" id="password" class="form-input" placeholder="Create a secure password"
+                            required minlength="6">
                     </div>
 
                     <div class="mb-6">
                         <label for="captcha" class="form-label">What is 5 + 3?</label>
-                        <input
-                            type="number"
-                            id="captcha"
-                            class="form-input"
-                            placeholder="Enter the answer"
-                            required
-                        >
+                        <input type="number" id="captcha" class="form-input" placeholder="Enter the answer" required>
                         <p class="text-xs text-slate-500 font-semibold mt-2">
                             This helps us make sure you're a real person
                         </p>
@@ -514,10 +509,12 @@
             </div>
 
             <div class="mt-6">
-                <div style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.15)); border: 2px solid rgba(251, 191, 36, 0.3); border-radius: 16px; padding: 16px; text-align: center;">
+                <div
+                    style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.15)); border: 2px solid rgba(251, 191, 36, 0.3); border-radius: 16px; padding: 16px; text-align: center;">
                     <p class="text-slate-700 font-bold text-base">
                         Already have an account?
-                        <a href="auth.html?type=student&mode=login" class="link-text" style="font-size: 17px; text-decoration: underline; margin-left: 4px;">Log In</a>
+                        <a href="auth.html?type=student&mode=login" class="link-text"
+                            style="font-size: 17px; text-decoration: underline; margin-left: 4px;">Log In</a>
                     </p>
                 </div>
             </div>
@@ -538,4 +535,5 @@
         }
     </script>
 </body>
+
 </html>
