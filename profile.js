@@ -125,7 +125,7 @@ async function loadUserProfile(userId, sessionEmail) {
                 } else if (profile.account_type === 'teacher') {
                     backToHomeBtn.href = 'dashboards/teacher-dashboard.html';
                 } else if (profile.account_type === 'student') {
-                    backToHomeBtn.href = 'stories/index.html';
+                    backToHomeBtn.href = 'dashboards/student-dashboard.html';
                 }
             }
 

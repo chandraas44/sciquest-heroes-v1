@@ -24,7 +24,7 @@ async function checkAuthAndUpdateUI() {
                 window.location.href = 'dashboards/teacher-dashboard.html';
                 return;
             } else if (profile.account_type === 'student') {
-                window.location.href = 'stories/index.html';
+                window.location.href = 'dashboards/student-dashboard.html';
                 return;
             }
         }

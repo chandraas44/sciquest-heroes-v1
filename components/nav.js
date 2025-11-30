@@ -159,7 +159,7 @@ async function loadUserProfile(userId, basePath) {
 
     const { data: profile, error } = await supabase
       .from('user_profiles')
-      .select('username, first_name, email, avatar_url')
+      .select('username, first_name, email, avatar_url, account_type')
       .eq('id', userId)
       .maybeSingle();
 
@@ -242,30 +242,44 @@ function setupUserMenuDropdown() {
 /**
  * Build navigation links based on page context
  */
-function buildNavLinks(isAuthenticated, basePath, currentPage) {
+function buildNavLinks(isAuthenticated, basePath, currentPage, profile) {
   const links = [];
 
   if (isAuthenticated) {
     // Authenticated navigation (no logout button - it's in dropdown)
-    const homeActive = currentPage === 'parent-dashboard' ? 'text-purple-600 font-bold' : 'text-slate-700 hover:text-purple-600 transition font-bold';
+    const homeActive = (currentPage === 'parent-dashboard' || currentPage === 'student-dashboard') ? 'text-purple-600 font-bold' : 'text-slate-700 hover:text-purple-600 transition font-bold';
     const storiesActive = currentPage === 'stories' || currentPage === 'stories-reader' || currentPage === 'stories-detail' ? 'text-purple-600 font-bold' : 'text-slate-700 hover:text-purple-600 transition font-bold';
     const chatActive = currentPage === 'chat' ? 'text-purple-600 font-bold' : 'text-slate-700 hover:text-purple-600 transition font-bold';
     const badgesActive = currentPage === 'badges' ? 'text-purple-600 font-bold' : 'text-slate-700 hover:text-purple-600 transition font-bold';
 
-    links.push(`
-      <a href="${basePath}parent/dashboard.html" class="font-fredoka ${homeActive}">
-        Home
-      </a>
-      <a href="${basePath}stories/index.html" class="font-fredoka ${storiesActive}">
-        Stories
-      </a>
-      <a href="${basePath}chat/index.html" class="font-fredoka ${chatActive}">
-        Chat
-      </a>
-      <a href="${basePath}badges/badges.html" class="font-fredoka ${badgesActive}">
-        Badges
-      </a>
-    `);
+    // Determine Home link based on account type
+    let homeLink = `${basePath}index.html`; // Default fallback
+    if (profile?.account_type === 'parent') {
+      homeLink = `${basePath}parent/dashboard.html`;
+    } else if (profile?.account_type === 'student') {
+      homeLink = `${basePath}dashboards/student-dashboard.html`;
+    } else if (profile?.account_type === 'teacher') {
+      homeLink = `${basePath}dashboards/teacher-dashboard.html`;
+    }
+
+    // Only show navigation links for non-parent accounts (students, teachers, etc.)
+    // Parents don't need these links on their dashboard as requested
+    if (profile?.account_type !== 'parent') {
+      links.push(`
+        <a href="${homeLink}" class="font-fredoka ${homeActive}">
+          Home
+        </a>
+        <a href="${basePath}stories/index.html" class="font-fredoka ${storiesActive}">
+          Stories
+        </a>
+        <a href="${basePath}chat/index.html" class="font-fredoka ${chatActive}">
+          Chat
+        </a>
+        <a href="${basePath}badges/badges.html" class="font-fredoka ${badgesActive}">
+          Badges
+        </a>
+      `);
+    }
   } else {
     // Public navigation (home page)
     links.push(`
@@ -351,6 +365,25 @@ async function loadNavigation() {
     const basePath = getBasePath();
     const currentPage = getCurrentPage();
 
+    // Load profile if authenticated
+    let profile = null;
+    if (isAuthenticated) {
+      try {
+        const configPath = getConfigPath();
+        const { supabaseConfig } = await import(configPath);
+        if (supabaseConfig?.url && supabaseConfig?.anonKey) {
+          const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm');
+          const supabase = createClient(supabaseConfig.url, supabaseConfig.anonKey);
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session?.user?.id) {
+            profile = await loadUserProfile(session.user.id, basePath);
+          }
+        }
+      } catch (error) {
+        console.warn('[nav] Could not load user profile:', error);
+      }
+    }
+
     // Set brand link
     const brandLink = document.getElementById('navBrandLink');
     if (brandLink) {
@@ -360,28 +393,13 @@ async function loadNavigation() {
     // Build and inject navigation links
     const navLinksContainer = document.getElementById('navDesktopLinks');
     if (navLinksContainer) {
-      navLinksContainer.innerHTML = buildNavLinks(isAuthenticated, basePath, currentPage);
+      navLinksContainer.innerHTML = buildNavLinks(isAuthenticated, basePath, currentPage, profile);
     }
 
-    // Handle authenticated state
+    // Handle authenticated state UI
     if (isAuthenticated) {
-      // Get user ID and load profile
-      try {
-        const configPath = getConfigPath();
-        const { supabaseConfig } = await import(configPath);
-
-        if (supabaseConfig?.url && supabaseConfig?.anonKey) {
-          const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm');
-          const supabase = createClient(supabaseConfig.url, supabaseConfig.anonKey);
-          const { data: { session } } = await supabase.auth.getSession();
-
-          if (session?.user?.id) {
-            const profile = await loadUserProfile(session.user.id, basePath);
-            updateUserMenu(profile, basePath);
-          }
-        }
-      } catch (error) {
-        console.warn('[nav] Could not load user profile for dropdown:', error);
+      if (profile) {
+        updateUserMenu(profile, basePath);
       }
 
       // Show user menu dropdown (desktop only)
@@ -417,7 +435,7 @@ async function loadNavigation() {
     }
 
     // Dispatch event that nav is loaded
-    window.dispatchEvent(new CustomEvent('navLoaded', { detail: { isAuthenticated, currentPage } }));
+    window.dispatchEvent(new CustomEvent('navLoaded', { detail: { isAuthenticated, currentPage, profile } }));
 
   } catch (error) {
     console.error('[nav] Failed to load navigation:', error);

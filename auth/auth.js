@@ -228,7 +228,7 @@ authForm.addEventListener('submit', async (e) => {
                     if (userAccountType === 'parent') {
                         window.location.href = '/parent/dashboard.html';
                     } else if (userAccountType === 'student') {
-                        window.location.href = '/stories/index.html';
+                        window.location.href = '/dashboards/student-dashboard.html';
                     } else {
                         window.location.href = '/index.html';
                     }
@@ -309,7 +309,7 @@ authForm.addEventListener('submit', async (e) => {
                             console.warn('Profile fetch error, redirecting to student dashboard (fallback)');
                             showSuccess('Login successful! Redirecting...');
                             setTimeout(() => {
-                                window.location.href = '/stories/index.html';
+                                window.location.href = '/dashboards/student-dashboard.html';
                             }, 1500);
                         } else if (accountType === 'parent') {
                             console.warn('Profile fetch error, redirecting to parent dashboard (fallback)');
@@ -339,7 +339,7 @@ authForm.addEventListener('submit', async (e) => {
                         console.warn('User profile not found, redirecting to student dashboard (fallback)');
                         showSuccess('Login successful! Redirecting...');
                         setTimeout(() => {
-                            window.location.href = '/stories/index.html';
+                            window.location.href = '/dashboards/student-dashboard.html';
                         }, 1500);
                     } else if (accountType === 'parent') {
                         console.warn('User profile not found, redirecting to parent dashboard (fallback)');
@@ -368,7 +368,7 @@ authForm.addEventListener('submit', async (e) => {
                         console.warn('Account type missing in profile, redirecting to student dashboard (fallback)');
                         showSuccess('Login successful! Redirecting...');
                         setTimeout(() => {
-                            window.location.href = '/stories/index.html';
+                            window.location.href = '/dashboards/student-dashboard.html';
                         }, 1500);
                     } else if (accountType === 'parent') {
                         console.warn('Account type missing in profile, redirecting to parent dashboard (fallback)');
@@ -400,7 +400,7 @@ authForm.addEventListener('submit', async (e) => {
                 } else if (accountTypeFromProfile === 'student') {
                     showSuccess('Login successful! Redirecting...');
                     setTimeout(() => {
-                        window.location.href = '/stories/index.html';
+                        window.location.href = '/dashboards/student-dashboard.html';
                     }, 1500);
                     return;
                 } else {
@@ -409,7 +409,7 @@ authForm.addEventListener('submit', async (e) => {
                         console.warn('Invalid account_type:', accountTypeFromProfile, 'redirecting to student dashboard');
                         showSuccess('Login successful! Redirecting...');
                         setTimeout(() => {
-                            window.location.href = '/stories/index.html';
+                            window.location.href = '/dashboards/student-dashboard.html';
                         }, 1500);
                     } else {
                         console.warn('Invalid account_type:', accountTypeFromProfile, 'showing error message');
