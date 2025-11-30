@@ -20,7 +20,6 @@ const backToHomeBtn = document.getElementById('backToHomeBtn');
 
 const firstNameInput = document.getElementById('firstName');
 const lastNameInput = document.getElementById('lastName');
-const usernameInput = document.getElementById('username');
 const gradeLevelInput = document.getElementById('gradeLevel');
 const parentEmailInput = document.getElementById('parentEmail');
 const emailInput = document.getElementById('email');
@@ -86,7 +85,6 @@ async function loadUserProfile(userId, sessionEmail) {
 
             if (firstNameInput) firstNameInput.value = profile.first_name || '';
             if (lastNameInput) lastNameInput.value = profile.last_name || '';
-            if (usernameInput) usernameInput.value = profile.username || '';
             if (emailInput) emailInput.value = profile.email || sessionEmail || '';
             if (fullNameInput) fullNameInput.value = profile.full_name || '';
 
@@ -108,6 +106,11 @@ async function loadUserProfile(userId, sessionEmail) {
                 if (accountTypeBadge) {
                     accountTypeBadge.className = 'badge badge-parent';
                     accountTypeBadge.textContent = 'Parent';
+                }
+                // Hide avatar edit button for parents
+                const avatarEditBtn = document.querySelector('.avatar-edit-btn');
+                if (avatarEditBtn) {
+                    avatarEditBtn.style.display = 'none';
                 }
             } else if (profile.account_type === 'teacher') {
                 if (accountTypeBadge) {

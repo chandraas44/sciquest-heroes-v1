@@ -384,6 +384,32 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        .avatar-edit-btn {
+            position: absolute;
+            bottom: -5px;
+            right: -5px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            border: 4px solid white;
+            z-index: 10;
+            font-size: 20px;
+        }
+
+        .avatar-edit-btn:hover {
+            transform: scale(1.15) rotate(15deg);
+            box-shadow: 0 8px 25px rgba(168, 85, 247, 0.6);
+        }
     </style>
 </head>
 
@@ -395,8 +421,13 @@
     <div class="container">
         <div class="profile-card">
             <div class="profile-header">
-                <div class="profile-avatar-large" id="profileAvatar">
-                    U
+                <div style="position: relative;">
+                    <div class="profile-avatar-large" id="profileAvatar">
+                        U
+                    </div>
+                    <a href="avatar-selection.html?returnTo=profile.html" class="avatar-edit-btn" title="Change Avatar">
+                        <i class="fas fa-camera"></i>
+                    </a>
                 </div>
                 <div>
                     <h1 class="font-fredoka text-4xl font-black text-slate-800 mb-2" id="profileTitle">
@@ -405,7 +436,6 @@
                     <span class="badge" id="accountTypeBadge"></span>
                 </div>
             </div>
-
             <div class="error-message" id="errorMessage"></div>
             <div class="success-message" id="successMessage"></div>
 
@@ -422,10 +452,6 @@
                 </div>
 
                 <div class="form-row">
-                    <div>
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" id="username" class="form-input" placeholder="Username" disabled>
-                    </div>
                     <div>
                         <label for="email" class="form-label">Email</label>
                         <input type="email" id="email" class="form-input" placeholder="your@email.com" disabled>
@@ -447,7 +473,7 @@
                     </div>
                     <div>
                         <label for="parentEmail" class="form-label">Parent's Email</label>
-                        <input type="email" id="parentEmail" class="form-input" placeholder="parent@email.com">
+                        <input type="email" id="parentEmail" class="form-input" placeholder="parent@email.com" disabled>
                     </div>
                 </div>
 
