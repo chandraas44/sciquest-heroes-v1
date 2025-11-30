@@ -8,7 +8,14 @@
     "build": "vite build",
     "preview": "vite preview",
     "start": "vite",
-    "test": "vitest"
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:report": "playwright show-report",
+    "test:setup": "node tests/setup-test-data.js",
+    "test:cleanup": "node tests/cleanup-test-data.js",
+    "test:enrollment": "playwright test tests/parent-enrollment-comprehensive.spec.js && node tests/generate-enrollment-report.js"
   },
   "keywords": [
     "education",
@@ -20,11 +27,14 @@
   "author": "SciQuest Heroes",
   "license": "MIT",
   "devDependencies": {
-    "vite": "^7.2.4",
-    "vitest": "^2.1.8",
-    "jsdom": "^25.0.1"
+    "@playwright/test": "^1.40.0",
+    "@vitejs/plugin-react": "^5.1.1",
+    "dotenv": "^16.3.1",
+    "vite": "^7.2.4"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.39.3"
+    "@supabase/supabase-js": "^2.39.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
   }
 }
