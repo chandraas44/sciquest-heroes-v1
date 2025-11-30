@@ -1,7 +1,9 @@
 import {
   getStoryById,
   getStoryProgressSummary,
-  logAnalyticsEvent
+  logAnalyticsEvent,
+  getLatestGeneratedComicForStory,
+  generateComicForStory
 } from './story-services.js';
 
 const params = new URLSearchParams(window.location.search);
@@ -20,6 +22,8 @@ const resumeBtn = document.getElementById('resumeStoryBtn');
 const panelPreviewEl = document.getElementById('panelPreview');
 const panelPreviewTemplate = document.getElementById('panelPreviewTemplate');
 const openChatBtn = document.getElementById('openChatBtn');
+
+let latestGeneratedComic = null;
 
 function renderPanelPreview(panels) {
   panelPreviewEl.innerHTML = '';
@@ -53,12 +57,75 @@ function wireButtons(panels, progress) {
 
   const goToReader = (panelIdx = 0) => {
     // Navigate to reader.html with query params, then update URL to show /stories/{storyId}/read
-    const readerUrl = `/stories/reader.html?storyId=${storyId}&panel=${panelIdx}`;
+    const search = new URLSearchParams();
+    if (storyId) search.set('storyId', storyId);
+    search.set('panel', String(panelIdx));
+    if (latestGeneratedComic?.id) {
+      search.set('comicId', latestGeneratedComic.id);
+    }
+    const readerUrl = `/stories/reader.html?${search.toString()}`;
     window.location.href = readerUrl;
     // After page loads, reader.html will update the URL using history API
   };
 
-  startBtn.addEventListener('click', () => goToReader(0));
+  startBtn.addEventListener('click', async () => {
+    console.log('[story-detail] Start Story clicked', {
+      storyId,
+      hasLatestGeneratedComic: Boolean(latestGeneratedComic?.id)
+    });
+
+    const hadProgress = Boolean(progress?.lastPanelIndex > 0);
+
+    // If we already have a generated comic, just navigate
+    if (latestGeneratedComic?.id) {
+      goToReader(0);
+      return;
+    }
+
+    // Try to generate (or reuse) a comic via Edge Function
+    const originalLabel = startBtn.textContent;
+    startBtn.disabled = true;
+    startBtn.textContent = 'Preparing your adventure...';
+
+    try {
+      const generationResult = await generateComicForStory(storyId);
+      console.log('[story-detail] generateComicForStory result', {
+        storyId,
+        hasResult: Boolean(generationResult),
+        comicId: generationResult?.comicId,
+        reused: generationResult?.reused
+      });
+
+      // In mock mode or on soft failure, fall back to static panels
+      if (!generationResult || !generationResult.comicId) {
+        goToReader(0);
+        return;
+      }
+
+      latestGeneratedComic = {
+        id: generationResult.comicId,
+        pdf_path: generationResult.pdfPath,
+        panel_count: generationResult.panelCount,
+        panels_json: {
+          panels: generationResult.panels || panels
+        }
+      };
+
+      const previewPanels = latestGeneratedComic.panels_json.panels || panels;
+      if (previewPanels?.length) {
+        renderPanelPreview(previewPanels);
+      }
+
+      goToReader(0);
+    } catch (error) {
+      console.error('[story-detail] Comic generation failed, falling back to reader', error);
+      goToReader(0);
+    } finally {
+      startBtn.disabled = false;
+      startBtn.textContent = hadProgress ? 'Restart Story' : 'Start Story';
+    }
+  });
+
   resumeBtn.addEventListener('click', () => goToReader(resumePanel));
 
   const currentPanelTopic = panels[resumePanel]?.chatTopicId || panels[0]?.chatTopicId;
@@ -79,6 +146,8 @@ async function hydrateStoryPage() {
   }
 
   try {
+    console.log('[story-detail] Hydrating story page with storyId:', storyId);
+
     const story = await getStoryById(storyId);
     if (!story) throw new Error('Story not found');
 
@@ -91,12 +160,45 @@ async function hydrateStoryPage() {
     coverEl.src = story.coverUrl || '/images/placeholder-story.png';
     coverEl.alt = story.title;
 
-    const panels = story.panels || [];
-    renderPanelPreview(panels);
+    const basePanels = story.panels || [];
+
+    console.log('[story-detail] Loaded story metadata', {
+      storyId,
+      title: story.title,
+      hasPanels: basePanels.length > 0,
+      panelCount: basePanels.length
+    });
+
+    // If a generated comic exists for this user + story, prefer its panels for preview
+    try {
+      latestGeneratedComic = await getLatestGeneratedComicForStory(storyId);
+      if (latestGeneratedComic) {
+        console.log('[story-detail] Using latest generated comic for preview', {
+          storyId,
+          comicId: latestGeneratedComic.id,
+          panelCount: latestGeneratedComic.panel_count
+        });
+      }
+    } catch (error) {
+      console.warn('[story-detail] Failed to load latest generated comic, using base panels', error);
+    }
+
+    const previewPanels =
+      latestGeneratedComic?.panels_json?.panels?.length
+        ? latestGeneratedComic.panels_json.panels
+        : basePanels;
+
+    console.log('[story-detail] Rendering panel preview', {
+      storyId,
+      previewPanelCount: previewPanels.length
+    });
+
+    renderPanelPreview(previewPanels);
 
     const progress = getStoryProgressSummary(storyId);
-    updateProgressUI(progress, panels.length || 6);
-    wireButtons(panels, progress);
+    const totalPanels = previewPanels.length || basePanels.length || 6;
+    updateProgressUI(progress, totalPanels);
+    wireButtons(previewPanels.length ? previewPanels : basePanels, progress);
 
     await logAnalyticsEvent('story_detail_opened', {
       storyId,

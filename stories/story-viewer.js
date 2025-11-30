@@ -4,7 +4,8 @@ import {
   saveStoryProgress,
   getStoryProgressSummary,
   logAnalyticsEvent,
-  isUsingStoryMocks
+  isUsingStoryMocks,
+  getGeneratedComicById
 } from './story-services.js';
 import {
   evaluateBadgeRules,
@@ -20,6 +21,7 @@ import {
 const params = new URLSearchParams(window.location.search);
 // Extract storyId from query params, or fallback to pathname: /stories/{storyId}/read
 let storyId = params.get('storyId');
+const comicId = params.get('comicId');
 if (!storyId) {
   const pathMatch = window.location.pathname.match(/^\/stories\/([^/]+)\/read$/);
   if (pathMatch) {
@@ -364,7 +366,10 @@ async function jumpToPanel(targetIndex) {
   
   // Update URL to show current panel
   if (storyId) {
-    const cleanUrl = `/stories/${storyId}/read?panel=${targetIndex}`;
+    const search = new URLSearchParams();
+    search.set('panel', String(targetIndex));
+    if (comicId) search.set('comicId', comicId);
+    const cleanUrl = `/stories/${storyId}/read?${search.toString()}`;
     window.history.replaceState({ storyId, panel: targetIndex }, '', cleanUrl);
   }
   
@@ -414,10 +419,33 @@ async function goToPreviousPanel() {
 
 async function loadStory() {
   if (!storyId) throw new Error('storyId missing');
-  const [story, panels] = await Promise.all([getStoryById(storyId), getPanelsForStory(storyId)]);
+
+  const story = await getStoryById(storyId);
   if (!story) throw new Error('story not found');
   state.story = story;
-  state.panels = panels.length ? panels : story.panels || [];
+
+  let panels = [];
+
+  // If a generated comic ID is present, prefer its panels
+  if (comicId && !isUsingStoryMocks()) {
+    try {
+      const generated = await getGeneratedComicById(comicId);
+      const generatedPanels = generated?.panels_json?.panels || [];
+
+      if (generatedPanels.length) {
+        panels = generatedPanels;
+      }
+    } catch (error) {
+      console.warn('[story-viewer] Failed to load generated comic, falling back to base panels', error);
+    }
+  }
+
+  if (!panels.length) {
+    const basePanels = await getPanelsForStory(storyId);
+    panels = basePanels.length ? basePanels : story.panels || [];
+  }
+
+  state.panels = panels;
   state.panelCount = state.panels.length;
 
   console.log('[story-viewer] Story loaded:', {

@@ -101,7 +101,7 @@
         {
           "panelId": "panel-01",
           "imageUrl": "../images/chlorophotosynthesis.png",
-          "narration": "Luna’s moon rover screeched to a stop beside a crater glowing neon blue.",
+          "narration": "Luna's moon rover screeched to a stop beside a crater glowing neon blue.",
           "glossaryTerms": [
             "crater",
             "lunar dust"
@@ -112,7 +112,7 @@
         {
           "panelId": "panel-02",
           "imageUrl": "../images/Plant%20Inquiry%20with%20Mr.%20Chloro.png",
-          "narration": "Nova scanned the air. “No atmosphere, but the glow matches solar flare energy!”",
+          "narration": "Nova scanned the air. \"No atmosphere, but the glow matches solar flare energy!\"",
           "glossaryTerms": [
             "atmosphere",
             "solar flare"
@@ -163,6 +163,294 @@
           ],
           "chatTopicId": "space-signals",
           "ctaLabel": "How do signals reach Earth?"
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "id": "native-american-civilizations",
+      "title": "Native American Civilizations",
+      "coverUrl": "/images/chlorophotosynthesis.png",
+      "topicTag": "US History",
+      "readingLevel": "Ages 8-11",
+      "estimatedTime": "10 min",
+      "summary": "Discover the amazing civilizations of Native Americans who lived in North America thousands of years before European settlers arrived!",
+      "panels": [
+        {
+          "panelId": "panel-01",
+          "imageUrl": "/images/chlorophotosynthesis.png",
+          "narration": "Long ago, before cities and cars, Native American tribes built incredible civilizations across North America. They lived in harmony with nature and created amazing art, tools, and stories. Guide: \"Welcome to ancient America!\" Child: \"Wow, this is so long ago!\"",
+          "glossaryTerms": [
+            "civilization",
+            "tribe",
+            "Native American"
+          ],
+          "chatTopicId": "native-american-history",
+          "ctaLabel": "Learn about Native American tribes"
+        },
+        {
+          "panelId": "panel-02",
+          "imageUrl": "/images/chlorophotosynthesis.png",
+          "narration": "The Anasazi people built amazing cliff dwellings in the Southwest. They carved homes into mountainsides and created beautiful pottery! Guide: \"Look at these incredible homes!\" Child: \"They lived in cliffs? That's amazing!\"",
+          "glossaryTerms": [
+            "Anasazi",
+            "cliff dwelling",
+            "pottery"
+          ],
+          "chatTopicId": "native-american-history",
+          "ctaLabel": "How did they build cliff dwellings?"
+        },
+        {
+          "panelId": "panel-03",
+          "imageUrl": "/images/chlorophotosynthesis.png",
+          "narration": "The Iroquois Confederacy created one of the first democracies in America! Five tribes worked together to make decisions and keep peace. Guide: \"They had their own government!\" Child: \"Like our country today?\"",
+          "glossaryTerms": [
+            "Iroquois",
+            "confederacy",
+            "democracy"
+          ],
+          "chatTopicId": "native-american-history",
+          "ctaLabel": "What is a confederacy?"
+        },
+        {
+          "panelId": "panel-04",
+          "imageUrl": "/images/chlorophotosynthesis.png",
+          "narration": "Native Americans were expert farmers! They grew corn, beans, and squash together—called the \"Three Sisters.\" These plants helped each other grow! Guide: \"Smart farming!\" Child: \"Plants can help each other?\"",
+          "glossaryTerms": [
+            "Three Sisters",
+            "corn",
+            "farming"
+          ],
+          "chatTopicId": "native-american-history",
+          "ctaLabel": "How do the Three Sisters work together?"
+        },
+        {
+          "panelId": "panel-05",
+          "imageUrl": "/images/chlorophotosynthesis.png",
+          "narration": "They created beautiful art, stories, and ceremonies that celebrated nature and their connection to the land. Their wisdom and traditions are still honored today! Guide: \"Their culture is rich and beautiful!\" Child: \"I want to learn more!\"",
+          "glossaryTerms": [
+            "ceremony",
+            "tradition",
+            "culture"
+          ],
+          "chatTopicId": "native-american-history",
+          "ctaLabel": "What are Native American traditions?"
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "id": "early-american-settlers",
+      "title": "Early American Settlers",
+      "coverUrl": "/images/chlorophotosynthesis.png",
+      "topicTag": "US History",
+      "readingLevel": "Ages 8-11",
+      "estimatedTime": "9 min",
+      "summary": "Journey back to the 1600s and discover how the first European settlers built new lives in America!",
+      "panels": [
+        {
+          "panelId": "panel-01",
+          "imageUrl": "/images/chlorophotosynthesis.png",
+          "narration": "In 1620, brave families sailed across the ocean on the Mayflower to start a new life in America. They were called Pilgrims and wanted freedom to practice their religion. Guide: \"A long and dangerous journey!\" Child: \"They sailed for months?\"",
+          "glossaryTerms": [
+            "Pilgrims",
+            "Mayflower",
+            "settler"
+          ],
+          "chatTopicId": "us-history",
+          "ctaLabel": "Why did the Pilgrims come to America?"
+        },
+        {
+          "panelId": "panel-02",
+          "imageUrl": "/images/chlorophotosynthesis.png",
+          "narration": "When they arrived, they met Native Americans who helped them learn to grow food and survive the harsh winters. Together, they celebrated the first Thanksgiving! Guide: \"Friendship and cooperation!\" Child: \"That's where Thanksgiving comes from!\"",
+          "glossaryTerms": [
+            "Thanksgiving",
+            "cooperation",
+            "survival"
+          ],
+          "chatTopicId": "us-history",
+          "ctaLabel": "What was the first Thanksgiving like?"
+        },
+        {
+          "panelId": "panel-03",
+          "imageUrl": "/images/chlorophotosynthesis.png",
+          "narration": "The settlers built homes, schools, and communities. They worked hard to create a new society based on freedom and self-government. Guide: \"Building a new nation!\" Child: \"They were so brave!\"",
+          "glossaryTerms": [
+            "community",
+            "self-government",
+            "freedom"
+          ],
+          "chatTopicId": "us-history",
+          "ctaLabel": "How did they build their communities?"
+        },
+        {
+          "panelId": "panel-04",
+          "imageUrl": "/images/chlorophotosynthesis.png",
+          "narration": "Life was tough! They had to grow their own food, make their own clothes, and build everything by hand. But they were determined and creative! Guide: \"Hard work and determination!\" Child: \"They were so resourceful!\"",
+          "glossaryTerms": [
+            "resourceful",
+            "determination",
+            "self-sufficient"
+          ],
+          "chatTopicId": "us-history",
+          "ctaLabel": "How did they make everything themselves?"
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "id": "indus-valley-civilization",
+      "title": "The Indus Valley Civilization",
+      "coverUrl": "/images/chlorophotosynthesis.png",
+      "topicTag": "India History",
+      "readingLevel": "Ages 8-11",
+      "estimatedTime": "10 min",
+      "summary": "Explore one of the world's oldest and most advanced ancient civilizations that thrived in India over 4,000 years ago!",
+      "panels": [
+        {
+          "panelId": "panel-01",
+          "imageUrl": "/images/chlorophotosynthesis.png",
+          "narration": "Over 4,000 years ago, a brilliant civilization flourished along the Indus River in ancient India. They built amazing cities with streets, houses, and even bathrooms! Guide: \"Welcome to ancient India!\" Child: \"They had bathrooms back then?\"",
+          "glossaryTerms": [
+            "Indus Valley",
+            "civilization",
+            "ancient"
+          ],
+          "chatTopicId": "india-history",
+          "ctaLabel": "Learn about the Indus Valley"
+        },
+        {
+          "panelId": "panel-02",
+          "imageUrl": "/images/chlorophotosynthesis.png",
+          "narration": "Their cities were incredibly well-planned! Streets were laid out in a grid pattern, and they had advanced drainage systems to keep cities clean. Guide: \"Amazing city planning!\" Child: \"They were so smart!\"",
+          "glossaryTerms": [
+            "grid pattern",
+            "drainage",
+            "city planning"
+          ],
+          "chatTopicId": "india-history",
+          "ctaLabel": "How did they plan their cities?"
+        },
+        {
+          "panelId": "panel-03",
+          "imageUrl": "/images/chlorophotosynthesis.png",
+          "narration": "They were expert traders! They made beautiful jewelry, pottery, and seals that they traded with people far away. Their writing system is still being decoded by scientists today! Guide: \"Mysterious writing!\" Child: \"Can we read it?\"",
+          "glossaryTerms": [
+            "trade",
+            "seals",
+            "writing system"
+          ],
+          "chatTopicId": "india-history",
+          "ctaLabel": "What did they trade?"
+        },
+        {
+          "panelId": "panel-04",
+          "imageUrl": "/images/chlorophotosynthesis.png",
+          "narration": "They were skilled farmers who grew wheat, barley, and cotton. They also raised animals and created beautiful art! Guide: \"Farming and creativity!\" Child: \"They did so many things!\"",
+          "glossaryTerms": [
+            "farming",
+            "cotton",
+            "agriculture"
+          ],
+          "chatTopicId": "india-history",
+          "ctaLabel": "What crops did they grow?"
+        },
+        {
+          "panelId": "panel-05",
+          "imageUrl": "/images/chlorophotosynthesis.png",
+          "narration": "The Indus Valley Civilization shows us how advanced ancient people were! Their achievements in city planning, trade, and culture inspire us even today. Guide: \"A legacy of innovation!\" Child: \"I want to learn more!\"",
+          "glossaryTerms": [
+            "legacy",
+            "innovation",
+            "achievement"
+          ],
+          "chatTopicId": "india-history",
+          "ctaLabel": "What happened to this civilization?"
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "id": "ancient-indian-kingdoms",
+      "title": "Ancient Indian Kingdoms",
+      "coverUrl": "/images/chlorophotosynthesis.png",
+      "topicTag": "India History",
+      "readingLevel": "Ages 8-11",
+      "estimatedTime": "11 min",
+      "summary": "Discover the magnificent kingdoms of ancient India with their grand palaces, wise rulers, and rich culture!",
+      "panels": [
+        {
+          "panelId": "panel-01",
+          "imageUrl": "/images/chlorophotosynthesis.png",
+          "narration": "Ancient India was home to powerful kingdoms ruled by wise kings and queens. They built magnificent palaces, temples, and cities that still amaze us today! Guide: \"Welcome to ancient kingdoms!\" Child: \"Like in fairy tales?\"",
+          "glossaryTerms": [
+            "kingdom",
+            "palace",
+            "ancient India"
+          ],
+          "chatTopicId": "india-history",
+          "ctaLabel": "Learn about ancient Indian kingdoms"
+        },
+        {
+          "panelId": "panel-02",
+          "imageUrl": "/images/chlorophotosynthesis.png",
+          "narration": "The Mauryan Empire was one of the largest and most powerful! Emperor Ashoka was known for his wisdom and kindness. He spread messages of peace carved on stone pillars. Guide: \"A wise and kind ruler!\" Child: \"He wrote on stones?\"",
+          "glossaryTerms": [
+            "Mauryan Empire",
+            "Emperor Ashoka",
+            "pillar"
+          ],
+          "chatTopicId": "india-history",
+          "ctaLabel": "Who was Emperor Ashoka?"
+        },
+        {
+          "panelId": "panel-03",
+          "imageUrl": "/images/chlorophotosynthesis.png",
+          "narration": "Ancient Indian kingdoms were centers of learning! They built universities where students from all over the world came to study mathematics, science, medicine, and philosophy. Guide: \"Great centers of knowledge!\" Child: \"People traveled to learn?\"",
+          "glossaryTerms": [
+            "university",
+            "mathematics",
+            "philosophy"
+          ],
+          "chatTopicId": "india-history",
+          "ctaLabel": "What did they teach in ancient universities?"
+        },
+        {
+          "panelId": "panel-04",
+          "imageUrl": "/images/chlorophotosynthesis.png",
+          "narration": "They created beautiful art, music, and dance! Ancient Indian culture included amazing temples with intricate carvings, classical music, and dance forms that are still performed today! Guide: \"Rich and beautiful culture!\" Child: \"I want to see the temples!\"",
+          "glossaryTerms": [
+            "temple",
+            "classical music",
+            "culture"
+          ],
+          "chatTopicId": "india-history",
+          "ctaLabel": "What are ancient Indian temples like?"
+        },
+        {
+          "panelId": "panel-05",
+          "imageUrl": "/images/chlorophotosynthesis.png",
+          "narration": "Ancient Indian kingdoms made incredible contributions to the world! They invented the number zero, created the decimal system, and wrote amazing stories and poems that are still loved today! Guide: \"So many contributions!\" Child: \"They invented zero?\"",
+          "glossaryTerms": [
+            "zero",
+            "decimal system",
+            "contribution"
+          ],
+          "chatTopicId": "india-history",
+          "ctaLabel": "How did they invent zero?"
+        },
+        {
+          "panelId": "panel-06",
+          "imageUrl": "/images/chlorophotosynthesis.png",
+          "narration": "The legacy of ancient Indian kingdoms lives on! Their achievements in science, art, and culture continue to inspire people around the world even today. Guide: \"A lasting legacy!\" Child: \"I want to learn more about India!\"",
+          "glossaryTerms": [
+            "legacy",
+            "achievement",
+            "inspiration"
+          ],
+          "chatTopicId": "india-history",
+          "ctaLabel": "What else did ancient India contribute?"
         }
       ]
     }

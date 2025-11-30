@@ -59,7 +59,8 @@ export async function getStoryList() {
         topic_tag,
         reading_level,
         estimated_time,
-        summary
+        summary,
+        user_id
       `)
       .order('title');
 
@@ -72,7 +73,8 @@ export async function getStoryList() {
       topicTag: story.topic_tag,
       readingLevel: story.reading_level,
       estimatedTime: story.estimated_time,
-      summary: story.summary
+      summary: story.summary,
+      userId: story.user_id || null
     }));
   } catch (error) {
     console.warn('[stories] Supabase stories fetch failed, reverting to mock data', error);
@@ -112,7 +114,8 @@ export async function getStoryById(storyId) {
       readingLevel: data.reading_level,
       estimatedTime: data.estimated_time,
       summary: data.summary,
-      panels: data.panels
+      panels: data.panels,
+      userId: data.user_id || null
     };
   } catch (error) {
     console.warn('[stories] Supabase story fetch failed, reverting to mock data', error);
@@ -124,6 +127,452 @@ export async function getStoryById(storyId) {
 export async function getPanelsForStory(storyId) {
   const story = await getStoryById(storyId);
   return story?.panels || [];
+}
+
+/**
+ * Fetch the latest generated comic for the current authenticated user and story.
+ * Returns null if mock mode is enabled, Supabase is not configured, or no comic exists.
+ */
+export async function getLatestGeneratedComicForStory(storyId) {
+  if (!storyId) throw new Error('storyId is required');
+  if (shouldUseMockData()) return null;
+
+  const client = getSupabaseClient();
+  if (!client) return null;
+
+  try {
+    const {
+      data: { session }
+    } = await client.auth.getSession();
+
+    if (!session?.user?.id) {
+      return null;
+    }
+
+    const { data, error } = await client
+      .from('generated_comics')
+      .select('id, story_id, pdf_path, panel_count, panels_json, created_at')
+      .eq('user_id', session.user.id)
+      .eq('story_id', storyId)
+      .eq('status', 'ready')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (error || !data) {
+      if (error) {
+        console.warn('[stories] Failed to load latest generated comic', {
+          error,
+          storyId
+        });
+      } else {
+        console.log('[stories] No generated comic found for story', { storyId });
+      }
+      return null;
+    }
+
+    console.log('[stories] Loaded latest generated comic', {
+      storyId,
+      comicId: data.id,
+      panelCount: data.panel_count
+    });
+
+    return data;
+  } catch (error) {
+    console.warn('[stories] Unable to get latest generated comic', error);
+    return null;
+  }
+}
+
+/**
+ * Fetch a specific generated comic by its ID.
+ * Returns null if mock mode is enabled, Supabase is not configured, or the comic is missing.
+ */
+export async function getGeneratedComicById(comicId) {
+  if (!comicId) throw new Error('comicId is required');
+  if (shouldUseMockData()) return null;
+
+  const client = getSupabaseClient();
+  if (!client) return null;
+
+  try {
+    const { data, error } = await client
+      .from('generated_comics')
+      .select('id, story_id, pdf_path, panel_count, panels_json, created_at')
+      .eq('id', comicId)
+      .maybeSingle();
+
+    if (error || !data) {
+      if (error) {
+        console.warn('[stories] Failed to load generated comic by id', {
+          error,
+          comicId
+        });
+      } else {
+        console.log('[stories] No generated comic found by id', { comicId });
+      }
+      return null;
+    }
+
+    console.log('[stories] Loaded generated comic by id', {
+      comicId: data.id,
+      storyId: data.story_id,
+      panelCount: data.panel_count
+    });
+
+    return data;
+  } catch (error) {
+    console.warn('[stories] Unable to get generated comic by id', error);
+    return null;
+  }
+}
+
+/**
+ * Fetch all generated comics for the current authenticated user.
+ * Returns an array of rows from generated_comics (empty array on error or if none).
+ */
+export async function getUserGeneratedComics() {
+  if (shouldUseMockData()) return [];
+
+  const client = getSupabaseClient();
+  if (!client) return [];
+
+  try {
+    const {
+      data: { session },
+      error: sessionError
+    } = await client.auth.getSession();
+
+    if (sessionError || !session?.user?.id) {
+      console.warn('[stories] No authenticated user for getUserGeneratedComics');
+      return [];
+    }
+
+    const { data, error } = await client
+      .from('generated_comics')
+      .select('id, story_id, pdf_path, panel_count, panels_json, status, created_at')
+      .eq('user_id', session.user.id)
+      .eq('status', 'ready')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.warn('[stories] Failed to load user generated comics', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.warn('[stories] Unexpected error in getUserGeneratedComics', error);
+    return [];
+  }
+}
+
+/**
+ * Call the generate-comic Edge Function to generate (or reuse) a comic for the given story.
+ * Returns the function payload (including comicId, pdfPath, and panels) or throws on hard failure.
+ */
+export async function generateComicForStory(storyId) {
+  if (!storyId) throw new Error('storyId is required');
+  if (shouldUseMockData()) {
+    // In mock mode we skip remote generation and let the viewer use static panels.
+    console.log('[stories] Skipping generate-comic call in mock mode', { storyId });
+    return null;
+  }
+
+  const client = getSupabaseClient();
+  if (!client) {
+    throw new Error('Supabase client is not configured');
+  }
+
+  try {
+    console.log('[stories] Invoking generate-comic function', { storyId });
+
+    const { data, error } = await client.functions.invoke('generate-comic', {
+      body: { storyId }
+    });
+
+    if (error) {
+      console.warn('[stories] generate-comic function error', { error, storyId });
+      throw error;
+    }
+
+    console.log('[stories] generate-comic function response', {
+      storyId,
+      hasData: Boolean(data),
+      comicId: data?.comicId,
+      reused: data?.reused
+    });
+
+    return data;
+  } catch (error) {
+    console.warn('[stories] Failed to invoke generate-comic function', {
+      error,
+      storyId
+    });
+    throw error;
+  }
+}
+
+/**
+ * Call the generate-avatar-story Edge Function to generate a 6-panel, avatar-aware story.
+ * Returns { storyId, title, panels } or a local stub if mocks are enabled or the call fails.
+ */
+export async function generateAvatarStory({
+  storyId,
+  storySummary,
+  topicTag = null
+}) {
+  if (!storyId) throw new Error('storyId is required');
+
+  // In mock mode or when Supabase isn't configured, fall back to a local stub generator.
+  if (shouldUseMockData()) {
+    console.log('[stories] Using local stub for generateAvatarStory in mock mode', {
+      storyId
+    });
+    return buildLocalAvatarStory({ storyId, storySummary, topicTag });
+  }
+
+  const client = getSupabaseClient();
+  if (!client) {
+    console.warn('[stories] Supabase client missing; using local stub for generateAvatarStory');
+    return buildLocalAvatarStory({ storyId, storySummary, topicTag });
+  }
+
+  try {
+    console.log('[stories] Invoking generate-avatar-story function', {
+      storyId,
+      hasSummary: Boolean(storySummary),
+      topicTag
+    });
+
+    const { data, error } = await client.functions.invoke('generate-avatar-story', {
+      body: {
+        storyId,
+        storySummary,
+        topicTag
+      }
+    });
+
+    if (error) {
+      console.warn('[stories] generate-avatar-story function error', { error, storyId });
+      return buildLocalAvatarStory({ storyId, storySummary, topicTag });
+    }
+
+    console.log('[stories] generate-avatar-story function response', {
+      storyId,
+      hasData: Boolean(data),
+      panelCount: Array.isArray(data?.panels) ? data.panels.length : 0
+    });
+
+    if (!data || !Array.isArray(data.panels)) {
+      return buildLocalAvatarStory({ storyId, storySummary, topicTag });
+    }
+
+    return data;
+  } catch (error) {
+    console.warn('[stories] Failed to invoke generate-avatar-story function', {
+      error,
+      storyId
+    });
+    return buildLocalAvatarStory({ storyId, storySummary, topicTag });
+  }
+}
+
+/**
+ * Call the generate-story-structure Edge Function to generate a story outline
+ * from a free-form user idea.
+ */
+export async function generateStoryStructure(idea) {
+  const trimmedIdea = (idea || '').trim();
+  if (!trimmedIdea) throw new Error('idea is required');
+
+  if (shouldUseMockData()) {
+    // Simple local stub in mock mode
+    const fallbackTitle =
+      trimmedIdea.length <= 40
+        ? trimmedIdea.charAt(0).toUpperCase() + trimmedIdea.slice(1)
+        : `${trimmedIdea.slice(0, 37)}...`;
+    return {
+      title: fallbackTitle || 'My Custom Adventure',
+      summary:
+        'A curious hero explores this topic and discovers fun facts along the way. This is a simple starting point for your comic.',
+      topicTag: 'Science',
+      readingLevel: 'Ages 7-9',
+      estimatedTime: '5 min'
+    };
+  }
+
+  const client = getSupabaseClient();
+  if (!client) {
+    throw new Error('Supabase client is not configured');
+  }
+
+  try {
+    const { data, error } = await client.functions.invoke('generate-story-structure', {
+      body: { idea: trimmedIdea }
+    });
+
+    if (error) {
+      console.warn('[stories] generate-story-structure function error', error);
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.warn('[stories] Failed to invoke generate-story-structure function', error);
+    throw error;
+  }
+}
+
+/**
+ * Create a user-owned story row in the stories table.
+ * Requires an authenticated Supabase session (RLS policy enforces user_id = auth.uid()).
+ */
+export async function createUserStory({
+  title,
+  summary,
+  topicTag,
+  readingLevel = 'Ages 7-9',
+  estimatedTime = '5 min'
+}) {
+  const client = getSupabaseClient();
+  if (!client) {
+    throw new Error('Supabase client is not configured');
+  }
+
+  const cleanTitle = (title || '').trim();
+  const cleanSummary = (summary || '').trim();
+  const cleanTopic = (topicTag || '').trim() || 'Science';
+
+  if (!cleanTitle || !cleanSummary) {
+    throw new Error('title and summary are required');
+  }
+
+  try {
+    const {
+      data: { session }
+    } = await client.auth.getSession();
+
+    if (!session?.user?.id) {
+      throw new Error('You must be logged in to create a story');
+    }
+
+    const { data, error } = await client
+      .from('stories')
+      .insert({
+        title: cleanTitle,
+        summary: cleanSummary,
+        topic_tag: cleanTopic,
+        reading_level: readingLevel,
+        estimated_time: estimatedTime,
+        user_id: session.user.id
+      })
+      .select(
+        'id, title, cover_url, topic_tag, reading_level, estimated_time, summary, user_id'
+      )
+      .single();
+
+    if (error) {
+      console.warn('[stories] Failed to create user story', error);
+      throw error;
+    }
+
+    return {
+      id: data.id,
+      title: data.title,
+      coverUrl: data.cover_url,
+      topicTag: data.topic_tag,
+      readingLevel: data.reading_level,
+      estimatedTime: data.estimated_time,
+      summary: data.summary,
+      userId: data.user_id || null
+    };
+  } catch (error) {
+    console.warn('[stories] createUserStory failed', error);
+    throw error;
+  }
+}
+
+function buildLocalAvatarStory({ storyId, storySummary, topicTag }) {
+  const cleanedSummary =
+    (storySummary || '').trim() ||
+    'A curious young hero sets off on a science adventure, ready to explore and ask big questions.';
+
+  const topic = (topicTag || 'science adventure').toLowerCase();
+  const baseTitle =
+    topic.includes('history') || topic.includes('past')
+      ? 'Time-Traveling Adventure'
+      : topic.includes('space')
+      ? 'Journey Through the Stars'
+      : topic.includes('plant') || topic.includes('photosynthesis')
+      ? 'Mystery of the Magic Leaves'
+      : 'Curious Hero Adventure';
+
+  const avatarName = 'Hero';
+
+  const panels = [
+    {
+      panelId: 'panel-01',
+      imageUrl: null,
+      imagePrompt: `Kid-friendly comic panel of ${avatarName} beginning a ${topic} based on this idea: ${cleanedSummary}`,
+      narration: `${avatarName} hears about a new ${topic} and decides to explore it in a fun, kid-friendly way.`,
+      glossaryTerms: ['adventure', 'curiosity'],
+      chatTopicId: topicTag || 'science-adventure',
+      ctaLabel: 'Ask what this adventure is about'
+    },
+    {
+      panelId: 'panel-02',
+      imageUrl: null,
+      imagePrompt: `${avatarName} meeting a friendly guide who explains the main idea using pictures and simple words.`,
+      narration:
+        `A friendly guide appears and helps ${avatarName} turn the big idea into a simple story they can understand.`,
+      glossaryTerms: ['guide', 'idea'],
+      chatTopicId: topicTag || 'science-adventure',
+      ctaLabel: 'Ask the guide to explain more'
+    },
+    {
+      panelId: 'panel-03',
+      imageUrl: null,
+      imagePrompt: `${avatarName} trying a tiny experiment or pretend activity to see how things change.`,
+      narration: `${avatarName} tries a tiny experiment, changing one small thing and watching carefully to see what happens.`,
+      glossaryTerms: ['experiment', 'observe'],
+      chatTopicId: topicTag || 'science-adventure',
+      ctaLabel: 'Ask what changed in the experiment'
+    },
+    {
+      panelId: 'panel-04',
+      imageUrl: null,
+      imagePrompt: `${avatarName} pointing at a simple chart or scene that shows a clear pattern.`,
+      narration: `Soon ${avatarName} notices a pattern. Things that looked confusing at first now start to make sense.`,
+      glossaryTerms: ['pattern', 'cause and effect'],
+      chatTopicId: topicTag || 'science-adventure',
+      ctaLabel: 'Ask about the pattern they found'
+    },
+    {
+      panelId: 'panel-05',
+      imageUrl: null,
+      imagePrompt: `${avatarName} happily explaining the idea to a new friend in kid-friendly language.`,
+      narration: `${avatarName} explains the adventure to a new friend using their own words and simple examples.`,
+      glossaryTerms: ['explain', 'share'],
+      chatTopicId: topicTag || 'science-adventure',
+      ctaLabel: 'Ask how to explain this to a friend'
+    },
+    {
+      panelId: 'panel-06',
+      imageUrl: null,
+      imagePrompt: `${avatarName} and the guide celebrating and thinking of a new question to explore next.`,
+      narration: `The adventure ends with a happy high-five. ${avatarName} feels proud and already wonders what they can explore next.`,
+      glossaryTerms: ['celebrate', 'curiosity'],
+      chatTopicId: topicTag || 'science-adventure',
+      ctaLabel: 'Ask what to explore next'
+    }
+  ];
+
+  return {
+    storyId,
+    title: baseTitle,
+    panels
+  };
 }
 
 function getStoredProgress() {

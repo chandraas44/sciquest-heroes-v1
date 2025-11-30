@@ -30,6 +30,31 @@
       transform: translateY(-6px);
       box-shadow: 0 20px 45px rgba(139, 92, 246, 0.15);
     }
+
+    .story-tile {
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .story-tile:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(139, 92, 246, 0.25);
+    }
+
+    .story-tile.selected {
+      border-color: rgba(147, 51, 234, 1);
+      box-shadow: 0 16px 32px rgba(147, 51, 234, 0.35);
+      transform: translateY(-3px);
+    }
+
+    .story-tile.selected button {
+      background: linear-gradient(90deg, #8b5cf6, #ec4899);
+      color: #ffffff;
+    }
+
+    .story-tile.selected [data-tile-topic],
+    .story-tile.selected [data-tile-time] {
+      color: rgba(255, 255, 255, 0.9);
+    }
   </style>
 </head>
 
@@ -55,7 +80,265 @@
   </div>
 
   <main class="-mt-16 relative z-10">
-    <section class="max-w-6xl mx-auto px-6 pb-20">
+    <!-- STEP 1: Predefined Stories Section with Tiles -->
+    <section class="max-w-6xl mx-auto px-6 pb-6">
+      <div class="mb-8">
+        <p class="text-[0.7rem] md:text-xs font-semibold uppercase tracking-[0.15em] text-purple-500 mb-1">
+          Step 1 · Pick a story
+        </p>
+        <h2 class="font-fredoka text-3xl md:text-4xl font-bold text-slate-700 mb-1">Predefined Stories</h2>
+        <p class="text-slate-600 text-sm md:text-base">Select a story to begin your science adventure.</p>
+      </div>
+      
+      <div id="predefinedStoriesGrid"
+        class="flex gap-4 md:gap-6 overflow-x-auto pb-3 -mx-2 px-2 snap-x snap-mandatory scroll-smooth">
+        <!-- Story tiles will be inserted here -->
+      </div>
+      <p class="text-xs md:text-sm text-slate-400 pl-1">
+        Swipe sideways or scroll to see more stories.
+      </p>
+
+      <div id="predefinedStoriesEmpty" class="hidden text-center py-12 text-slate-500 font-medium">
+        No predefined stories available at the moment.
+      </div>
+    </section>
+
+    <!-- STEP 2: Story Prompt Section (populated when a story is selected) -->
+    <section id="storyPromptSection" class="max-w-6xl mx-auto px-6 pb-10 hidden">
+      <div class="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-3xl shadow-[0_0_24px_rgba(147,51,234,0.18)] px-6 py-6 md:px-10 md:py-8 flex flex-col gap-4">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <p class="text-[0.7rem] md:text-xs font-semibold uppercase tracking-[0.15em] text-purple-500">
+              Step 2 · Check your adventure prompt
+            </p>
+            <h2 id="storyPromptTitle" class="font-fredoka text-2xl md:text-3xl font-bold text-slate-800 mt-1">
+              Your adventure prompt
+            </h2>
+            <p class="text-slate-600 text-sm md:text-base mt-1">
+              We pre-filled a prompt using this story's summary. You can change it before starting your adventure.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-2">
+          <label for="storyPromptTextarea" class="sr-only">Story Prompt</label>
+          <textarea id="storyPromptTextarea"
+            class="w-full min-h-[120px] md:min-h-[150px] bg-white/80 border-2 border-purple-200 rounded-2xl px-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 shadow-inner"
+            placeholder="Select a story above to see its prompt here..."></textarea>
+        </div>
+
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mt-2">
+          <p class="text-xs md:text-sm text-slate-500">
+            Tip: Rewrite the prompt in your own words to make this adventure feel even more like yours.
+          </p>
+          <button id="startAdventureBtn"
+            class="inline-flex items-center justify-center px-6 py-3 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold text-sm md:text-base shadow-lg hover:from-purple-600 hover:to-pink-600 transition disabled:opacity-50 disabled:cursor-not-allowed md:w-auto w-full">
+            Start your adventure
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bonus: Create Your Own Story Section -->
+    <section class="max-w-6xl mx-auto px-6 pb-8">
+      <div
+        class="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-3xl shadow-[0_0_24px_rgba(147,51,234,0.18)] px-6 py-6 md:px-10 md:py-8 flex flex-col gap-4">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <p class="text-[0.7rem] md:text-xs font-semibold uppercase tracking-[0.15em] text-purple-500">
+              Bonus · Create your own story
+            </p>
+            <h2 class="font-fredoka text-2xl md:text-3xl font-bold text-slate-800 mt-1">
+              Make your own adventure prompt
+            </h2>
+            <p class="text-slate-600 text-sm md:text-base mt-1">
+              Tell us what you want to explore. We’ll help you turn it into a kid-friendly comic story.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-2 flex flex-col gap-4">
+          <!-- Step 1: Idea input -->
+          <div>
+            <label for="userStoryIdeaInput"
+              class="block text-xs md:text-sm font-semibold text-slate-600 mb-1 uppercase tracking-wide">
+              Your story idea
+            </label>
+            <textarea id="userStoryIdeaInput"
+              class="w-full min-h-[80px] md:min-h-[100px] bg-white/80 border-2 border-purple-200 rounded-2xl px-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 shadow-inner text-sm md:text-base"
+              placeholder="Example: A journey through the solar system with my avatar as the captain, or learning about how volcanoes work."></textarea>
+          </div>
+
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <p class="text-xs md:text-sm text-slate-500">
+              Tip: Use kid-friendly language. Mention what your hero is curious about.
+            </p>
+            <button id="generateStoryStructureBtn"
+              class="inline-flex items-center justify-center px-5 py-2.5 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold text-xs md:text-sm shadow-lg hover:from-purple-600 hover:to-pink-600 transition disabled:opacity-50 disabled:cursor-not-allowed">
+              Generate story outline with AI
+            </button>
+          </div>
+
+          <!-- Step 2: AI generated preview -->
+          <div id="userStoryPreviewSection" class="hidden mt-2 border-t border-purple-200 pt-4">
+            <p class="text-xs md:text-sm font-semibold text-purple-500 uppercase tracking-wide mb-2">
+              Story outline preview
+            </p>
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label for="userStoryTitleInput"
+                  class="block text-xs md:text-sm font-semibold text-slate-600 mb-1 uppercase tracking-wide">
+                  Story title
+                </label>
+                <input id="userStoryTitleInput" type="text"
+                  class="w-full bg-white/80 border-2 border-purple-200 rounded-2xl px-4 py-2.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm md:text-base"
+                  placeholder="Your custom story title" />
+              </div>
+              <div>
+                <label for="userStoryTopicInput"
+                  class="block text-xs md:text-sm font-semibold text-slate-600 mb-1 uppercase tracking-wide">
+                  Topic tag
+                </label>
+                <input id="userStoryTopicInput" type="text"
+                  class="w-full bg-white/80 border-2 border-purple-200 rounded-2xl px-4 py-2.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm md:text-base"
+                  placeholder="e.g., Space, US History, India History" />
+              </div>
+            </div>
+            <div class="mt-3">
+              <label for="userStorySummaryInput"
+                class="block text-xs md:text-sm font-semibold text-slate-600 mb-1 uppercase tracking-wide">
+                Story summary
+              </label>
+              <textarea id="userStorySummaryInput"
+                class="w-full min-h-[100px] md:min-h-[120px] bg-white/80 border-2 border-purple-200 rounded-2xl px-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 shadow-inner text-sm md:text-base"
+                placeholder="Edit the summary to sound just right for your adventure."></textarea>
+            </div>
+
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mt-3">
+              <p id="userStoryStatus"
+                class="text-xs md:text-sm text-slate-500 min-h-[1.25rem] flex items-center">
+              </p>
+              <button id="saveUserStoryBtn"
+                class="inline-flex items-center justify-center px-6 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold text-xs md:text-sm shadow-lg hover:from-emerald-600 hover:to-teal-600 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                Save story and add to tiles
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Your Stories: All stories created by the current user -->
+    <section id="userStoriesSection" class="max-w-6xl mx-auto px-6 pb-8 hidden">
+      <div
+        class="bg-white border-2 border-purple-200 rounded-3xl shadow-[0_0_20px_rgba(148,163,184,0.2)] px-6 py-6 md:px-10 md:py-8 flex flex-col gap-4">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <p class="text-[0.7rem] md:text-xs font-semibold uppercase tracking-[0.15em] text-purple-500">
+              comics stories generated by AI
+            </p>
+            <h2 class="font-fredoka text-2xl md:text-3xl font-bold text-slate-800 mt-1">
+              Stories you made with AI
+            </h2>
+            <p class="text-slate-600 text-sm md:text-base mt-1">
+              Quickly jump back into any story you created. Tap a story to reuse its prompt and start a new adventure.
+            </p>
+          </div>
+        </div>
+
+        <div id="userStoriesList" class="flex flex-col gap-3"></div>
+
+        <p id="userStoriesEmpty" class="hidden text-sm md:text-base text-slate-500 text-center py-4">
+          You haven't saved any stories yet. Use the "Create your own story" section above to make your first one.
+        </p>
+      </div>
+    </section>
+
+    <!-- STEP 3: Generated Avatar Story (single-panel reader) -->
+    <section id="generatedStorySection" class="max-w-6xl mx-auto px-6 pb-16 hidden">
+      <div
+        class="bg-white border-2 border-purple-200 rounded-3xl shadow-[0_0_24px_rgba(148,163,184,0.25)] px-6 py-6 md:px-10 md:py-8 flex flex-col gap-4">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-1">
+          <div>
+            <p class="text-[0.7rem] md:text-xs font-semibold uppercase tracking-[0.15em] text-purple-500">
+              Step 3 · Read your comic
+            </p>
+            <h2 id="generatedStoryTitle" class="font-fredoka text-2xl md:text-3xl font-bold text-slate-800 mt-1">
+              Your custom adventure
+            </h2>
+            <p class="text-slate-600 text-xs md:text-sm mt-1">
+              We created a 6-panel story using your prompt and avatar. Use the arrows to read one panel at a time.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between gap-2 mt-1">
+          <span class="text-xs font-semibold uppercase tracking-wide text-purple-600">
+            Panel <span id="currentPanelNum">1</span> of <span id="totalPanels">6</span>
+          </span>
+          <div id="panelDots" class="flex items-center gap-1"></div>
+        </div>
+
+        <div
+          class="bg-slate-50 border border-slate-200 rounded-2xl p-3 md:p-4 flex flex-col gap-3 mt-2">
+          <div
+            class="w-full rounded-xl overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center min-h-[220px] md:min-h-[320px]">
+            <img id="panelImage" class="w-full h-auto max-h-[480px] object-contain hidden" alt="Comic panel" />
+            <span id="panelImagePlaceholder"
+              class="text-slate-400 text-sm md:text-base">
+              Image generating...
+            </span>
+          </div>
+
+          <div id="panelSpeechBubbles" class="flex flex-col gap-2"></div>
+
+          <p id="panelNarration" class="text-sm md:text-base text-slate-700 leading-relaxed"></p>
+
+          <div id="panelGlossary" class="flex flex-wrap gap-1.5"></div>
+        </div>
+
+        <div class="flex items-center justify-between mt-3">
+          <button id="prevPanelBtn"
+            class="px-4 py-2 rounded-full bg-slate-100 text-slate-700 text-xs md:text-sm font-semibold border border-slate-200 hover:bg-slate-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled>
+            ← Previous
+          </button>
+          <button id="nextPanelBtn"
+            class="px-4 py-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs md:text-sm font-bold shadow-md hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed">
+            Next →
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Previously generated comics from Supabase -->
+    <section id="generatedComicsSection" class="max-w-6xl mx-auto px-6 pb-8 hidden">
+      <div
+        class="bg-white border-2 border-purple-200 rounded-3xl shadow-[0_0_20px_rgba(148,163,184,0.2)] px-6 py-6 md:px-10 md:py-8 flex flex-col gap-4">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <p class="text-[0.7rem] md:text-xs font-semibold uppercase tracking-[0.15em] text-purple-500">
+              Past adventures
+            </p>
+            <h2 class="font-fredoka text-2xl md:text-3xl font-bold text-slate-800 mt-1">
+              Your generated comics
+            </h2>
+            <p class="text-slate-600 text-sm md:text-base mt-1">
+              See all the comics that were generated for you before. Tap one to load it into the reader panel above.
+            </p>
+          </div>
+        </div>
+
+        <div id="generatedComicsList" class="flex flex-col gap-3"></div>
+
+        <p id="generatedComicsEmpty" class="hidden text-sm md:text-base text-slate-500 text-center py-4">
+          No generated comics found yet. Start an adventure to create your first one!
+        </p>
+      </div>
+    </section>
+
+    <!-- Available Adventures Section (hidden on stories hub for now) -->
+    <section class="max-w-6xl mx-auto px-6 pb-20 hidden" aria-hidden="true">
       <div
         class="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-3xl shadow-[0_0_20px_rgba(139,92,246,0.15)] px-6 py-6 md:px-10 md:py-10 flex flex-col gap-4">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -80,6 +363,39 @@
     </section>
   </main>
 
+  <!-- Template for Predefined Story Tiles -->
+  <template id="storyTileTemplate">
+    <article
+      class="story-tile bg-white border-2 border-purple-200 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer min-w-[220px] md:min-w-[240px] lg:min-w-[260px] min-h-[72px] snap-start shrink-0"
+      data-story-id="">
+      <button
+        class="w-full h-full flex items-center gap-3 px-3 py-3 bg-white rounded-xl hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-400 text-left">
+        <div
+          class="h-11 w-11 md:h-12 md:w-12 rounded-lg bg-gradient-to-br from-purple-100 to-pink-100 overflow-hidden flex-shrink-0">
+          <img data-tile-cover class="w-full h-full object-cover" alt="" />
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between gap-2">
+            <h3 data-tile-title
+              class="font-fredoka text-xs md:text-sm text-slate-800 font-semibold truncate">
+            </h3>
+            <span data-tile-time class="text-[0.6rem] text-slate-500 whitespace-nowrap"></span>
+          </div>
+          <div class="flex items-center gap-1 mt-0.5">
+            <span data-tile-topic
+              class="text-[0.6rem] font-semibold uppercase tracking-wide text-purple-600 truncate max-w-[8rem] md:max-w-[10rem]">
+            </span>
+            <span data-tile-badge
+              class="hidden text-[0.6rem] font-bold uppercase rounded-full bg-emerald-500 text-white px-2 py-0.5">
+              Your Story
+            </span>
+          </div>
+        </div>
+      </button>
+    </article>
+  </template>
+
+  <!-- Template for Story Cards (Existing) -->
   <template id="storyCardTemplate">
     <article
       class="panel-card bg-white border-2 border-purple-200 rounded-2xl overflow-hidden shadow-[0_0_20px_rgba(139,92,246,0.15)] hover:shadow-[0_0_30px_rgba(139,92,246,0.3)] transition">
