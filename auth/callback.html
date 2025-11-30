@@ -114,7 +114,7 @@
 
             <script type="module">
                 import { createClient } from '@supabase/supabase-js';
-                import { supabaseConfig } from '../config.js';
+                import { supabaseConfig } from '/config.js';
 
                 const supabase = createClient(supabaseConfig.url, supabaseConfig.anonKey);
 
@@ -142,7 +142,7 @@
                             console.error('Error fetching profile:', profileError);
                             // Fallback or error handling
                             handleError('Unable to load profile. Redirecting to home...');
-                            setTimeout(() => window.location.href = '../index.html', 2000);
+                            setTimeout(() => window.location.href = '/index.html', 2000);
                             return;
                         }
 
@@ -150,19 +150,19 @@
                             const type = profile.account_type.toLowerCase();
                             switch (type) {
                                 case 'student':
-                                    window.location.href = '../dashboards/student-dashboard.html';
+                                    window.location.href = '/dashboards/student-dashboard.html';
                                     break;
                                 case 'parent':
-                                    window.location.href = '../parent/dashboard.html';
+                                    window.location.href = '/parent/dashboard.html';
                                     break;
                                 case 'teacher':
-                                    window.location.href = '../dashboards/teacher-dashboard.html';
+                                    window.location.href = '/dashboards/teacher-dashboard.html';
                                     break;
                                 default:
-                                    window.location.href = '../index.html';
+                                    window.location.href = '/index.html';
                             }
                         } else {
-                            window.location.href = '../index.html';
+                            window.location.href = '/index.html';
                         }
 
                     } catch (error) {

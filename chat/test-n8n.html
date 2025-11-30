@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test n8n Connection</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    pre {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      overflow-x: auto;
+      font-size: 0.875rem;
+    }
+    .status-success { color: #10b981; }
+    .status-error { color: #ef4444; }
+    .status-warning { color: #f59e0b; }
+  </style>
+</head>
+<body class="bg-gray-50 p-8">
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6">🧪 Test n8n Connection with Payload</h1>
+    
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+      <h2 class="text-xl font-semibold mb-4">Configuration Status</h2>
+      <div id="configStatus" class="mb-4">
+        <p class="text-gray-600">Loading...</p>
+      </div>
+      <button 
+        id="checkConfigBtn" 
+        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        onclick="checkConfig()"
+      >
+        Check Configuration
+      </button>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+      <h2 class="text-xl font-semibold mb-4">Test n8n Connection</h2>
+      <div id="testStatus" class="mb-4">
+        <p class="text-gray-600">Click the button below to test</p>
+      </div>
+      <button 
+        id="testBtn" 
+        class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
+        onclick="runTest()"
+      >
+        Run Test
+      </button>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-lg p-6">
+      <h2 class="text-xl font-semibold mb-4">Test Results</h2>
+      <div id="testResults" class="space-y-4">
+        <p class="text-gray-600">Test results will appear here...</p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    async function checkConfig() {
+      const statusDiv = document.getElementById('configStatus');
+      statusDiv.innerHTML = '<p class="text-gray-600">Checking...</p>';
+      
+      try {
+        const { getN8nStatus } = await import('./chat-services.js');
+        const status = getN8nStatus();
+        
+        let html = '<div class="space-y-2">';
+        html += `<p class="${status.configured ? 'status-success' : 'status-error'}">`;
+        html += `${status.configured ? '✅' : '❌'} n8n URL: ${status.configured ? 'Configured' : 'Not Configured'}`;
+        html += `</p>`;
+        html += `<p>URL: <code class="bg-gray-100 px-2 py-1 rounded">${status.url || 'Not set'}</code></p>`;
+        html += `<p class="${status.mockMode ? 'status-warning' : 'status-success'}">`;
+        html += `${status.mockMode ? '⚠️' : '✅'} Mock Mode: ${status.mockMode ? 'Enabled (n8n will NOT be used)' : 'Disabled'}`;
+        html += `</p>`;
+        html += `<p class="${status.willUseN8n ? 'status-success' : 'status-warning'}">`;
+        html += `${status.willUseN8n ? '✅' : '⚠️'} Will Use n8n: ${status.willUseN8n ? 'Yes' : 'No'}`;
+        html += `</p>`;
+        
+        if (!status.willUseN8n && status.configured) {
+          html += '<div class="bg-yellow-50 border border-yellow-200 rounded p-3 mt-3">';
+          html += '<p class="text-sm"><strong>⚠️ Action Required:</strong></p>';
+          html += '<p class="text-sm">To use n8n, set <code>VITE_USE_CHAT_MOCKS=false</code> in your .env file and restart the dev server.</p>';
+          html += '</div>';
+        }
+        
+        html += '</div>';
+        statusDiv.innerHTML = html;
+      } catch (error) {
+        statusDiv.innerHTML = `<p class="status-error">Error: ${error.message}</p>`;
+      }
+    }
+    
+    async function runTest() {
+      const testBtn = document.getElementById('testBtn');
+      const testStatus = document.getElementById('testStatus');
+      const testResults = document.getElementById('testResults');
+      
+      testBtn.disabled = true;
+      testStatus.innerHTML = '<p class="text-blue-600">⏳ Running test...</p>';
+      testResults.innerHTML = '<p class="text-gray-600">Preparing test...</p>';
+      
+      try {
+        // Import test function
+        const { testN8nWithPayload } = await import('./test-n8n-payload.js');
+        
+        // Capture console output
+        const logs = [];
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        console.log = function(...args) {
+          logs.push({ type: 'log', args });
+          originalLog(...args);
+        };
+        
+        console.error = function(...args) {
+          logs.push({ type: 'error', args });
+          originalError(...args);
+        };
+        
+        console.warn = function(...args) {
+          logs.push({ type: 'warn', args });
+          originalWarn(...args);
+        };
+        
+        // Run test
+        await testN8nWithPayload();
+        
+        // Restore console
+        console.log = originalLog;
+        console.error = originalError;
+        console.warn = originalWarn;
+        
+        // Display results
+        let resultsHtml = '<div class="space-y-4">';
+        resultsHtml += '<h3 class="font-semibold">Test Output:</h3>';
+        resultsHtml += '<div class="bg-gray-100 p-4 rounded max-h-96 overflow-y-auto">';
+        resultsHtml += '<pre class="text-sm">';
+        
+        logs.forEach(log => {
+          const text = log.args.map(arg => 
+            typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+          ).join(' ');
+          const color = log.type === 'error' ? 'text-red-600' : 
+                       log.type === 'warn' ? 'text-yellow-600' : 
+                       'text-gray-800';
+          resultsHtml += `<span class="${color}">${text}</span>\n`;
+        });
+        
+        resultsHtml += '</pre>';
+        resultsHtml += '</div>';
+        resultsHtml += '<p class="text-sm text-gray-600">💡 Check the browser console for detailed logs</p>';
+        resultsHtml += '</div>';
+        
+        testResults.innerHTML = resultsHtml;
+        testStatus.innerHTML = '<p class="status-success">✅ Test completed! Check results below and browser console.</p>';
+        
+      } catch (error) {
+        testStatus.innerHTML = `<p class="status-error">❌ Test failed: ${error.message}</p>`;
+        testResults.innerHTML = `<pre class="bg-red-50 text-red-800 p-4 rounded">${error.stack}</pre>`;
+      } finally {
+        testBtn.disabled = false;
+      }
+    }
+    
+    // Auto-check config on load
+    window.addEventListener('DOMContentLoaded', () => {
+      checkConfig();
+    });
+    
+    // Make functions available globally
+    window.checkConfig = checkConfig;
+    window.runTest = runTest;
+  </script>
+</body>
+</html>
+

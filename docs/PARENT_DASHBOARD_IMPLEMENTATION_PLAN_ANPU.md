@@ -133,9 +133,9 @@ dashboards/
       
       <!-- Navigation Links -->
       <div class="hidden lg:flex items-center space-x-6">
-        <a href="../stories/index.html" class="font-fredoka text-white hover:text-purple-200 transition font-bold">Stories</a>
-        <a href="../chat/index.html" class="font-fredoka text-white hover:text-purple-200 transition font-bold">Chat</a>
-        <a href="./dashboard.html" class="font-fredoka text-purple-200 font-bold">Dashboard</a>
+        <a href="/stories/index.html" class="font-fredoka text-white hover:text-purple-200 transition font-bold">Stories</a>
+        <a href="/chat/index.html" class="font-fredoka text-white hover:text-purple-200 transition font-bold">Chat</a>
+        <a href="/dashboard.html" class="font-fredoka text-purple-200 font-bold">Dashboard</a>
         <button id="logoutBtn" class="font-fredoka text-white hover:text-purple-200 transition font-bold px-4 py-2 rounded-full border border-white/20 hover:bg-white/10">Logout</button>
       </div>
       
@@ -190,10 +190,10 @@ document.getElementById('logoutBtnMobile')?.addEventListener('click', handleLogo
       
       <!-- Navigation Links -->
       <div class="flex items-center gap-6 text-white/80 text-sm font-semibold">
-        <a href="../index.html" class="hover:text-white transition">Home</a>
-        <a href="../stories/index.html" class="hover:text-white transition">Stories</a>
-        <a href="../chat/index.html" class="hover:text-white transition">Chat</a>
-        <a href="./dashboard.html" class="hover:text-white transition">Dashboard</a>
+        <a href="/index.html" class="hover:text-white transition">Home</a>
+        <a href="/stories/index.html" class="hover:text-white transition">Stories</a>
+        <a href="/chat/index.html" class="hover:text-white transition">Chat</a>
+        <a href="/dashboard.html" class="hover:text-white transition">Dashboard</a>
       </div>
       
       <!-- Copyright -->

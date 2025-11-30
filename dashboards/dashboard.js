@@ -53,7 +53,7 @@ async function checkAuth() {
 
     if (currentPage.includes('teacher-dashboard.html') && profile.account_type !== 'teacher') {
         if (profile.account_type === 'parent') {
-            window.location.href = 'parent-dashboard.html';
+            window.location.href = '../parent/dashboard.html';
         } else if (profile.account_type === 'student') {
             window.location.href = 'student-dashboard.html';
         } else {
@@ -125,7 +125,7 @@ logoutBtn.addEventListener('click', async () => {
         sessionStorage.clear();
 
         // Redirect to auth page with account type and mode query parameters
-        const redirectUrl = currentAccountType 
+        const redirectUrl = currentAccountType
             ? `../auth/auth.html?type=${currentAccountType}&mode=login`
             : '../auth/auth.html';
         window.location.href = redirectUrl;

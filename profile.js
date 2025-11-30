@@ -22,7 +22,7 @@ const studentFieldsRow = document.getElementById('studentFieldsRow');
 
 const firstNameInput = document.getElementById('firstName');
 const usernameInput = document.getElementById('username');
-const ageInput = document.getElementById('age');
+const gradeLevelInput = document.getElementById('gradeLevel');
 const parentEmailInput = document.getElementById('parentEmail');
 const emailInput = document.getElementById('email');
 const fullNameInput = document.getElementById('fullName');
@@ -94,7 +94,7 @@ async function loadUserProfile(userId) {
 
             if (profile.account_type === 'student') {
                 studentFieldsRow.style.display = 'grid';
-                ageInput.value = profile.age || '';
+                gradeLevelInput.value = profile.grade_level || '';
                 parentEmailInput.value = profile.parent_email || '';
                 accountTypeBadge.className = 'badge badge-student';
                 accountTypeBadge.textContent = 'Student';
@@ -169,11 +169,18 @@ profileForm.addEventListener('submit', async (e) => {
     };
 
     if (currentProfile.account_type === 'student') {
-        const age = parseInt(ageInput.value);
+        const gradeLevel = gradeLevelInput.value.trim();
         const parentEmail = parentEmailInput.value.trim();
 
-        if (age && (age < 5 || age > 12)) {
-            showError('Age must be between 5 and 12');
+        if (!gradeLevel) {
+            showError('Please select your grade level');
+            return;
+        }
+
+        // Validate grade_level format (e.g., "1", "2", "3", "4", "5", "6" or "Grade 1", etc.)
+        const validGrades = ['1', '2', '3', '4', '5', '6', 'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6'];
+        if (!validGrades.includes(gradeLevel) && !gradeLevel.match(/^(Grade\s?)?[1-6]$/i)) {
+            showError('Please select a valid grade level (1-6)');
             return;
         }
 
@@ -185,7 +192,7 @@ profileForm.addEventListener('submit', async (e) => {
             }
         }
 
-        updateData.age = age || null;
+        updateData.grade_level = gradeLevel;
         updateData.parent_email = parentEmail || null;
     }
 

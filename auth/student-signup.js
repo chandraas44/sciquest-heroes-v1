@@ -1,5 +1,5 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
-import { supabaseConfig } from '../config.js';
+import { supabaseConfig } from '/config.js';
 
 const supabaseUrl = supabaseConfig.url;
 const supabaseAnonKey = supabaseConfig.anonKey;
@@ -12,7 +12,7 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 let currentPanel = 1;
 let formData = {
-    age: '',
+    grade_level: '',
     parentEmail: '',
     firstName: '',
     email: '',
@@ -101,11 +101,11 @@ panel1Form.addEventListener('submit', async (e) => {
     e.preventDefault();
     hideMessages();
 
-    const age = document.getElementById('studentAge').value;
+    const gradeLevel = document.getElementById('studentGradeLevel').value;
     const parentEmail = document.getElementById('parentEmail').value.trim();
 
-    if (!age) {
-        showError('Please select your age');
+    if (!gradeLevel) {
+        showError('Please select your grade level');
         return;
     }
 
@@ -120,7 +120,7 @@ panel1Form.addEventListener('submit', async (e) => {
         return;
     }
 
-    formData.age = parseInt(age);
+    formData.grade_level = gradeLevel;
     formData.parentEmail = parentEmail;
 
     goToPanel(2);
@@ -220,7 +220,7 @@ panel2Form.addEventListener('submit', async (e) => {
                 email: email,
                 account_type: 'student',
                 first_name: firstName,
-                age: formData.age,
+                grade_level: formData.grade_level,
                 parent_email: formData.parentEmail
             };
 
@@ -243,7 +243,7 @@ panel2Form.addEventListener('submit', async (e) => {
             showSuccess('Account created successfully! Redirecting to avatar selection...');
 
             setTimeout(() => {
-                window.location.href = '../avatar-selection.html';
+                window.location.href = '/avatar-selection.html';
             }, 1500);
         }
     } catch (error) {
