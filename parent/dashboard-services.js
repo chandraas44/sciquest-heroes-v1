@@ -383,10 +383,56 @@ export function logAnalyticsEvent(eventName, eventData = {}) {
 }
 
 
+export async function getAvatars() {
+  const client = getSupabaseClient();
+  if (!client) return [];
+
+  try {
+    const { data, error } = await client
+      .storage
+      .from('avatars')
+      .list('', {
+        limit: 100,
+        offset: 0,
+        sortBy: { column: 'name', order: 'asc' },
+      });
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      return [];
+    }
+
+    // Filter for image files and map to avatar objects
+    const avatarFiles = data.filter(file =>
+      file.name.match(/\.(png|jpg|jpeg|gif|webp)$/i)
+    );
+
+    return avatarFiles.map(file => {
+      const { data: publicUrlData } = client
+        .storage
+        .from('avatars')
+        .getPublicUrl(file.name);
+
+      const name = file.name.split('.')[0];
+      const id = name.toLowerCase();
+
+      return {
+        id: id,
+        name: name,
+        image: publicUrlData.publicUrl
+      };
+    });
+  } catch (error) {
+    console.warn('[dashboard] Failed to fetch avatars', error);
+    return [];
+  }
+}
+
 export async function createChildAccount(childData) {
   if (!hasSupabaseConfig()) return { error: 'Supabase not configured' };
 
-  const { firstName, lastName, email, password, age, grade, parentId } = childData;
+  const { firstName, lastName, email, password, age, grade, parentId, avatarUrl } = childData;
 
   // Create a temporary client to avoid logging out the parent
   const tempClient = createClient(supabaseConfig.url, supabaseConfig.anonKey, {
@@ -437,7 +483,7 @@ export async function createChildAccount(childData) {
         account_type: 'student',
         grade_level: grade,
         age: age ? parseInt(age) : null,
-        avatar_url: `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${firstName}`,
+        avatar_url: avatarUrl || `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${firstName}`,
         parent_id: parentId
       });
 

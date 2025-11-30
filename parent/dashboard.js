@@ -5,7 +5,8 @@ import {
   createChildAccount,
   signOutUser,
   logAnalyticsEvent,
-  getCurrentUser
+  getCurrentUser,
+  getAvatars
 } from './dashboard-services.js';
 import {
   getBadgeById,
@@ -21,7 +22,10 @@ const state = {
   children: [],
   progress: null,
   badges: null,
-  activeTab: 'overview'
+  activeTab: 'overview',
+  avatars: [],
+  selectedAvatar: null,
+  currentStep: 1
 };
 
 const childrenListEl = document.getElementById('childrenList');
@@ -732,23 +736,167 @@ const addChildModal = document.getElementById('addChildModal');
 const addChildSidebarBtn = document.getElementById('addChildSidebarBtn');
 const addChildEmptyStateBtn = document.getElementById('addChildEmptyStateBtn');
 const closeAddChildModalBtn = document.getElementById('closeAddChildModalBtn');
+const nextStepBtn = document.getElementById('nextStepBtn');
+const backStepBtn = document.getElementById('backStepBtn');
+const addChildStep1 = document.getElementById('addChildStep1');
+const addChildStep2 = document.getElementById('addChildStep2');
+const modalAvatarGrid = document.getElementById('modalAvatarGrid');
+const saveChildBtn = document.getElementById('saveChildBtn');
 
 function openAddChildModal() {
   if (addChildModal) {
     addChildModal.classList.remove('hidden');
-    document.getElementById('newChildFirstName')?.focus();
+    resetAddChildModal();
   }
+}
+
+function resetAddChildModal() {
+  // Reset form
+  const form = document.getElementById('addChildForm');
+  if (form) form.reset();
+
+  // Reset error
+  const errorEl = document.getElementById('addChildError');
+  if (errorEl) errorEl.classList.add('hidden');
+
+  // Reset state
+  state.selectedAvatar = null;
+  state.currentStep = 1;
+
+  // Reset UI
+  showStep(1);
+
+  // Reset avatar selection
+  document.querySelectorAll('.avatar-card').forEach(card => card.classList.remove('selected'));
+  if (saveChildBtn) saveChildBtn.disabled = true;
+}
+
+function showStep(step) {
+  state.currentStep = step;
+  if (step === 1) {
+    addChildStep1.classList.remove('hidden');
+    addChildStep2.classList.add('hidden');
+  } else {
+    addChildStep1.classList.add('hidden');
+    addChildStep2.classList.remove('hidden');
+    loadAndRenderAvatars();
+  }
+}
+
+async function loadAndRenderAvatars() {
+  if (state.avatars.length > 0) {
+    renderAvatars(state.avatars);
+    return;
+  }
+
+  modalAvatarGrid.innerHTML = '<div class="col-span-full text-center py-8 text-slate-500"><div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-purple-200 border-t-purple-500 mb-2"></div><p>Loading avatars...</p></div>';
+
+  const avatars = await getAvatars();
+  state.avatars = avatars;
+  renderAvatars(avatars);
+}
+
+function renderAvatars(avatars) {
+  modalAvatarGrid.innerHTML = '';
+
+  if (avatars.length === 0) {
+    modalAvatarGrid.innerHTML = '<p class="col-span-full text-center text-slate-500">No avatars available.</p>';
+    return;
+  }
+
+  avatars.forEach(avatar => {
+    const card = document.createElement('div');
+    card.className = 'avatar-card';
+    if (state.selectedAvatar?.id === avatar.id) {
+      card.classList.add('selected');
+    }
+
+    card.innerHTML = `
+      <div class="avatar-image-wrapper">
+        <img src="${avatar.image}" alt="${avatar.name}" onerror="this.src='https://api.dicebear.com/7.x/fun-emoji/svg?seed=${avatar.name}'">
+      </div>
+      <div class="avatar-name">${avatar.name}</div>
+    `;
+
+    card.addEventListener('click', () => selectAvatar(avatar));
+    modalAvatarGrid.appendChild(card);
+  });
+}
+
+function selectAvatar(avatar) {
+  state.selectedAvatar = avatar;
+
+  // Update UI
+  document.querySelectorAll('.avatar-card').forEach(card => card.classList.remove('selected'));
+  // Find the card we just clicked (re-querying is safest)
+  const cards = Array.from(modalAvatarGrid.children);
+  const selectedCardIndex = state.avatars.findIndex(a => a.id === avatar.id);
+  if (selectedCardIndex >= 0 && cards[selectedCardIndex]) {
+    cards[selectedCardIndex].classList.add('selected');
+  }
+
+  // Enable save button
+  saveChildBtn.disabled = false;
+}
+
+function validateStep1() {
+  const firstName = document.getElementById('newChildFirstName').value.trim();
+  const email = document.getElementById('newChildEmail').value.trim();
+  const password = document.getElementById('newChildPassword').value;
+  const confirmPassword = document.getElementById('newChildRetypePassword').value;
+  const age = document.getElementById('newChildAge').value;
+
+  const errorEl = document.getElementById('addChildError');
+  errorEl.classList.add('hidden');
+
+  if (!firstName) {
+    showAddChildError('First Name is required');
+    return false;
+  }
+  if (!email || !email.includes('@')) {
+    showAddChildError('Valid Email is required');
+    return false;
+  }
+  if (!password || password.length < 6) {
+    showAddChildError('Password must be at least 6 characters');
+    return false;
+  }
+  if (password !== confirmPassword) {
+    showAddChildError('Passwords do not match');
+    return false;
+  }
+  if (!age) {
+    showAddChildError('Age is required');
+    return false;
+  }
+
+  return true;
+}
+
+function showAddChildError(msg) {
+  const errorEl = document.getElementById('addChildError');
+  errorEl.textContent = msg;
+  errorEl.classList.remove('hidden');
+}
+
+if (nextStepBtn) {
+  nextStepBtn.addEventListener('click', () => {
+    if (validateStep1()) {
+      showStep(2);
+    }
+  });
+}
+
+if (backStepBtn) {
+  backStepBtn.addEventListener('click', () => {
+    showStep(1);
+  });
 }
 
 function closeAddChildModal() {
   if (addChildModal) {
     addChildModal.classList.add('hidden');
-    // Reset form
-    const form = document.getElementById('addChildForm');
-    if (form) form.reset();
-    // Reset error
-    const errorEl = document.getElementById('addChildError');
-    if (errorEl) errorEl.classList.add('hidden');
+    resetAddChildModal();
   }
 }
 
@@ -787,6 +935,11 @@ if (addChildForm) {
     const saveBtn = document.getElementById('saveChildBtn');
     const errorEl = document.getElementById('addChildError');
 
+    if (!state.selectedAvatar) {
+      showAddChildError('Please select an avatar');
+      return;
+    }
+
     saveBtn.disabled = true;
     saveBtn.textContent = 'CREATING...';
     errorEl.classList.add('hidden');
@@ -802,13 +955,9 @@ if (addChildForm) {
         password: document.getElementById('newChildPassword').value,
         age: document.getElementById('newChildAge').value,
         grade: document.getElementById('newChildGrade').value,
-        parentId: user.id
+        parentId: user.id,
+        avatarUrl: state.selectedAvatar.image
       };
-
-      // Basic validation
-      if (document.getElementById('newChildPassword').value !== document.getElementById('newChildRetypePassword').value) {
-        throw new Error('Passwords do not match');
-      }
 
       const { data, error } = await createChildAccount(formData);
 
