@@ -194,11 +194,13 @@ export async function saveStoryProgress({
   if (client && !shouldUseMockData()) {
     try {
       // Try saving with user_id first
+      const now = new Date().toISOString();
       const payload = {
         user_id: childId,
         story_id: storyId,
         last_panel_index: lastPanelIndex,
-        completed_at: completed ? new Date().toISOString() : null
+        completed_at: completed ? now : null,
+        updated_at: now
       };
       
       try {
