@@ -388,7 +388,7 @@
 </head>
 
 <body>
-      <!-- Shared Navigation -->
+    <!-- Shared Navigation -->
     <div id="nav-container"></div>
     <script type="module" src="/components/nav.js"></script>
 
@@ -402,7 +402,7 @@
                     <h1 class="font-fredoka text-4xl font-black text-slate-800 mb-2" id="profileTitle">
                         My Profile
                     </h1>
-                    <span class="badge badge-student" id="accountTypeBadge">Child</span>
+                    <span class="badge" id="accountTypeBadge"></span>
                 </div>
             </div>
 
@@ -416,8 +416,19 @@
                         <input type="text" id="firstName" class="form-input" placeholder="Enter first name">
                     </div>
                     <div>
+                        <label for="lastName" class="form-label">Last Name</label>
+                        <input type="text" id="lastName" class="form-input" placeholder="Enter last name">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div>
                         <label for="username" class="form-label">Username</label>
                         <input type="text" id="username" class="form-input" placeholder="Username" disabled>
+                    </div>
+                    <div>
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" id="email" class="form-input" placeholder="your@email.com" disabled>
                     </div>
                 </div>
 
@@ -440,21 +451,30 @@
                     </div>
                 </div>
 
-                <div class="mb-5">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" id="email" class="form-input" placeholder="your@email.com" disabled>
-                </div>
-
-                <div class="mb-5">
+                <div class="mb-5" style="display: none;">
                     <label for="fullName" class="form-label">Full Name (Optional)</label>
                     <input type="text" id="fullName" class="form-input" placeholder="Full name">
                 </div>
 
+                <div style="margin-top: 40px; border-top: 2px solid #e2e8f0; padding-top: 32px;">
+                    <h3 class="font-fredoka text-2xl font-bold text-slate-800 mb-6">Security</h3>
+                    <div class="form-row">
+                        <div>
+                            <label for="newPassword" class="form-label">New Password</label>
+                            <input type="password" id="newPassword" class="form-input" placeholder="Enter new password">
+                        </div>
+                        <div>
+                            <label for="confirmPassword" class="form-label">Confirm Password</label>
+                            <input type="password" id="confirmPassword" class="form-input"
+                                placeholder="Confirm new password">
+                        </div>
+                    </div>
+                </div>
                 <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-top: 32px;">
                     <button type="submit" class="btn-3d">
                         <span id="saveBtnText">Save Changes</span>
                     </button>
-                    <a href="index.html" class="btn-secondary">
+                    <a href="index.html" class="btn-secondary" id="backToHomeBtn">
                         Back to Home
                     </a>
                 </div>

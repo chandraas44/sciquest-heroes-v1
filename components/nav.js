@@ -181,7 +181,7 @@ function updateUserMenu(profile, basePath) {
   const profileLink = document.getElementById('profileLink');
   const homeLink = document.getElementById('homeLink');
 
-  if (!userAvatarNav || !userNameNav || !profileLink || !homeLink) {
+  if (!userAvatarNav || !userNameNav || !profileLink) {
     return;
   }
 
@@ -203,7 +203,9 @@ function updateUserMenu(profile, basePath) {
 
   // Set dropdown links
   profileLink.href = `${basePath}profile.html`;
-  homeLink.href = `${basePath}index.html`;
+  if (homeLink) {
+    homeLink.href = `${basePath}index.html`;
+  }
 }
 
 /**
@@ -276,7 +278,7 @@ function buildNavLinks(isAuthenticated, basePath, currentPage) {
       <button class="btn-3d mr-4" onclick="window.location.href='${basePath}auth/auth.html?type=parent&mode=signup'">
         Join For Free
       </button>
-      <button class="btn-3d bg-white text-purple-600" onclick="window.location.href='${basePath}auth/account-type-selection.html'">
+      <button class="btn-3d bg-white text-purple-600" onclick="window.location.href='${basePath}auth/auth.html?mode=login'">
         Log In
       </button>
     `);

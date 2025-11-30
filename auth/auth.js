@@ -61,6 +61,18 @@ function updateUI() {
         modeToggleTopText.textContent = 'Log In';
         modeToggleIcon.className = 'fas fa-sign-in-alt';
         forgotPasswordContainer.style.display = 'none';
+
+        // Hide login option for parent signup
+        if (accountType === 'parent') {
+            const authToggleContainer = document.getElementById('authToggleContainer');
+            if (authToggleContainer) authToggleContainer.style.display = 'none';
+            if (modeToggleTop) modeToggleTop.style.display = 'none';
+        } else {
+            // Ensure visible for other modes
+            const authToggleContainer = document.getElementById('authToggleContainer');
+            if (authToggleContainer) authToggleContainer.style.display = 'block';
+            if (modeToggleTop) modeToggleTop.style.display = 'inline-flex';
+        }
     } else {
         authTitle.textContent = 'Welcome Back!';
         authSubtitle.textContent = 'Sign in to continue your adventure';
@@ -71,6 +83,11 @@ function updateUI() {
         modeToggleTopText.textContent = 'Sign Up';
         modeToggleIcon.className = 'fas fa-user-plus';
         forgotPasswordContainer.style.display = 'block';
+
+        // Ensure visible in login mode
+        const authToggleContainer = document.getElementById('authToggleContainer');
+        if (authToggleContainer) authToggleContainer.style.display = 'none';
+        if (modeToggleTop) modeToggleTop.style.display = 'none';
     }
 }
 
