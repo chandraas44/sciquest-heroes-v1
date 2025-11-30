@@ -125,9 +125,7 @@ function getCurrentPage() {
     return 'parent-dashboard';
   }
 
-  if (path.includes('/dashboards/student-dashboard')) {
-    return 'student-dashboard';
-  }
+
 
 
 
@@ -257,18 +255,29 @@ function buildNavLinks(isAuthenticated, basePath, currentPage, profile) {
     if (profile?.account_type === 'parent') {
       homeLink = `${basePath}parent/dashboard.html`;
     } else if (profile?.account_type === 'student') {
-      homeLink = `${basePath}dashboards/student-dashboard.html`;
+      homeLink = `${basePath}stories/index.html`;
     } else if (profile?.account_type === 'teacher') {
       homeLink = `${basePath}dashboards/teacher-dashboard.html`;
     }
 
-    // Only show navigation links for non-parent accounts (students, teachers, etc.)
+    // Only show navigation links for non-parent and non-student accounts
+    // Parents don't need these links on their dashboard as requested
+    // Students also don't need Home link as requested
+    // Only show navigation links for non-parent accounts
     // Parents don't need these links on their dashboard as requested
     if (profile?.account_type !== 'parent') {
-      links.push(`
+      let navItems = '';
+
+      // Only show Home link if NOT a student
+      if (profile?.account_type !== 'student') {
+        navItems += `
         <a href="${homeLink}" class="font-fredoka ${homeActive}">
           Home
-        </a>
+        </a>`;
+      }
+
+      // Show other links for all non-parent accounts (including students)
+      navItems += `
         <a href="${basePath}stories/index.html" class="font-fredoka ${storiesActive}">
           Stories
         </a>
@@ -278,7 +287,9 @@ function buildNavLinks(isAuthenticated, basePath, currentPage, profile) {
         <a href="${basePath}badges/badges.html" class="font-fredoka ${badgesActive}">
           Badges
         </a>
-      `);
+      `;
+
+      links.push(navItems);
     }
   } else {
     // Public navigation (home page)
@@ -326,7 +337,7 @@ async function handleLogout() {
 
   // Redirect to auth page
   const basePath = getBasePath();
-  window.location.href = `/`;
+  window.location.href = `${basePath}auth/auth.html?mode=login`;
 }
 
 /**
@@ -387,7 +398,20 @@ async function loadNavigation() {
     // Set brand link
     const brandLink = document.getElementById('navBrandLink');
     if (brandLink) {
-      brandLink.href = '/index.html';
+      if (isAuthenticated && profile) {
+        // Use the same logic as buildNavLinks to determine home
+        let homeLink = `${basePath}index.html`;
+        if (profile.account_type === 'parent') {
+          homeLink = `${basePath}parent/dashboard.html`;
+        } else if (profile.account_type === 'student') {
+          homeLink = `${basePath}stories/index.html`;
+        } else if (profile.account_type === 'teacher') {
+          homeLink = `${basePath}dashboards/teacher-dashboard.html`;
+        }
+        brandLink.href = homeLink;
+      } else {
+        brandLink.href = '/index.html';
+      }
     }
 
     // Build and inject navigation links

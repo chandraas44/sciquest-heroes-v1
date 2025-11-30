@@ -42,7 +42,7 @@ async function checkAuth() {
 
     if (currentPage.includes('parent-dashboard.html') && profile.account_type !== 'parent') {
         if (profile.account_type === 'student') {
-            window.location.href = 'student-dashboard.html';
+            window.location.href = '../stories/index.html';
         } else {
             window.location.href = '../index.html';
         }

@@ -96,7 +96,7 @@ export default defineConfig({
         auth: resolve(__dirname, 'auth/auth.html'),
         studentSignup: resolve(__dirname, 'auth/student-signup.html'),
         avatarSelection: resolve(__dirname, 'avatar-selection.html'),
-        studentDashboard: resolve(__dirname, 'dashboards/student-dashboard.html'),
+
         parentDashboardOld: resolve(__dirname, 'dashboards/parent-dashboard.html'),
 
         profile: resolve(__dirname, 'profile.html'),

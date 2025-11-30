@@ -110,18 +110,8 @@ toggleModeLink.addEventListener('click', toggleMode);
 modeToggleTop.addEventListener('click', toggleMode);
 
 // Handle back button navigation
-const backLink = document.querySelector('.back-link');
-if (backLink) {
-    backLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        if (window.history.length > 1) {
-            window.history.back();
-        } else {
-            // Fallback if no history (e.g. opened in new tab)
-            window.location.href = '/index.html';
-        }
-    });
-}
+// Removed custom back button handler to allow direct navigation to index.html
+// This prevents redirect loops when coming from a protected route after logout
 
 function showError(message) {
     errorMessage.textContent = message;
@@ -228,7 +218,7 @@ authForm.addEventListener('submit', async (e) => {
                     if (userAccountType === 'parent') {
                         window.location.href = '/parent/dashboard.html';
                     } else if (userAccountType === 'student') {
-                        window.location.href = '/dashboards/student-dashboard.html';
+                        window.location.href = '/stories/index.html';
                     } else {
                         window.location.href = '/index.html';
                     }
@@ -309,7 +299,7 @@ authForm.addEventListener('submit', async (e) => {
                             console.warn('Profile fetch error, redirecting to student dashboard (fallback)');
                             showSuccess('Login successful! Redirecting...');
                             setTimeout(() => {
-                                window.location.href = '/dashboards/student-dashboard.html';
+                                window.location.href = '/stories/index.html';
                             }, 1500);
                         } else if (accountType === 'parent') {
                             console.warn('Profile fetch error, redirecting to parent dashboard (fallback)');
@@ -339,7 +329,7 @@ authForm.addEventListener('submit', async (e) => {
                         console.warn('User profile not found, redirecting to student dashboard (fallback)');
                         showSuccess('Login successful! Redirecting...');
                         setTimeout(() => {
-                            window.location.href = '/dashboards/student-dashboard.html';
+                            window.location.href = '/stories/index.html';
                         }, 1500);
                     } else if (accountType === 'parent') {
                         console.warn('User profile not found, redirecting to parent dashboard (fallback)');
@@ -368,7 +358,7 @@ authForm.addEventListener('submit', async (e) => {
                         console.warn('Account type missing in profile, redirecting to student dashboard (fallback)');
                         showSuccess('Login successful! Redirecting...');
                         setTimeout(() => {
-                            window.location.href = '/dashboards/student-dashboard.html';
+                            window.location.href = '/stories/index.html';
                         }, 1500);
                     } else if (accountType === 'parent') {
                         console.warn('Account type missing in profile, redirecting to parent dashboard (fallback)');
@@ -400,7 +390,7 @@ authForm.addEventListener('submit', async (e) => {
                 } else if (accountTypeFromProfile === 'student') {
                     showSuccess('Login successful! Redirecting...');
                     setTimeout(() => {
-                        window.location.href = '/dashboards/student-dashboard.html';
+                        window.location.href = '/stories/index.html';
                     }, 1500);
                     return;
                 } else {
@@ -409,7 +399,7 @@ authForm.addEventListener('submit', async (e) => {
                         console.warn('Invalid account_type:', accountTypeFromProfile, 'redirecting to student dashboard');
                         showSuccess('Login successful! Redirecting...');
                         setTimeout(() => {
-                            window.location.href = '/dashboards/student-dashboard.html';
+                            window.location.href = '/stories/index.html';
                         }, 1500);
                     } else {
                         console.warn('Invalid account_type:', accountTypeFromProfile, 'showing error message');
