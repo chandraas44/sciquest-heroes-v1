@@ -61,6 +61,18 @@ function updateUI() {
         modeToggleTopText.textContent = 'Log In';
         modeToggleIcon.className = 'fas fa-sign-in-alt';
         forgotPasswordContainer.style.display = 'none';
+
+        // Hide login option for parent signup
+        if (accountType === 'parent') {
+            const authToggleContainer = document.getElementById('authToggleContainer');
+            if (authToggleContainer) authToggleContainer.style.display = 'none';
+            if (modeToggleTop) modeToggleTop.style.display = 'none';
+        } else {
+            // Ensure visible for other modes
+            const authToggleContainer = document.getElementById('authToggleContainer');
+            if (authToggleContainer) authToggleContainer.style.display = 'block';
+            if (modeToggleTop) modeToggleTop.style.display = 'inline-flex';
+        }
     } else {
         authTitle.textContent = 'Welcome Back!';
         authSubtitle.textContent = 'Sign in to continue your adventure';
@@ -71,6 +83,11 @@ function updateUI() {
         modeToggleTopText.textContent = 'Sign Up';
         modeToggleIcon.className = 'fas fa-user-plus';
         forgotPasswordContainer.style.display = 'block';
+
+        // Ensure visible in login mode
+        const authToggleContainer = document.getElementById('authToggleContainer');
+        if (authToggleContainer) authToggleContainer.style.display = 'none';
+        if (modeToggleTop) modeToggleTop.style.display = 'none';
     }
 }
 
@@ -91,6 +108,10 @@ function toggleMode(e) {
 
 toggleModeLink.addEventListener('click', toggleMode);
 modeToggleTop.addEventListener('click', toggleMode);
+
+// Handle back button navigation
+// Removed custom back button handler to allow direct navigation to index.html
+// This prevents redirect loops when coming from a protected route after logout
 
 function showError(message) {
     errorMessage.textContent = message;
@@ -196,8 +217,6 @@ authForm.addEventListener('submit', async (e) => {
                 setTimeout(() => {
                     if (userAccountType === 'parent') {
                         window.location.href = '/parent/dashboard.html';
-                    } else if (userAccountType === 'teacher') {
-                        window.location.href = '/dashboards/teacher-dashboard.html';
                     } else if (userAccountType === 'student') {
                         window.location.href = '/stories/index.html';
                     } else {
@@ -288,12 +307,6 @@ authForm.addEventListener('submit', async (e) => {
                             setTimeout(() => {
                                 window.location.href = '/parent/dashboard.html';
                             }, 1500);
-                        } else if (accountType === 'teacher') {
-                            console.warn('Profile fetch error, redirecting to teacher dashboard (fallback)');
-                            showSuccess('Login successful! Redirecting...');
-                            setTimeout(() => {
-                                window.location.href = '/dashboards/teacher-dashboard.html';
-                            }, 1500);
                         } else {
                             console.warn('Profile fetch error, showing error message (no fallback available)');
                             showError('Unable to load your account profile. Please try again or contact support.');
@@ -324,12 +337,6 @@ authForm.addEventListener('submit', async (e) => {
                         setTimeout(() => {
                             window.location.href = '/parent/dashboard.html';
                         }, 1500);
-                    } else if (accountType === 'teacher') {
-                        console.warn('User profile not found, redirecting to teacher dashboard (fallback)');
-                        showSuccess('Login successful! Redirecting...');
-                        setTimeout(() => {
-                            window.location.href = '/dashboards/teacher-dashboard.html';
-                        }, 1500);
                     } else {
                         console.warn('User profile not found, showing error message (no fallback available)');
                         showError('User profile not found. Please contact support to set up your account.');
@@ -359,12 +366,6 @@ authForm.addEventListener('submit', async (e) => {
                         setTimeout(() => {
                             window.location.href = '/parent/dashboard.html';
                         }, 1500);
-                    } else if (accountType === 'teacher') {
-                        console.warn('Account type missing in profile, redirecting to teacher dashboard (fallback)');
-                        showSuccess('Login successful! Redirecting...');
-                        setTimeout(() => {
-                            window.location.href = '/dashboards/teacher-dashboard.html';
-                        }, 1500);
                     } else {
                         console.warn('Account type missing in profile, showing error message (no fallback available)');
                         showError('Account type is missing from your profile. Please contact support.');
@@ -384,12 +385,6 @@ authForm.addEventListener('submit', async (e) => {
                     showSuccess('Login successful! Redirecting...');
                     setTimeout(() => {
                         window.location.href = '/parent/dashboard.html';
-                    }, 1500);
-                    return;
-                } else if (accountTypeFromProfile === 'teacher') {
-                    showSuccess('Login successful! Redirecting...');
-                    setTimeout(() => {
-                        window.location.href = '/dashboards/teacher-dashboard.html';
                     }, 1500);
                     return;
                 } else if (accountTypeFromProfile === 'student') {
