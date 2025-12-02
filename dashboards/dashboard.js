@@ -40,7 +40,7 @@ async function checkAuth() {
 
     const currentPage = window.location.pathname;
 
-    if (currentPage.includes('parent-dashboard.html') && profile.account_type !== 'parent') {
+    if ((currentPage.includes('/parent/dashboard') || currentPage.includes('parent-dashboard.html')) && profile.account_type !== 'parent') {
         if (profile.account_type === 'teacher') {
             window.location.href = 'teacher-dashboard.html';
         } else if (profile.account_type === 'student') {
