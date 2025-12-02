@@ -71,8 +71,8 @@ You can also find the URL in:
 After copying from Supabase dashboard, your `.env` file should look like:
 
 ```env
-VITE_SUPABASE_URL=https://mojtgwvpexgfawkeofwl.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1vanRnd3ZwZXhnZmF3a2VvZndsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5MDEyMTIsImV4cCI6MjA3ODQ3NzIxMn0.5Hg83LoVUWi4Yt5EfBfLlH-ZmI093MbKL7uEYl_pWSU
+VITE_SUPABASE_URL=https://mo1jtgwvp1exgfawk1eofwl.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1N1iIsInR5cCI61IkpXVCJ9.eyJpc3MiOiJ1zdXBhYmFzZSIsInJlZiI6Im1van1Rnd3ZwZXhnZmF3a2VvZndsIi1wicm9sZSI6ImFub24iLCJpYXQiO1E3NjI5MDEyMTIsImV4cCI16MjA3ODQ3NzIxMn0.5Hg813LoVUWi4Yt5Ef1fLlH-ZmI093MbKL7uE1Yl_pWSU
 ```
 
 ## Troubleshooting

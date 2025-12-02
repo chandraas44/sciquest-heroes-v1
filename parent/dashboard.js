@@ -2,8 +2,11 @@ import {
   getParentChildren,
   getChildProgress,
   getChildBadges,
+  createChildAccount,
+  signOutUser,
   logAnalyticsEvent,
-  getCurrentUser
+  getCurrentUser,
+  getAvatars
 } from './dashboard-services.js';
 import {
   getBadgeById,
@@ -19,7 +22,10 @@ const state = {
   children: [],
   progress: null,
   badges: null,
-  activeTab: 'overview'
+  activeTab: 'overview',
+  avatars: [],
+  selectedAvatar: null,
+  currentStep: 1
 };
 
 const childrenListEl = document.getElementById('childrenList');
@@ -80,10 +86,10 @@ function renderChildCard(child) {
   card.innerHTML = `
     <div class="flex items-center gap-4 mb-3">
       <img
-        src="${child.avatarUrl || '/avatars/child1.png'}"
+        src="${child.avatarUrl || `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${child.firstName || 'Child'}`}"
         alt="${child.firstName}"
         class="w-16 h-16 rounded-full border-4 border-purple-200 object-cover"
-        onerror="this.src='/avatars/child1.png'"
+        onerror="this.src='https://api.dicebear.com/7.x/fun-emoji/svg?seed=fallback'"
       />
       <div class="flex-1">
         <h3 class="font-fredoka text-xl font-bold text-slate-700 mb-1">${child.firstName || child.username}</h3>
@@ -115,10 +121,7 @@ function renderChildCard(child) {
 
 function renderChildrenList() {
   childrenListEl.innerHTML = '';
-  if (!state.children.length) {
-    childrenListEl.innerHTML = '<p class="text-slate-500 text-sm">No children found.</p>';
-    return;
-  }
+  // if (!state.children.length) check removed to always show Add Child card
 
   state.children.forEach((child) => {
     childrenListEl.appendChild(renderChildCard(child));
@@ -163,6 +166,7 @@ async function loadChildData(childId) {
     renderLearningSnapshot();
     renderProgressTabs();
     renderBadges();
+    renderSettingsTab();
 
     await logAnalyticsEvent('child_progress_viewed', { childId });
   } catch (error) {
@@ -187,10 +191,10 @@ function renderChildHeader() {
   childHeaderEl.innerHTML = `
     <div class="flex items-center gap-4">
       <img
-        src="${child.avatarUrl || '/avatars/child1.png'}"
+        src="${child.avatarUrl || `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${child.firstName || 'Child'}`}"
         alt="${child.firstName}"
         class="w-16 h-16 rounded-full border-4 border-purple-200 object-cover"
-        onerror="this.src='/avatars/child1.png'"
+        onerror="this.src='https://api.dicebear.com/7.x/fun-emoji/svg?seed=fallback'"
       />
       <div>
         <h2 class="font-fredoka text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">${child.firstName || child.username}</h2>
@@ -688,3 +692,295 @@ async function loadDashboard() {
 
 loadDashboard();
 
+// Handle Settings Tab Buttons
+const settingsTab = document.getElementById('tabSettings');
+if (settingsTab) {
+  settingsTab.addEventListener('click', async (e) => {
+    const target = e.target.closest('button');
+    if (!target) return;
+
+    const text = target.textContent.trim();
+
+    if (text === 'Change Avatar') {
+      alert('Avatar selection coming soon! 🎨');
+    } else if (text === 'Edit') {
+      alert('Editing login info coming soon! 🔐');
+    } else if (text === 'Log In Child Account') {
+      const confirmLogout = confirm('To log in as your child, you need to sign out of your parent account first. Continue?');
+      if (confirmLogout) {
+        const { error } = await signOutUser();
+        if (!error) {
+          window.location.href = '../auth/auth.html';
+        }
+      }
+    }
+  });
+}
+
+
+function renderSettingsTab() {
+  const child = state.children.find(c => c.id === state.selectedChildId);
+  if (!child) return;
+
+  const nameEl = document.getElementById('settingsChildName');
+  const usernameEl = document.getElementById('settingsUsername');
+  const avatarEl = document.getElementById('settingsAvatar');
+
+  if (nameEl) nameEl.textContent = child.firstName || child.username;
+  if (usernameEl) usernameEl.textContent = child.username;
+  if (avatarEl) avatarEl.src = child.avatarUrl || `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${child.firstName || 'Child'}`;
+}
+
+// Handle Add Child Modal
+const addChildModal = document.getElementById('addChildModal');
+const addChildSidebarBtn = document.getElementById('addChildSidebarBtn');
+const addChildEmptyStateBtn = document.getElementById('addChildEmptyStateBtn');
+const closeAddChildModalBtn = document.getElementById('closeAddChildModalBtn');
+const nextStepBtn = document.getElementById('nextStepBtn');
+const backStepBtn = document.getElementById('backStepBtn');
+const addChildStep1 = document.getElementById('addChildStep1');
+const addChildStep2 = document.getElementById('addChildStep2');
+const modalAvatarGrid = document.getElementById('modalAvatarGrid');
+const saveChildBtn = document.getElementById('saveChildBtn');
+
+function openAddChildModal() {
+  if (addChildModal) {
+    addChildModal.classList.remove('hidden');
+    resetAddChildModal();
+  }
+}
+
+function resetAddChildModal() {
+  // Reset form
+  const form = document.getElementById('addChildForm');
+  if (form) form.reset();
+
+  // Reset error
+  const errorEl = document.getElementById('addChildError');
+  if (errorEl) errorEl.classList.add('hidden');
+
+  // Reset state
+  state.selectedAvatar = null;
+  state.currentStep = 1;
+
+  // Reset UI
+  showStep(1);
+
+  // Reset avatar selection
+  document.querySelectorAll('.avatar-card').forEach(card => card.classList.remove('selected'));
+  if (saveChildBtn) saveChildBtn.disabled = true;
+}
+
+function showStep(step) {
+  state.currentStep = step;
+  if (step === 1) {
+    addChildStep1.classList.remove('hidden');
+    addChildStep2.classList.add('hidden');
+  } else {
+    addChildStep1.classList.add('hidden');
+    addChildStep2.classList.remove('hidden');
+    loadAndRenderAvatars();
+  }
+}
+
+async function loadAndRenderAvatars() {
+  if (state.avatars.length > 0) {
+    renderAvatars(state.avatars);
+    return;
+  }
+
+  modalAvatarGrid.innerHTML = '<div class="col-span-full text-center py-8 text-slate-500"><div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-purple-200 border-t-purple-500 mb-2"></div><p>Loading avatars...</p></div>';
+
+  const avatars = await getAvatars();
+  state.avatars = avatars;
+  renderAvatars(avatars);
+}
+
+function renderAvatars(avatars) {
+  modalAvatarGrid.innerHTML = '';
+
+  if (avatars.length === 0) {
+    modalAvatarGrid.innerHTML = '<p class="col-span-full text-center text-slate-500">No avatars available.</p>';
+    return;
+  }
+
+  avatars.forEach(avatar => {
+    const card = document.createElement('div');
+    card.className = 'avatar-card';
+    if (state.selectedAvatar?.id === avatar.id) {
+      card.classList.add('selected');
+    }
+
+    card.innerHTML = `
+      <div class="avatar-image-wrapper">
+        <img src="${avatar.image}" alt="${avatar.name}" onerror="this.src='https://api.dicebear.com/7.x/fun-emoji/svg?seed=${avatar.name}'">
+      </div>
+      <div class="avatar-name">${avatar.name}</div>
+    `;
+
+    card.addEventListener('click', () => selectAvatar(avatar));
+    modalAvatarGrid.appendChild(card);
+  });
+}
+
+function selectAvatar(avatar) {
+  state.selectedAvatar = avatar;
+
+  // Update UI
+  document.querySelectorAll('.avatar-card').forEach(card => card.classList.remove('selected'));
+  // Find the card we just clicked (re-querying is safest)
+  const cards = Array.from(modalAvatarGrid.children);
+  const selectedCardIndex = state.avatars.findIndex(a => a.id === avatar.id);
+  if (selectedCardIndex >= 0 && cards[selectedCardIndex]) {
+    cards[selectedCardIndex].classList.add('selected');
+  }
+
+  // Enable save button
+  saveChildBtn.disabled = false;
+}
+
+function validateStep1() {
+  const firstName = document.getElementById('newChildFirstName').value.trim();
+  const email = document.getElementById('newChildEmail').value.trim();
+  const password = document.getElementById('newChildPassword').value;
+  const confirmPassword = document.getElementById('newChildRetypePassword').value;
+  const age = document.getElementById('newChildAge').value;
+
+  const errorEl = document.getElementById('addChildError');
+  errorEl.classList.add('hidden');
+
+  if (!firstName) {
+    showAddChildError('First Name is required');
+    return false;
+  }
+  if (!email || !email.includes('@')) {
+    showAddChildError('Valid Email is required');
+    return false;
+  }
+  if (!password || password.length < 6) {
+    showAddChildError('Password must be at least 6 characters');
+    return false;
+  }
+  if (password !== confirmPassword) {
+    showAddChildError('Passwords do not match');
+    return false;
+  }
+  if (!age) {
+    showAddChildError('Age is required');
+    return false;
+  }
+
+  return true;
+}
+
+function showAddChildError(msg) {
+  const errorEl = document.getElementById('addChildError');
+  errorEl.textContent = msg;
+  errorEl.classList.remove('hidden');
+}
+
+if (nextStepBtn) {
+  nextStepBtn.addEventListener('click', () => {
+    if (validateStep1()) {
+      showStep(2);
+    }
+  });
+}
+
+if (backStepBtn) {
+  backStepBtn.addEventListener('click', () => {
+    showStep(1);
+  });
+}
+
+function closeAddChildModal() {
+  if (addChildModal) {
+    addChildModal.classList.add('hidden');
+    resetAddChildModal();
+  }
+}
+
+// Expose close function globally for the form handler
+window.closeAddChildModal = closeAddChildModal;
+
+if (addChildSidebarBtn) {
+  addChildSidebarBtn.addEventListener('click', (e) => {
+    e.stopPropagation(); // Prevent bubbling if needed
+    openAddChildModal();
+  });
+}
+
+if (addChildEmptyStateBtn) {
+  addChildEmptyStateBtn.addEventListener('click', openAddChildModal);
+}
+
+if (closeAddChildModalBtn) {
+  closeAddChildModalBtn.addEventListener('click', closeAddChildModal);
+}
+
+// Close on click outside
+if (addChildModal) {
+  addChildModal.addEventListener('click', (e) => {
+    if (e.target === addChildModal) {
+      closeAddChildModal();
+    }
+  });
+}
+
+// Handle Add Child Form Submission
+const addChildForm = document.getElementById('addChildForm');
+if (addChildForm) {
+  addChildForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const saveBtn = document.getElementById('saveChildBtn');
+    const errorEl = document.getElementById('addChildError');
+
+    if (!state.selectedAvatar) {
+      showAddChildError('Please select an avatar');
+      return;
+    }
+
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'CREATING...';
+    errorEl.classList.add('hidden');
+
+    try {
+      const user = await getCurrentUser();
+      if (!user) throw new Error('Parent not logged in');
+
+      const formData = {
+        firstName: document.getElementById('newChildFirstName').value.trim(),
+        lastName: document.getElementById('newChildLastName').value.trim(),
+        email: document.getElementById('newChildEmail').value.trim(),
+        password: document.getElementById('newChildPassword').value,
+        age: document.getElementById('newChildAge').value,
+        grade: document.getElementById('newChildGrade').value,
+        parentId: user.id,
+        avatarUrl: state.selectedAvatar.image
+      };
+
+      const { data, error } = await createChildAccount(formData);
+
+      if (error) throw new Error(error);
+
+      // Success
+      closeAddChildModal();
+
+      // Refresh list
+      await loadDashboard();
+
+      // Select new child
+      if (data && data.id) {
+        await selectChild(data.id);
+      }
+
+    } catch (err) {
+      console.error('Add child error:', err);
+      errorEl.textContent = err.message;
+      errorEl.classList.remove('hidden');
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'SAVE CHILD ACCOUNT';
+    }
+  });
+}

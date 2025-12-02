@@ -627,3 +627,125 @@ export function logAnalyticsEvent(eventName, eventData = {}) {
   }
 }
 
+
+export async function getAvatars() {
+  const client = getSupabaseClient();
+  if (!client) return [];
+
+  try {
+    const { data, error } = await client
+      .storage
+      .from('avatars')
+      .list('', {
+        limit: 100,
+        offset: 0,
+        sortBy: { column: 'name', order: 'asc' },
+      });
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      return [];
+    }
+
+    // Filter for image files and map to avatar objects
+    const avatarFiles = data.filter(file =>
+      file.name.match(/\.(png|jpg|jpeg|gif|webp)$/i)
+    );
+
+    return avatarFiles.map(file => {
+      const { data: publicUrlData } = client
+        .storage
+        .from('avatars')
+        .getPublicUrl(file.name);
+
+      const name = file.name.split('.')[0];
+      const id = name.toLowerCase();
+
+      return {
+        id: id,
+        name: name,
+        image: publicUrlData.publicUrl
+      };
+    });
+  } catch (error) {
+    console.warn('[dashboard] Failed to fetch avatars', error);
+    return [];
+  }
+}
+
+export async function createChildAccount(childData) {
+  if (!hasSupabaseConfig()) return { error: 'Supabase not configured' };
+
+  const { firstName, lastName, email, password, age, grade, parentId, avatarUrl } = childData;
+
+  // Create a temporary client to avoid logging out the parent
+  const tempClient = createClient(supabaseConfig.url, supabaseConfig.anonKey, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false
+    }
+  });
+
+  // Generate a username from the email (part before @)
+  const username = email.split('@')[0];
+
+  try {
+    // 1. Sign up the child
+    const { data: authData, error: authError } = await tempClient.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          first_name: firstName,
+          username: username,
+          account_type: 'student'
+        }
+      }
+    });
+
+    if (authError) {
+      return { error: authError.message };
+    }
+
+    if (!authData.user) {
+      return { error: 'Failed to create user' };
+    }
+
+    const childUserId = authData.user.id;
+    const client = getSupabaseClient(); // Parent's client
+
+    // 2. Create user profile linked to parent
+    const { error: profileError } = await client
+      .from('user_profiles')
+      .insert({
+        id: childUserId,
+        email: email,
+        username: username,
+        first_name: firstName,
+
+        account_type: 'student',
+        grade_level: grade,
+        age: age ? parseInt(age) : null,
+        avatar_url: avatarUrl || `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${firstName}`,
+        parent_id: parentId
+      });
+
+    if (profileError) {
+      console.error('Profile creation error:', profileError);
+      return { error: 'Account created but profile failed: ' + profileError.message };
+    }
+
+    return { data: { id: childUserId, firstName, username, grade } };
+  } catch (error) {
+    console.error('Create child error:', error);
+    return { error: error.message };
+  }
+}
+
+export async function signOutUser() {
+  const client = getSupabaseClient();
+  if (!client) return { error: 'No client' };
+  return await client.auth.signOut();
+}

@@ -408,132 +408,118 @@
         }
     </style>
 </head>
+<div class="progress-step" id="step2Indicator">2</div>
+</div>
 
-<body>
-    <section class="hero-gradient">
-        <div class="particles"></div>
+<div class="text-center mb-6">
+    <h1 class="font-fredoka text-4xl font-black text-slate-800 mb-2" id="panelTitle">
+        Let's Get Started!
+    </h1>
+    <p class="text-slate-600 font-bold text-base" id="panelSubtitle">
+        Tell us a bit about yourself
+    </p>
+</div>
 
-        <a href="account-type-selection.html" class="back-link">
-            <i class="fas fa-arrow-left"></i>
-        </a>
+<div class="error-message" id="errorMessage"></div>
+<div class="success-message" id="successMessage"></div>
 
-        <div class="auth-container">
-            <div class="progress-indicator">
-                <div class="progress-step active" id="step1Indicator">1</div>
-                <div class="progress-line" id="progressLine"></div>
-                <div class="progress-step" id="step2Indicator">2</div>
-            </div>
-
-            <div class="text-center mb-6">
-                <h1 class="font-fredoka text-4xl font-black text-slate-800 mb-2" id="panelTitle">
-                    Let's Get Started!
-                </h1>
-                <p class="text-slate-600 font-bold text-base" id="panelSubtitle">
-                    Tell us a bit about yourself
-                </p>
-            </div>
-
-            <div class="error-message" id="errorMessage"></div>
-            <div class="success-message" id="successMessage"></div>
-
-            <!-- Panel 1: Grade Level and Parent Email -->
-            <div class="panel active" id="panel1">
-                <form id="panel1Form">
-                    <div class="mb-6">
-                        <label for="studentGradeLevel" class="form-label">What grade are you in?</label>
-                        <select id="studentGradeLevel" class="form-input" required>
-                            <option value="">Select your grade</option>
-                            <option value="1">Grade 1</option>
-                            <option value="2">Grade 2</option>
-                            <option value="3">Grade 3</option>
-                            <option value="4">Grade 4</option>
-                            <option value="5">Grade 5</option>
-                            <option value="6">Grade 6</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-6">
-                        <label for="parentEmail" class="form-label">Parent's Email</label>
-                        <input type="email" id="parentEmail" class="form-input" placeholder="parent@email.com" required>
-                        <p class="text-xs text-slate-500 font-semibold mt-2">
-                            We'll send updates to your parent about your progress
-                        </p>
-                    </div>
-
-                    <button type="submit" class="btn-3d">
-                        <span>Next Step</span>
-                    </button>
-                </form>
-            </div>
-
-            <!-- Panel 2: Child Details, Password, and Captcha -->
-            <div class="panel" id="panel2">
-                <form id="panel2Form">
-                    <div class="mb-4">
-                        <label for="firstName" class="form-label">Child's First Name</label>
-                        <input type="text" id="firstName" class="form-input" placeholder="Enter your first name"
-                            required>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="email" class="form-label">Child's Email Address</label>
-                        <input type="email" id="email" class="form-input" placeholder="student@email.com" required>
-                        <p class="text-xs text-slate-500 font-semibold mt-2">
-                            This email will be used to sign in to your account
-                        </p>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="password" class="form-label">Create a Password</label>
-                        <input type="password" id="password" class="form-input" placeholder="Create a secure password"
-                            required minlength="6">
-                    </div>
-
-                    <div class="mb-6">
-                        <label for="captcha" class="form-label">What is 5 + 3?</label>
-                        <input type="number" id="captcha" class="form-input" placeholder="Enter the answer" required>
-                        <p class="text-xs text-slate-500 font-semibold mt-2">
-                            This helps us make sure you're a real person
-                        </p>
-                    </div>
-
-                    <div class="flex gap-3">
-                        <button type="button" class="btn-secondary flex-1" id="backBtn">
-                            Back
-                        </button>
-                        <button type="submit" class="btn-3d flex-1" id="signupBtn">
-                            <span id="signupBtnText">Sign Up</span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="mt-6">
-                <div
-                    style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.15)); border: 2px solid rgba(251, 191, 36, 0.3); border-radius: 16px; padding: 16px; text-align: center;">
-                    <p class="text-slate-700 font-bold text-base">
-                        Already have an account?
-                        <a href="auth.html?type=student&mode=login" class="link-text"
-                            style="font-size: 17px; text-decoration: underline; margin-left: 4px;">Log In</a>
-                    </p>
-                </div>
-            </div>
+<!-- Panel 1: Grade Level and Parent Email -->
+<div class="panel active" id="panel1">
+    <form id="panel1Form">
+        <div class="mb-6">
+            <label for="studentGradeLevel" class="form-label">What grade are you in?</label>
+            <select id="studentGradeLevel" class="form-input" required>
+                <option value="">Select your grade</option>
+                <option value="1">Grade 1</option>
+                <option value="2">Grade 2</option>
+                <option value="3">Grade 3</option>
+                <option value="4">Grade 4</option>
+                <option value="5">Grade 5</option>
+                <option value="6">Grade 6</option>
+            </select>
         </div>
-    </section>
 
-    <script type="module" src="student-signup.js"></script>
+        <div class="mb-6">
+            <label for="parentEmail" class="form-label">Parent's Email</label>
+            <input type="email" id="parentEmail" class="form-input" placeholder="parent@email.com" required>
+            <p class="text-xs text-slate-500 font-semibold mt-2">
+                We'll send updates to your parent about your progress
+            </p>
+        </div>
 
-    <script>
-        const particlesContainer = document.querySelector('.particles');
-        for (let i = 0; i < 30; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.animationDelay = Math.random() * 15 + 's';
-            particle.style.animationDuration = (10 + Math.random() * 10) + 's';
-            particlesContainer.appendChild(particle);
-        }
-    </script>
+        <button type="submit" class="btn-3d">
+            <span>Next Step</span>
+        </button>
+    </form>
+</div>
+
+<!-- Panel 2: Child Details, Password, and Captcha -->
+<div class="panel" id="panel2">
+    <form id="panel2Form">
+        <div class="mb-4">
+            <label for="firstName" class="form-label">Child's First Name</label>
+            <input type="text" id="firstName" class="form-input" placeholder="Enter your first name" required>
+        </div>
+
+        <div class="mb-4">
+            <label for="email" class="form-label">Child's Email Address</label>
+            <input type="email" id="email" class="form-input" placeholder="student@email.com" required>
+            <p class="text-xs text-slate-500 font-semibold mt-2">
+                This email will be used to sign in to your account
+            </p>
+        </div>
+
+        <div class="mb-4">
+            <label for="password" class="form-label">Create a Password</label>
+            <input type="password" id="password" class="form-input" placeholder="Create a secure password" required
+                minlength="6">
+        </div>
+
+        <div class="mb-6">
+            <label for="captcha" class="form-label">What is 5 + 3?</label>
+            <input type="number" id="captcha" class="form-input" placeholder="Enter the answer" required>
+            <p class="text-xs text-slate-500 font-semibold mt-2">
+                This helps us make sure you're a real person
+            </p>
+        </div>
+
+        <div class="flex gap-3">
+            <button type="button" class="btn-secondary flex-1" id="backBtn">
+                Back
+            </button>
+            <button type="submit" class="btn-3d flex-1" id="signupBtn">
+                <span id="signupBtnText">Sign Up</span>
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="mt-6">
+    <div
+        style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.15)); border: 2px solid rgba(251, 191, 36, 0.3); border-radius: 16px; padding: 16px; text-align: center;">
+        <p class="text-slate-700 font-bold text-base">
+            Already have an account?
+            <a href="auth.html?type=student&mode=login" class="link-text"
+                style="font-size: 17px; text-decoration: underline; margin-left: 4px;">Log In</a>
+        </p>
+    </div>
+</div>
+</div>
+</section>
+
+<script type="module" src="student-signup.js"></script>
+
+<script>
+    const particlesContainer = document.querySelector('.particles');
+    for (let i = 0; i < 30; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 15 + 's';
+        particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+        particlesContainer.appendChild(particle);
+    }
+</script>
 </body>
 
 </html>
