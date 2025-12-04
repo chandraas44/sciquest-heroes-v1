@@ -66,7 +66,7 @@ async function getMockDashboardProgress(childId) {
 }
 
 export async function getCurrentUser() {
-  const client = getSupabaseClient();
+  const client = await getSupabaseClient();
   if (!client) return null;
 
   const { data: { user } } = await client.auth.getUser();
@@ -77,7 +77,7 @@ export async function getParentChildren(parentId) {
   if (!parentId) throw new Error('parentId is required');
   console.log('[dashboard] getParentChildren called for:', parentId);
 
-  const client = getSupabaseClient();
+  const client = await getSupabaseClient();
   if (!client) {
     console.warn('[dashboard] No Supabase client available');
     return [];
@@ -110,7 +110,7 @@ export async function getParentChildren(parentId) {
 export async function getChildProgress(childId) {
   if (!childId) throw new Error('childId is required');
 
-  const client = getSupabaseClient();
+  const client = await getSupabaseClient();
   if (!client) {
     return buildEmptyChildProgress(childId, "no_supabase_client");
   }
@@ -336,7 +336,7 @@ export async function getChildBadges(childId) {
     console.warn('[dashboard] Badge service unavailable, using fallback', error);
 
     // Fallback to mock data directly
-    const client = getSupabaseClient();
+    const client = await getSupabaseClient();
     if (!client) {
       return { coreBadges: [] };
     }
