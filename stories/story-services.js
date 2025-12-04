@@ -40,33 +40,45 @@ async function loadMockStories() {
 }
 
 export async function getStoryList() {
+  // Always load Photosynthesis Adventure mock story to show at the top
+  const mockStories = await loadMockStories();
+  const photosynthesisStory = mockStories.find(s => s.id === 'photosynthesis-adventure');
+  
   if (shouldUseMockData()) {
-    return loadMockStories();
+    return mockStories;
   }
 
   const client = getSupabaseClient();
   if (!client) {
-    return loadMockStories();
+    return mockStories;
   }
 
   try {
-    const { data, error } = await client
-      .from('stories')
+    // Only load stories from ai_stories table (exclude regular stories table)
+    const aiStoriesResult = await client
+      .from('ai_stories')
       .select(`
         id,
         title,
         cover_url,
+        topic,
         topic_tag,
+        grade_level,
         reading_level,
         estimated_time,
         summary,
-        enabled
+        enabled,
+        published_at,
+        created_at
       `)
-      .order('title');
+      .eq('enabled', true)  // Only published AI stories
+      .order('published_at', { ascending: false, nullsLast: true })
+      .order('created_at', { ascending: false });
 
-    if (error) throw error;
+    if (aiStoriesResult.error) throw aiStoriesResult.error;
 
-    return (data || []).map((story) => ({
+    // Map AI stories (convert to same format)
+    const aiStories = (aiStoriesResult.data || []).map((story) => ({
       id: story.id,
       title: story.title,
       coverUrl: story.cover_url,
@@ -74,11 +86,27 @@ export async function getStoryList() {
       readingLevel: story.reading_level,
       estimatedTime: story.estimated_time,
       summary: story.summary,
-      enabled: story.enabled !== false  // Default to true if not specified
+      enabled: story.enabled !== false,
+      // Store additional AI story fields for reference
+      topic: story.topic,
+      gradeLevel: story.grade_level
     }));
+
+    // Combine: Photosynthesis Adventure at top, then all AI stories
+    const combinedStories = [];
+    
+    // Add Photosynthesis Adventure at the top if it exists
+    if (photosynthesisStory) {
+      combinedStories.push(photosynthesisStory);
+    }
+    
+    // Add all AI stories (no need to check for duplicates since we're not querying stories table)
+    combinedStories.push(...aiStories);
+
+    return combinedStories;
   } catch (error) {
     console.warn('[stories] Supabase stories fetch failed, reverting to mock data', error);
-    return loadMockStories();
+    return mockStories;
   }
 }
 
@@ -96,25 +124,52 @@ export async function getStoryById(storyId) {
   }
 
   try {
-    const { data, error } = await client
+    // Try to get from regular stories table first
+    const { data: regularStory, error: regularError } = await client
       .from('stories')
       .select('*')
       .eq('id', storyId)
       .maybeSingle();
 
-    if (error || !data) {
-      throw error || new Error('missing story');
+    if (regularStory) {
+      return {
+        id: regularStory.id,
+        title: regularStory.title,
+        coverUrl: regularStory.cover_url,
+        topicTag: regularStory.topic_tag,
+        readingLevel: regularStory.reading_level,
+        estimatedTime: regularStory.estimated_time,
+        summary: regularStory.summary,
+        panels: regularStory.panels,
+        metadata: regularStory.metadata || null
+      };
     }
 
+    // If not found in regular stories, try ai_stories table
+    const { data: aiStory, error: aiError } = await client
+      .from('ai_stories')
+      .select('*')
+      .eq('id', storyId)
+      .maybeSingle();
+
+    if (aiError || !aiStory) {
+      throw aiError || new Error('missing story');
+    }
+
+    // Map AI story to expected format
     return {
-      id: data.id,
-      title: data.title,
-      coverUrl: data.cover_url,
-      topicTag: data.topic_tag,
-      readingLevel: data.reading_level,
-      estimatedTime: data.estimated_time,
-      summary: data.summary,
-      panels: data.panels
+      id: aiStory.id,
+      title: aiStory.title,
+      coverUrl: aiStory.cover_url,
+      topicTag: aiStory.topic_tag,
+      readingLevel: aiStory.reading_level,
+      estimatedTime: aiStory.estimated_time,
+      summary: aiStory.summary,
+      panels: aiStory.panels,
+      metadata: aiStory.metadata || null,
+      // Include AI-specific fields
+      topic: aiStory.topic,
+      gradeLevel: aiStory.grade_level
     };
   } catch (error) {
     console.warn('[stories] Supabase story fetch failed, reverting to mock data', error);
@@ -124,8 +179,51 @@ export async function getStoryById(storyId) {
 }
 
 export async function getPanelsForStory(storyId) {
-  const story = await getStoryById(storyId);
-  return story?.panels || [];
+  if (!storyId) return [];
+  
+  if (shouldUseMockData()) {
+    const stories = await loadMockStories();
+    const story = stories.find((s) => s.id === storyId);
+    return story?.panels || [];
+  }
+
+  const client = getSupabaseClient();
+  if (!client) {
+    const stories = await loadMockStories();
+    const story = stories.find((s) => s.id === storyId);
+    return story?.panels || [];
+  }
+
+  try {
+    // Try regular stories table first
+    const { data: regularStory } = await client
+      .from('stories')
+      .select('panels')
+      .eq('id', storyId)
+      .maybeSingle();
+
+    if (regularStory && regularStory.panels) {
+      return regularStory.panels;
+    }
+
+    // Try ai_stories table
+    const { data: aiStory } = await client
+      .from('ai_stories')
+      .select('panels')
+      .eq('id', storyId)
+      .maybeSingle();
+
+    if (aiStory && aiStory.panels) {
+      return aiStory.panels;
+    }
+
+    return [];
+  } catch (error) {
+    console.warn('[stories] Error fetching panels, trying mock data', error);
+    const stories = await loadMockStories();
+    const story = stories.find((s) => s.id === storyId);
+    return story?.panels || [];
+  }
 }
 
 function getStoredProgress() {

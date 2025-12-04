@@ -1,0 +1,681 @@
+{
+  "topics": {
+    "photosynthesis": {
+      "displayName": "Photosynthesis",
+      "description": "How plants make their own food using sunlight, water, and air",
+      "guide": "mr-chloro",
+      "gradeLevels": {
+        "K-2": {
+          "vocabulary": ["leaf", "sun", "water", "plant", "food", "grow"],
+          "concepts": ["Plants need sunlight", "Plants drink water", "Leaves are important"],
+          "scenes": [
+            {
+              "title": "Meet the Plant Friend",
+              "description": "A friendly leaf character greets a curious child in a sunny garden",
+              "elements": ["garden", "smiling leaf", "sunshine", "flowers"],
+              "dialogue": "Hi there! I'm going to show you how plants eat!"
+            },
+            {
+              "title": "Sunshine Power",
+              "description": "Bright sun rays shine down on happy plants",
+              "elements": ["big yellow sun", "sun rays", "plants reaching up", "sparkles"],
+              "dialogue": "Plants love the sun! It gives them energy!"
+            },
+            {
+              "title": "Drinking Water",
+              "description": "Water droplets travel up from roots to leaves",
+              "elements": ["roots underground", "blue water droplets", "stem", "happy plant"],
+              "dialogue": "Slurp! Plants drink water through their roots!"
+            },
+            {
+              "title": "Breathing Air",
+              "description": "Tiny doors on leaves open to let air in",
+              "elements": ["leaf close-up", "tiny doors (stomata)", "air bubbles", "magnifying effect"],
+              "dialogue": "Leaves have tiny doors that let air in!"
+            },
+            {
+              "title": "Making Food",
+              "description": "Inside the leaf, everything mixes together with magic sparkles",
+              "elements": ["leaf interior", "swirling colors", "sparkles", "energy glow"],
+              "dialogue": "Mix it all together - the plant makes its own food!"
+            },
+            {
+              "title": "Sharing Oxygen",
+              "description": "Fresh oxygen bubbles float out of the leaf into the air",
+              "elements": ["oxygen bubbles", "happy plant", "fresh air waves", "celebration"],
+              "dialogue": "And it shares fresh air with us! Thank you, plants!"
+            }
+          ]
+        },
+        "3-4": {
+          "vocabulary": ["photosynthesis", "chlorophyll", "carbon dioxide", "oxygen", "glucose", "energy"],
+          "concepts": ["Chlorophyll captures light", "CO2 + H2O = sugar + O2", "Energy transformation"],
+          "scenes": [
+            {
+              "title": "The Green Mystery",
+              "description": "A science guide shows a curious student why leaves are green",
+              "elements": ["laboratory setting", "microscope", "green leaf", "chlorophyll visualization"],
+              "dialogue": "Ever wonder why leaves are green? Let me show you chlorophyll!"
+            },
+            {
+              "title": "Capturing Sunlight",
+              "description": "Chlorophyll molecules absorbing light energy",
+              "elements": ["sun rays", "chlorophyll diagram", "energy arrows", "molecular view"],
+              "dialogue": "Chlorophyll is like a solar panel - it catches sunlight!"
+            },
+            {
+              "title": "The Ingredient Gathering",
+              "description": "Water from roots and CO2 from air arriving at the leaf",
+              "elements": ["water pathway", "CO2 molecules", "leaf cross-section", "arrows"],
+              "dialogue": "Water travels up while carbon dioxide comes in through tiny pores!"
+            },
+            {
+              "title": "The Chemical Kitchen",
+              "description": "Inside the chloroplast, the ingredients combine",
+              "elements": ["chloroplast interior", "chemical reaction", "molecule transformation", "energy glow"],
+              "dialogue": "Inside the chloroplast, a chemical reaction happens!"
+            },
+            {
+              "title": "Sugar Creation",
+              "description": "Glucose molecules forming from the reaction",
+              "elements": ["glucose structure", "energy storage", "plant growth", "success indicators"],
+              "dialogue": "Glucose is made - that's the plant's food and energy storage!"
+            },
+            {
+              "title": "Oxygen Release",
+              "description": "O2 molecules released as a byproduct, animals breathing it",
+              "elements": ["O2 molecules", "stomata opening", "animals breathing", "ecosystem"],
+              "dialogue": "And oxygen is released - which all animals need to breathe!"
+            }
+          ]
+        },
+        "5-6": {
+          "vocabulary": ["chloroplast", "stomata", "ATP", "glucose", "light reactions", "Calvin cycle"],
+          "concepts": ["Light-dependent reactions", "Light-independent reactions", "Energy currency (ATP)"],
+          "scenes": [
+            {
+              "title": "Inside the Chloroplast",
+              "description": "Detailed view of chloroplast structure with thylakoids",
+              "elements": ["chloroplast diagram", "thylakoid membranes", "stroma", "scientific labels"],
+              "dialogue": "Welcome to the chloroplast - the photosynthesis factory!"
+            },
+            {
+              "title": "Light Reactions Begin",
+              "description": "Light hitting photosystems and exciting electrons",
+              "elements": ["photon absorption", "electron transport", "energy diagram", "thylakoid"],
+              "dialogue": "Light energy excites electrons in the thylakoid membrane!"
+            },
+            {
+              "title": "Water Splitting",
+              "description": "Water molecules being split to release electrons and oxygen",
+              "elements": ["H2O molecule", "splitting animation", "electron flow", "O2 release"],
+              "dialogue": "Water is split: electrons power the chain, oxygen is released!"
+            },
+            {
+              "title": "ATP Production",
+              "description": "ATP synthase creating ATP molecules",
+              "elements": ["ATP synthase", "proton gradient", "ATP molecules", "energy flow"],
+              "dialogue": "The energy creates ATP - the cell's energy currency!"
+            },
+            {
+              "title": "Calvin Cycle",
+              "description": "CO2 being fixed into organic compounds in the stroma",
+              "elements": ["Calvin cycle diagram", "CO2 fixation", "carbon compounds", "NADPH use"],
+              "dialogue": "In the Calvin Cycle, CO2 becomes sugar using ATP and NADPH!"
+            },
+            {
+              "title": "The Complete Picture",
+              "description": "Overview showing both stages working together",
+              "elements": ["full diagram", "energy flow arrows", "inputs/outputs", "ecosystem context"],
+              "dialogue": "Together, these reactions turn sunlight into food energy!"
+            }
+          ]
+        }
+      }
+    },
+    "solar-system": {
+      "displayName": "Solar System",
+      "description": "Our cosmic neighborhood and the planets that orbit the Sun",
+      "guide": "stella",
+      "gradeLevels": {
+        "K-2": {
+          "vocabulary": ["sun", "planet", "moon", "Earth", "star", "space"],
+          "concepts": ["Sun is a star", "Earth orbits the Sun", "Moon orbits Earth"],
+          "scenes": [
+            {
+              "title": "Our Space Neighborhood",
+              "description": "A space explorer introduces the solar system to a child",
+              "elements": ["spaceship", "starry background", "planets in distance", "excited characters"],
+              "dialogue": "Welcome aboard! Let's explore our space neighborhood!"
+            },
+            {
+              "title": "The Mighty Sun",
+              "description": "The Sun at the center, glowing bright and warm",
+              "elements": ["big bright sun", "solar flares", "warmth rays", "awe expression"],
+              "dialogue": "The Sun is a giant ball of fire - it gives us light and warmth!"
+            },
+            {
+              "title": "Planet Parade",
+              "description": "Planets orbiting around the Sun in their paths",
+              "elements": ["orbital paths", "different sized planets", "colorful planets", "movement lines"],
+              "dialogue": "Eight planets circle around the Sun - like a cosmic dance!"
+            },
+            {
+              "title": "Our Home Earth",
+              "description": "Earth highlighted as our beautiful blue planet",
+              "elements": ["Earth close-up", "blue oceans", "green continents", "clouds"],
+              "dialogue": "Earth is our home - the blue planet where we live!"
+            },
+            {
+              "title": "Moon Friend",
+              "description": "The Moon orbiting Earth, showing phases",
+              "elements": ["Earth and Moon", "orbital path", "moon phases", "nighttime"],
+              "dialogue": "The Moon is Earth's best friend - it follows us everywhere!"
+            },
+            {
+              "title": "Space Exploration",
+              "description": "Looking out at the vast universe beyond",
+              "elements": ["distant galaxies", "stars everywhere", "wonder expression", "telescope"],
+              "dialogue": "There's so much more to discover out there!"
+            }
+          ]
+        },
+        "3-4": {
+          "vocabulary": ["orbit", "gravity", "asteroid", "comet", "atmosphere", "rotation"],
+          "concepts": ["Gravity keeps planets in orbit", "Inner vs outer planets", "Asteroid belt"],
+          "scenes": [
+            {
+              "title": "The Force of Gravity",
+              "description": "Demonstrating how gravity keeps planets orbiting the Sun",
+              "elements": ["gravity visualization", "orbital mechanics", "force arrows", "space background"],
+              "dialogue": "Gravity is the invisible force that keeps everything in place!"
+            },
+            {
+              "title": "Rocky Inner Planets",
+              "description": "Mercury, Venus, Earth, and Mars shown as rocky worlds",
+              "elements": ["four rocky planets", "size comparison", "surface details", "labels"],
+              "dialogue": "The inner planets are small and rocky - including Earth!"
+            },
+            {
+              "title": "The Asteroid Belt",
+              "description": "Thousands of rocks floating between Mars and Jupiter",
+              "elements": ["asteroids", "belt visualization", "Mars and Jupiter", "size scale"],
+              "dialogue": "Between Mars and Jupiter, thousands of space rocks orbit!"
+            },
+            {
+              "title": "Gas Giants",
+              "description": "Jupiter and Saturn as massive gas planets",
+              "elements": ["Jupiter's storms", "Saturn's rings", "size comparison", "gas swirls"],
+              "dialogue": "Jupiter and Saturn are huge gas giants with no solid surface!"
+            },
+            {
+              "title": "Ice Giants",
+              "description": "Uranus and Neptune in the outer reaches",
+              "elements": ["blue/green planets", "cold space", "distance from sun", "ice imagery"],
+              "dialogue": "Uranus and Neptune are ice giants - super cold and far away!"
+            },
+            {
+              "title": "Comets and Beyond",
+              "description": "A comet with its tail, pointing to the Kuiper Belt",
+              "elements": ["comet with tail", "Kuiper Belt", "icy objects", "vast space"],
+              "dialogue": "Comets are icy visitors from the edge of our solar system!"
+            }
+          ]
+        },
+        "5-6": {
+          "vocabulary": ["astronomical unit", "dwarf planet", "Kuiper Belt", "heliocentric", "terrestrial", "Jovian"],
+          "concepts": ["Scale of the solar system", "Formation theory", "Planetary characteristics"],
+          "scenes": [
+            {
+              "title": "Solar System Formation",
+              "description": "A nebula collapsing to form our solar system",
+              "elements": ["nebula", "accretion disk", "proto-sun", "formation process"],
+              "dialogue": "4.6 billion years ago, a cloud of gas and dust began to collapse..."
+            },
+            {
+              "title": "The Sun's Domain",
+              "description": "Scale showing astronomical units and distances",
+              "elements": ["distance markers", "AU scale", "planet positions", "light travel time"],
+              "dialogue": "The solar system is huge - measured in Astronomical Units!"
+            },
+            {
+              "title": "Terrestrial Worlds",
+              "description": "Comparing the four rocky planets' characteristics",
+              "elements": ["comparison chart", "atmospheres", "surface features", "data panels"],
+              "dialogue": "Each rocky planet has unique features and conditions."
+            },
+            {
+              "title": "Jovian Giants",
+              "description": "Detailed look at gas and ice giant composition",
+              "elements": ["planet interiors", "layer diagrams", "magnetic fields", "ring systems"],
+              "dialogue": "Gas giants have layers of gas, liquid, and maybe a rocky core."
+            },
+            {
+              "title": "The Outer Reaches",
+              "description": "Kuiper Belt, dwarf planets, and the heliosphere",
+              "elements": ["Pluto and friends", "Kuiper Belt", "heliosphere boundary", "scale"],
+              "dialogue": "Beyond Neptune lies the Kuiper Belt and dwarf planets like Pluto."
+            },
+            {
+              "title": "Exoplanets and Beyond",
+              "description": "Looking at planets around other stars",
+              "elements": ["exoplanet system", "other stars", "telescopes", "discovery"],
+              "dialogue": "We've found thousands of planets around other stars!"
+            }
+          ]
+        }
+      }
+    },
+    "water-cycle": {
+      "displayName": "Water Cycle",
+      "description": "How water moves around Earth in a continuous cycle",
+      "guide": "mr-chloro",
+      "gradeLevels": {
+        "K-2": {
+          "vocabulary": ["rain", "cloud", "puddle", "sun", "water", "sky"],
+          "concepts": ["Water goes up", "Clouds make rain", "Water goes round and round"],
+          "scenes": [
+            {
+              "title": "A Rainy Day",
+              "description": "Child and guide watching rain fall from clouds",
+              "elements": ["rain drops", "clouds", "puddles", "umbrella"],
+              "dialogue": "Look at all that rain! Where does it come from?"
+            },
+            {
+              "title": "Puddle Magic",
+              "description": "Sun shining on a puddle, water rising up",
+              "elements": ["puddle", "sunshine", "rising water vapor", "sparkles"],
+              "dialogue": "Watch the puddle - the sun makes water float up into the sky!"
+            },
+            {
+              "title": "Making Clouds",
+              "description": "Water vapor forming into fluffy clouds",
+              "elements": ["water droplets", "cloud formation", "blue sky", "happy cloud"],
+              "dialogue": "Up high, the water becomes clouds - like cotton candy in the sky!"
+            },
+            {
+              "title": "Cloud Gets Heavy",
+              "description": "Cloud filling up with water droplets",
+              "elements": ["full cloud", "water droplets inside", "gray cloud", "weight indication"],
+              "dialogue": "The cloud gets fuller and fuller with water drops!"
+            },
+            {
+              "title": "Rain Falls Down",
+              "description": "Rain falling from clouds to water plants and fill streams",
+              "elements": ["rain drops", "plants getting water", "stream", "happy nature"],
+              "dialogue": "When it's too heavy - rain! Water falls back down!"
+            },
+            {
+              "title": "Round and Round",
+              "description": "Complete cycle shown with arrows connecting all stages",
+              "elements": ["cycle diagram", "arrows", "all stages", "continuous loop"],
+              "dialogue": "And then it starts all over again - round and round!"
+            }
+          ]
+        },
+        "3-4": {
+          "vocabulary": ["evaporation", "condensation", "precipitation", "collection", "vapor", "cycle"],
+          "concepts": ["Heat causes evaporation", "Cooling causes condensation", "Gravity pulls water down"],
+          "scenes": [
+            {
+              "title": "The Water Adventure",
+              "description": "Guide introduces the water cycle concept",
+              "elements": ["water drop character", "cycle preview", "adventure map", "excited child"],
+              "dialogue": "Water is always on an adventure - let's follow its journey!"
+            },
+            {
+              "title": "Evaporation Station",
+              "description": "Heat energy turning liquid water into vapor",
+              "elements": ["sun's heat", "lake/ocean", "rising vapor", "energy arrows"],
+              "dialogue": "Heat from the sun gives water energy to float up as vapor!"
+            },
+            {
+              "title": "Rising High",
+              "description": "Water vapor rising into the atmosphere",
+              "elements": ["atmosphere layers", "rising vapor", "temperature change", "altitude"],
+              "dialogue": "Water vapor rises higher and higher where it's colder!"
+            },
+            {
+              "title": "Condensation Creation",
+              "description": "Vapor cooling and forming water droplets on dust particles",
+              "elements": ["cooling effect", "droplet formation", "dust particles", "cloud building"],
+              "dialogue": "Cold air makes vapor stick together around tiny dust particles!"
+            },
+            {
+              "title": "Precipitation Types",
+              "description": "Different forms: rain, snow, sleet, hail",
+              "elements": ["rain", "snow", "sleet", "hail", "temperature zones"],
+              "dialogue": "Precipitation can be rain, snow, sleet, or even hail!"
+            },
+            {
+              "title": "Collection Complete",
+              "description": "Water collecting in oceans, lakes, groundwater",
+              "elements": ["ocean", "lake", "underground aquifer", "rivers", "arrows"],
+              "dialogue": "Water collects in oceans, lakes, and underground - ready to start again!"
+            }
+          ]
+        },
+        "5-6": {
+          "vocabulary": ["transpiration", "aquifer", "watershed", "humidity", "dew point", "runoff"],
+          "concepts": ["Transpiration from plants", "Groundwater systems", "Human impact on water cycle"],
+          "scenes": [
+            {
+              "title": "The Complex Cycle",
+              "description": "Overview of the complete water cycle with all components",
+              "elements": ["full diagram", "all processes labeled", "interconnections", "scale"],
+              "dialogue": "The water cycle is more complex than you might think!"
+            },
+            {
+              "title": "Plant Power",
+              "description": "Transpiration from forests adding water to atmosphere",
+              "elements": ["forest", "transpiration arrows", "stomata close-up", "water movement"],
+              "dialogue": "Plants release water through transpiration - like breathing water!"
+            },
+            {
+              "title": "Underground Journey",
+              "description": "Water seeping into soil and aquifers",
+              "elements": ["soil layers", "aquifer", "water table", "well"],
+              "dialogue": "Some water soaks deep underground into aquifers!"
+            },
+            {
+              "title": "Watershed Systems",
+              "description": "How watersheds collect and channel water",
+              "elements": ["watershed map", "rivers", "drainage patterns", "elevation"],
+              "dialogue": "Watersheds are like giant funnels collecting water!"
+            },
+            {
+              "title": "Human Connections",
+              "description": "How humans interact with the water cycle",
+              "elements": ["city", "water treatment", "agriculture", "impact indicators"],
+              "dialogue": "Humans affect the water cycle through cities and farms."
+            },
+            {
+              "title": "Climate Connections",
+              "description": "How the water cycle affects and is affected by climate",
+              "elements": ["global view", "climate zones", "extreme weather", "balance"],
+              "dialogue": "The water cycle and climate are deeply connected!"
+            }
+          ]
+        }
+      }
+    },
+    "human-body": {
+      "displayName": "Human Body",
+      "description": "The amazing systems that keep our bodies working",
+      "guide": "mr-chloro",
+      "gradeLevels": {
+        "K-2": {
+          "vocabulary": ["heart", "lungs", "brain", "bones", "muscles", "blood"],
+          "concepts": ["Heart pumps blood", "Lungs help us breathe", "Brain helps us think"],
+          "scenes": [
+            {
+              "title": "Body Adventure",
+              "description": "Guide shrinks down to explore inside the body",
+              "elements": ["shrinking effect", "body silhouette", "adventure start", "excitement"],
+              "dialogue": "Let's shrink down and explore the amazing human body!"
+            },
+            {
+              "title": "The Beating Heart",
+              "description": "Heart pumping blood through the body",
+              "elements": ["heart", "pumping motion", "blood flow", "rhythm"],
+              "dialogue": "Your heart pumps blood all day and night - ba-bump, ba-bump!"
+            },
+            {
+              "title": "Breathing Buddies",
+              "description": "Lungs filling with air and releasing",
+              "elements": ["lungs", "breathing in/out", "air bubbles", "oxygen"],
+              "dialogue": "Breathe in, breathe out - your lungs bring in fresh air!"
+            },
+            {
+              "title": "Brain Boss",
+              "description": "Brain sending signals throughout the body",
+              "elements": ["brain", "electrical signals", "thoughts", "control center"],
+              "dialogue": "Your brain is the boss - it tells everything what to do!"
+            },
+            {
+              "title": "Bones and Muscles",
+              "description": "Skeleton and muscles working together to move",
+              "elements": ["skeleton", "muscles", "movement", "teamwork"],
+              "dialogue": "Bones hold you up and muscles help you move!"
+            },
+            {
+              "title": "Team Body",
+              "description": "All systems working together harmoniously",
+              "elements": ["all systems", "connections", "harmony", "healthy body"],
+              "dialogue": "All these parts work as a team to keep you healthy!"
+            }
+          ]
+        },
+        "3-4": {
+          "vocabulary": ["circulatory", "respiratory", "digestive", "nervous", "skeletal", "organs"],
+          "concepts": ["Body systems work together", "Blood carries oxygen", "Digestion breaks down food"],
+          "scenes": [
+            {
+              "title": "System Overview",
+              "description": "Introduction to body systems concept",
+              "elements": ["body outline", "system highlights", "connection lines", "labels"],
+              "dialogue": "Your body has different systems that work together!"
+            },
+            {
+              "title": "Circulatory Highway",
+              "description": "Blood vessels as roads carrying blood everywhere",
+              "elements": ["blood vessels", "red/blue blood", "heart pump", "pathway map"],
+              "dialogue": "Blood travels through tubes like cars on a highway!"
+            },
+            {
+              "title": "Respiratory Exchange",
+              "description": "Lungs exchanging oxygen and carbon dioxide",
+              "elements": ["alveoli", "gas exchange", "O2 in/CO2 out", "blood cells"],
+              "dialogue": "In your lungs, oxygen goes in and carbon dioxide comes out!"
+            },
+            {
+              "title": "Digestive Journey",
+              "description": "Food traveling through the digestive system",
+              "elements": ["digestive tract", "food breakdown", "nutrients", "stages"],
+              "dialogue": "Food takes a journey through your digestive system!"
+            },
+            {
+              "title": "Nervous Network",
+              "description": "Nerves sending messages throughout body",
+              "elements": ["nerve cells", "signal transmission", "brain connection", "fast messages"],
+              "dialogue": "Nerves send messages faster than the internet!"
+            },
+            {
+              "title": "Systems Connected",
+              "description": "How all systems depend on each other",
+              "elements": ["system diagram", "interdependence", "feedback loops", "health"],
+              "dialogue": "Every system needs the others to work properly!"
+            }
+          ]
+        },
+        "5-6": {
+          "vocabulary": ["cardiovascular", "alveoli", "neurons", "homeostasis", "metabolism", "immunity"],
+          "concepts": ["Cellular respiration", "Immune response", "Homeostasis maintenance"],
+          "scenes": [
+            {
+              "title": "Cellular Level",
+              "description": "Zooming into the cellular level of body functions",
+              "elements": ["cell view", "organelles", "microscope effect", "detail"],
+              "dialogue": "Let's zoom in to see how your body works at the cell level!"
+            },
+            {
+              "title": "Cardiovascular Detail",
+              "description": "Heart chambers and blood flow mechanics",
+              "elements": ["heart anatomy", "chambers", "valves", "pressure"],
+              "dialogue": "The heart has four chambers that pump blood precisely!"
+            },
+            {
+              "title": "Cellular Respiration",
+              "description": "Cells using oxygen to make energy",
+              "elements": ["mitochondria", "ATP production", "energy conversion", "cell interior"],
+              "dialogue": "Inside cells, oxygen helps create energy through respiration!"
+            },
+            {
+              "title": "Immune Defense",
+              "description": "White blood cells fighting pathogens",
+              "elements": ["white blood cells", "antibodies", "pathogen attack", "defense"],
+              "dialogue": "Your immune system has soldiers that fight invaders!"
+            },
+            {
+              "title": "Homeostasis Balance",
+              "description": "Body maintaining stable internal conditions",
+              "elements": ["temperature regulation", "balance scales", "feedback", "stability"],
+              "dialogue": "Homeostasis keeps your body in perfect balance!"
+            },
+            {
+              "title": "Integrated Systems",
+              "description": "Complex interactions between all systems",
+              "elements": ["system network", "data flows", "integration", "complexity"],
+              "dialogue": "Every second, trillions of interactions keep you alive!"
+            }
+          ]
+        }
+      }
+    },
+    "electricity": {
+      "displayName": "Electricity",
+      "description": "The flow of electrical energy and how we use it",
+      "guide": "mr-chloro",
+      "gradeLevels": {
+        "K-2": {
+          "vocabulary": ["electricity", "battery", "light", "switch", "wire", "power"],
+          "concepts": ["Electricity makes things work", "Circuits need to be complete", "Safety with electricity"],
+          "scenes": [
+            {
+              "title": "Magic Power",
+              "description": "Lights turning on with the flip of a switch",
+              "elements": ["light switch", "light bulb", "glow effect", "wonder"],
+              "dialogue": "Click! Like magic, the light turns on! But how?"
+            },
+            {
+              "title": "Battery Power",
+              "description": "A battery powering a toy",
+              "elements": ["battery", "toy", "energy flow", "simple circuit"],
+              "dialogue": "Batteries store electricity to power our toys!"
+            },
+            {
+              "title": "The Electric Road",
+              "description": "Electricity flowing through wires like a road",
+              "elements": ["wires", "flowing energy", "road metaphor", "direction"],
+              "dialogue": "Electricity travels through wires like cars on a road!"
+            },
+            {
+              "title": "Complete the Circle",
+              "description": "A simple circuit that needs to be complete",
+              "elements": ["simple circuit", "complete loop", "light on/off", "connection"],
+              "dialogue": "Electricity needs a complete path - like a circle!"
+            },
+            {
+              "title": "Stay Safe",
+              "description": "Safety rules about electricity",
+              "elements": ["outlet cover", "wet hands warning", "adult help", "safety symbols"],
+              "dialogue": "Electricity is helpful but we must be safe around it!"
+            },
+            {
+              "title": "Electricity Everywhere",
+              "description": "All the things powered by electricity in daily life",
+              "elements": ["household items", "powered devices", "grateful child", "modern life"],
+              "dialogue": "Electricity powers so many things we use every day!"
+            }
+          ]
+        },
+        "3-4": {
+          "vocabulary": ["circuit", "conductor", "insulator", "current", "voltage", "electrons"],
+          "concepts": ["Electrons flow in circuits", "Conductors vs insulators", "Series vs parallel"],
+          "scenes": [
+            {
+              "title": "Electron Adventure",
+              "description": "Introduction to electrons as tiny particles",
+              "elements": ["atom", "electrons", "zoom effect", "particle view"],
+              "dialogue": "Electricity is made of tiny particles called electrons!"
+            },
+            {
+              "title": "Conductor Highway",
+              "description": "Electrons flowing easily through metal conductors",
+              "elements": ["metal wire", "electron flow", "highway metaphor", "speed"],
+              "dialogue": "Conductors like metal let electrons flow easily!"
+            },
+            {
+              "title": "Insulator Walls",
+              "description": "Insulators blocking electron flow",
+              "elements": ["rubber/plastic", "blocked electrons", "protection", "comparison"],
+              "dialogue": "Insulators like rubber stop electricity - they keep us safe!"
+            },
+            {
+              "title": "Series Circuit",
+              "description": "Components connected in a single path",
+              "elements": ["series circuit", "single path", "bulbs in row", "one goes out"],
+              "dialogue": "In a series circuit, electricity has only one path!"
+            },
+            {
+              "title": "Parallel Circuit",
+              "description": "Components with multiple paths",
+              "elements": ["parallel circuit", "multiple paths", "independent bulbs", "comparison"],
+              "dialogue": "Parallel circuits give electricity many paths to take!"
+            },
+            {
+              "title": "Building Circuits",
+              "description": "Child building a simple circuit",
+              "elements": ["hands-on activity", "components", "success", "learning"],
+              "dialogue": "Now you can build your own circuits!"
+            }
+          ]
+        },
+        "5-6": {
+          "vocabulary": ["ampere", "ohm", "resistance", "static electricity", "electromagnetic", "generator"],
+          "concepts": ["Ohm's Law basics", "Static vs current electricity", "Generating electricity"],
+          "scenes": [
+            {
+              "title": "Electric Properties",
+              "description": "Introduction to voltage, current, and resistance",
+              "elements": ["V, I, R symbols", "water pipe analogy", "equations", "visualization"],
+              "dialogue": "Voltage, current, and resistance work together!"
+            },
+            {
+              "title": "Static vs Current",
+              "description": "Comparing static electricity to current electricity",
+              "elements": ["balloon hair", "flowing current", "comparison", "examples"],
+              "dialogue": "Static electricity stays put, current electricity flows!"
+            },
+            {
+              "title": "Resistance Matters",
+              "description": "How resistance affects current flow",
+              "elements": ["resistors", "current change", "heat generation", "applications"],
+              "dialogue": "Resistance controls how much current flows!"
+            },
+            {
+              "title": "Generating Power",
+              "description": "How generators convert motion to electricity",
+              "elements": ["generator", "magnets", "spinning", "energy conversion"],
+              "dialogue": "Generators use magnets and motion to make electricity!"
+            },
+            {
+              "title": "Electromagnetic Connection",
+              "description": "Relationship between electricity and magnetism",
+              "elements": ["electromagnet", "magnetic field", "motor principle", "connection"],
+              "dialogue": "Electricity and magnetism are connected - electromagnetism!"
+            },
+            {
+              "title": "Power Grid",
+              "description": "How electricity reaches our homes",
+              "elements": ["power plant", "transmission lines", "transformer", "home"],
+              "dialogue": "Electricity travels a long way from power plants to your home!"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "styleGuide": {
+    "artStyle": "Pixar-style 3D animation, bright colors, expressive characters, educational but fun",
+    "colorPalette": ["vibrant", "child-friendly", "high contrast for readability"],
+    "characterConsistency": "Characters must maintain consistent appearance across all panels",
+    "panelFormat": "Square 1:1 ratio, clear focal point, minimal text in image"
+  },
+  "promptTemplate": {
+    "base": "Create a Pixar-style educational comic panel illustration. Style: bright, colorful, 3D animated look with expressive characters. The scene shows {sceneDescription}. Characters present: {characterNames}. Setting: {setting}. Mood: {mood}. Educational focus: {educationalFocus}. The image should be clear, engaging, and suitable for children.",
+    "characterIntegration": "The main guide character ({guideName}) should be prominently featured alongside the student character ({studentName}). They should be interacting naturally and expressively.",
+    "safetyNote": "Ensure all content is age-appropriate, educational, and promotes curiosity and learning."
+  }
+}
+
