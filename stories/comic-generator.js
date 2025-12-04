@@ -12,13 +12,23 @@
  */
 
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
-import { supabaseConfig } from '../config.js';
+import { createSupabaseClientAsync } from '../config.js';
 
 // ============================================================================
 // Configuration
 // ============================================================================
 
-const supabase = createClient(supabaseConfig.url, supabaseConfig.anonKey);
+let supabaseClient = null;
+
+/**
+ * Get Supabase client (async, waits for Netlify config)
+ */
+async function getSupabaseClient() {
+  if (!supabaseClient) {
+    supabaseClient = await createSupabaseClientAsync(createClient);
+  }
+  return supabaseClient;
+}
 
 // API Keys from .env (must have VITE_ prefix to be exposed to frontend)
 const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
@@ -362,6 +372,12 @@ function updateProgress(step, progress = 100) {
 
 async function loadAvatars() {
   try {
+    const supabase = await getSupabaseClient();
+    if (!supabase) {
+      renderDefaultAvatars();
+      return;
+    }
+
     // Try to load from Supabase storage
     const { data: avatarFiles, error } = await supabase.storage
       .from('avatars')
@@ -447,7 +463,24 @@ async function loadTopicGuides() {
   const guideEntries = Object.entries(TOPIC_GUIDES);
   const guidesWithUrls = [];
 
+  const supabase = await getSupabaseClient();
+  if (!supabase) {
+    // Fallback: render guides without images
+    console.warn('Supabase not available, using fallback guides');
+    for (const [guideId, guide] of guideEntries) {
+      guidesWithUrls.push({
+        guideId,
+        guide,
+        imageUrl: null,
+        found: false
+      });
+    }
+    renderTopicGuides(guidesWithUrls);
+    return;
+  }
+
   try {
+
     // Try to list files from the topic_guide bucket
     const { data: bucketFiles, error: listError } = await supabase.storage
       .from('topic_guide')
@@ -613,6 +646,9 @@ async function generatePanels() {
 
   try {
     // Get the current user session (for storage uploads)
+    const supabase = await getSupabaseClient();
+    if (!supabase) throw new Error('Supabase not configured');
+    
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
     if (sessionError) throw sessionError;
     if (!session) throw new Error('Please log in to generate panels');
@@ -921,6 +957,11 @@ async function generateImageWithFal(prompt, guideImageUrl, avatarImageUrl, panel
  * Save generated panel to Supabase Storage
  */
 async function savePanelToStorage(topic, gradeLevel, panelIndex, imageUrl) {
+  const supabase = await getSupabaseClient();
+  if (!supabase) {
+    throw new Error('Supabase not configured. Cannot save panel to storage.');
+  }
+
   const fileName = `panel-${String(panelIndex + 1).padStart(2, '0')}.png`;
   const storagePath = `${topic}/${gradeLevel}/${fileName}`;
   
@@ -948,7 +989,7 @@ async function savePanelToStorage(topic, gradeLevel, panelIndex, imageUrl) {
   const imageBlob = await imageResponse.blob();
   console.log(`[Storage] Image blob size: ${imageBlob.size} bytes`);
   
-  // Upload to Supabase Storage
+  // Upload to Supabase Storage (supabase is already defined above in this function)
   console.log(`[Storage] Uploading to bucket: generated_panels, path: ${storagePath}`);
   const { data, error } = await supabase.storage
     .from('generated_panels')
@@ -1332,6 +1373,12 @@ async function saveAsStory() {
   log('Creating story entry...', 'info');
 
   try {
+    const supabase = await getSupabaseClient();
+    if (!supabase) {
+      log('✗ Supabase not configured', 'error');
+      throw new Error('Supabase not configured. Cannot save story.');
+    }
+
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
     if (sessionError) {
       log(`✗ Session error: ${sessionError.message}`, 'error');
@@ -1416,6 +1463,7 @@ async function saveAsStory() {
     const metadataPath = `${state.topic}/${state.gradeLevel}/story-metadata-${storyId}.json`;
     const metadataBlob = new Blob([JSON.stringify(metadata, null, 2)], { type: 'application/json' });
     
+    // supabase is already defined above in this function
     const { error: storageError } = await supabase.storage
       .from('generated_panels')
       .upload(metadataPath, metadataBlob, {
@@ -1581,6 +1629,11 @@ async function publishStory(publishTopic = null, publishGrade = null) {
   log('Publishing story...', 'info');
 
   try {
+    const supabase = await getSupabaseClient();
+    if (!supabase) {
+      throw new Error('Supabase not configured. Cannot publish story.');
+    }
+
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) throw new Error('Not authenticated');
 
@@ -1627,7 +1680,7 @@ async function publishStory(publishTopic = null, publishGrade = null) {
     // Update metadata JSON in storage
     const metadataPath = `${state.topic}/${state.gradeLevel}/story-metadata-${state.savedStoryId}.json`;
     
-    // First, try to read existing metadata
+    // First, try to read existing metadata (supabase is already defined above)
     const { data: existingMetadata, error: readError } = await supabase.storage
       .from('generated_panels')
       .download(metadataPath);
@@ -1866,6 +1919,12 @@ async function loadPreviousStories() {
   grid.innerHTML = '<div class="col-span-full text-center py-12 text-slate-400"><p class="text-sm">Loading...</p></div>';
 
   try {
+    const supabase = await getSupabaseClient();
+    if (!supabase) {
+      grid.innerHTML = '<div class="col-span-full text-center py-12 text-slate-400"><p class="text-sm">Supabase not configured. Cannot load stories.</p></div>';
+      return;
+    }
+
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
       grid.innerHTML = '<div class="col-span-full text-center py-12 text-slate-400"><p class="text-sm">Please log in to view your generated stories.</p></div>';
@@ -2097,6 +2156,11 @@ async function quickPublishStory(storyId) {
 
   try {
     log('Publishing story...', 'info');
+
+    const supabase = await getSupabaseClient();
+    if (!supabase) {
+      throw new Error('Supabase not configured. Cannot publish story.');
+    }
 
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) throw new Error('Not authenticated');
