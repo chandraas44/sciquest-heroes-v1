@@ -10,18 +10,18 @@ const routeRewritePlugin = () => {
       server.middlewares.use((req, res, next) => {
         const originalUrl = req.url || '';
         const method = req.method || 'GET';
-        
+
         // Parse URL
         const [path, queryString] = originalUrl.split('?');
         const query = queryString ? `?${queryString}` : '';
-        
+
         // Skip rewriting for asset files (JS, CSS, images, etc.)
         const isAssetFile = /\.(js|css|json|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$/i.test(path);
         if (isAssetFile) {
           next();
           return;
         }
-        
+
         // ABSOLUTE FIRST: /child/badges -> /badges/badges.html (exact match only, no trailing slash)
         if (path === '/child/badges' || path === '/child/badges/') {
           req.url = `/badges/badges.html${query}`;
@@ -29,10 +29,10 @@ const routeRewritePlugin = () => {
           next();
           return;
         }
-        
+
         // Other routes...
         const normalizedPath = path === '/' ? '/' : path.replace(/\/$/, '');
-        
+
         // 2. /parent/dashboard -> /parent/dashboard.html
         if (normalizedPath === '/parent/dashboard' || path.startsWith('/parent/dashboard/')) {
           req.url = `/parent/dashboard.html${query}`;
@@ -40,7 +40,7 @@ const routeRewritePlugin = () => {
           next();
           return;
         }
-        
+
         // 3. /stories/{storyId}/read -> /stories/reader.html
         const storyMatch = normalizedPath.match(/^\/stories\/([^/]+)\/read$/);
         if (storyMatch) {
@@ -52,7 +52,7 @@ const routeRewritePlugin = () => {
           next();
           return;
         }
-        
+
         // 4. /stories -> /stories/index.html
         if (normalizedPath === '/stories') {
           req.url = `/stories/index.html${query}`;
@@ -60,7 +60,7 @@ const routeRewritePlugin = () => {
           next();
           return;
         }
-        
+
         // 5. /chat -> /chat/index.html
         if (normalizedPath === '/chat') {
           req.url = `/chat/index.html${query}`;
@@ -68,10 +68,10 @@ const routeRewritePlugin = () => {
           next();
           return;
         }
-        
+
         next();
       });
-      
+
       // Log that plugin is registered
       process.stdout.write('\n✅✅✅ ROUTE REWRITE PLUGIN REGISTERED ✅✅✅\n');
       process.stdout.write('Routes: /child/badges, /parent/dashboard, /stories/{id}/read, /chat, /stories\n\n');
@@ -96,9 +96,9 @@ export default defineConfig({
         auth: resolve(__dirname, 'auth/auth.html'),
         studentSignup: resolve(__dirname, 'auth/student-signup.html'),
         avatarSelection: resolve(__dirname, 'avatar-selection.html'),
-        studentDashboard: resolve(__dirname, 'dashboards/student-dashboard.html'),
+
         parentDashboardOld: resolve(__dirname, 'dashboards/parent-dashboard.html'),
-        teacherDashboard: resolve(__dirname, 'dashboards/teacher-dashboard.html'),
+
         profile: resolve(__dirname, 'profile.html'),
         mrChloroGuide: resolve(__dirname, 'mr-chloro-guide.html'),
         stellaGradeSelector: resolve(__dirname, 'stella-grade-selector.html'),
@@ -131,48 +131,48 @@ export default defineConfig({
     const originalConsoleError = console.error.bind(console);
     const originalConsoleLog = console.log.bind(console);
     const originalStderrWrite = process.stderr.write.bind(process.stderr);
-    
+
     // FORCE LOG to verify configureServer is running - use original to bypass any overrides
     originalConsoleError('\n🔧🔧🔧 CONFIGURE SERVER RUNNING 🔧🔧🔧\n');
-    
+
     // Override process.stderr.write to filter out image warnings
-    process.stderr.write = function(chunk, encoding, callback) {
+    process.stderr.write = function (chunk, encoding, callback) {
       const message = chunk.toString();
       // Suppress Vite's public directory warnings
-      if (message.includes('Instead of /images/avatars') || 
-          message.includes('Files in the public directory') ||
-          message.includes('use /avatars/')) {
+      if (message.includes('Instead of /images/avatars') ||
+        message.includes('Files in the public directory') ||
+        message.includes('use /avatars/')) {
         return true; // Suppress - return true to indicate it was handled
       }
       // Allow everything else through
       return originalStderrWrite(chunk, encoding, callback);
     };
-    
+
     // Override console.error to filter warnings but show our important logs
-    console.error = function(...args) {
+    console.error = function (...args) {
       const message = args.join(' ');
       // Always show our middleware logs - check for ANY of our markers
-      if (message.includes('🚨') || message.includes('✅') || message.includes('🔍') || message.includes('🔧') || 
-          message.includes('ROUTE REWRITE') || message.includes('MIDDLEWARE') || message.includes('CONFIGURE') ||
-          message.includes('REWRITE MIDDLEWARE') || message.includes('child/badges')) {
+      if (message.includes('🚨') || message.includes('✅') || message.includes('🔍') || message.includes('🔧') ||
+        message.includes('ROUTE REWRITE') || message.includes('MIDDLEWARE') || message.includes('CONFIGURE') ||
+        message.includes('REWRITE MIDDLEWARE') || message.includes('child/badges')) {
         originalConsoleError(...args);
         return;
       }
       // Suppress image warnings
-      if (message.includes('Instead of /images/avatars') || 
-          message.includes('Files in the public directory') ||
-          message.includes('use /avatars/')) {
+      if (message.includes('Instead of /images/avatars') ||
+        message.includes('Files in the public directory') ||
+        message.includes('use /avatars/')) {
         return; // Suppress
       }
       // Allow everything else through
       originalConsoleError(...args);
     };
-    
+
     // CRITICAL: Create rewrite middleware function that runs FIRST
     const rewriteMiddleware = (req, res, next) => {
       const originalUrl = req.url || '';
       const method = req.method || 'GET';
-      
+
       // ABSOLUTE FIRST CHECK: /child/badges - check BEFORE any parsing
       // This MUST be the very first thing we check
       if (originalUrl && (originalUrl.startsWith('/child/badges') || originalUrl === '/child/badges')) {
@@ -184,30 +184,30 @@ export default defineConfig({
         next();
         return;
       }
-      
+
       // Parse URL: split path and query
       const [path, queryString] = originalUrl.split('?');
       const query = queryString ? `?${queryString}` : '';
-      
+
       // Normalize path: remove trailing slash (except root)
       const normalizedPath = path === '/' ? '/' : path.replace(/\/$/, '');
-      
+
       // ROUTE REWRITES - Check in priority order
-      
+
       // 1. /child/badges -> /badges/badges.html (REDUNDANT CHECK FOR SAFETY)
       // Additional check after parsing in case first check missed it
-      if (normalizedPath === '/child/badges' || 
-          path === '/child/badges' || 
-          path === '/child/badges/' ||
-          path.startsWith('/child/badges/') ||
-          path.startsWith('/child/badges?')) {
+      if (normalizedPath === '/child/badges' ||
+        path === '/child/badges' ||
+        path === '/child/badges/' ||
+        path.startsWith('/child/badges/') ||
+        path.startsWith('/child/badges?')) {
         req.url = `/badges/badges.html${query}`;
         process.stdout.write(`\n✅✅✅ ROUTE REWRITE (fallback): ${method} "${originalUrl}" -> "${req.url}"\n`);
         originalConsoleError(`\n✅✅✅ ROUTE REWRITE (fallback): ${method} "${originalUrl}" -> "${req.url}"\n`);
         next();
         return;
       }
-      
+
       // 2. /parent/dashboard -> /parent/dashboard.html
       if (normalizedPath === '/parent/dashboard' || path.startsWith('/parent/dashboard/')) {
         req.url = `/parent/dashboard.html${query}`;
@@ -215,7 +215,7 @@ export default defineConfig({
         next();
         return;
       }
-      
+
       // 3. /stories/{storyId}/read -> /stories/reader.html
       const storyMatch = normalizedPath.match(/^\/stories\/([^/]+)\/read$/);
       if (storyMatch) {
@@ -227,7 +227,7 @@ export default defineConfig({
         next();
         return;
       }
-      
+
       // 4. /stories -> /stories/index.html
       if (normalizedPath === '/stories') {
         req.url = `/stories/index.html${query}`;
@@ -235,7 +235,7 @@ export default defineConfig({
         next();
         return;
       }
-      
+
       // 5. /chat -> /chat/index.html
       if (normalizedPath === '/chat') {
         req.url = `/chat/index.html${query}`;
@@ -243,15 +243,15 @@ export default defineConfig({
         next();
         return;
       }
-      
+
       // Continue to next middleware (Vite's static file handler)
       next();
     };
-    
+
     // CRITICAL: Register middleware directly in configureServer
     // In Vite, middleware registered in configureServer runs before static file serving
     server.middlewares.use(rewriteMiddleware);
-    
+
     // FORCE LOG using process.stdout.write to bypass all console overrides
     process.stdout.write('\n\n✅✅✅✅✅✅✅✅✅ REWRITE MIDDLEWARE REGISTERED ✅✅✅✅✅✅✅✅✅\n');
     process.stdout.write('Routes: /child/badges -> /badges/badges.html\n');
@@ -259,7 +259,7 @@ export default defineConfig({
     process.stdout.write('        /stories/{id}/read -> /stories/reader.html\n');
     process.stdout.write('        /chat -> /chat/index.html\n');
     process.stdout.write('        /stories -> /stories/index.html\n\n');
-    
+
     // Also log with console methods
     originalConsoleError('\n✅✅✅✅✅✅✅✅✅ REWRITE MIDDLEWARE REGISTERED ✅✅✅✅✅✅✅✅✅\n');
     originalConsoleError('Will handle: /child/badges, /parent/dashboard, /stories/{id}/read, /chat, /stories\n');

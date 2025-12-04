@@ -11,10 +11,10 @@ import {
 import {
   evaluateBadgeRules,
   getBadgeById
-} from '../badges/badge-services.js';
+} from '/badges/badge-services.js';
 import {
   showBadgeCelebration
-} from '../shared/badge-celebration.js';
+} from '/shared/badge-celebration.js';
 
 const params = new URLSearchParams(window.location.search);
 const topicId = params.get('topicId');
@@ -43,13 +43,14 @@ const quickPromptsEl = document.getElementById('quickPrompts');
 const safetyBannerEl = document.getElementById('safetyBanner');
 const escalationBtnEl = document.getElementById('escalationBtn');
 const backBtnEl = document.getElementById('backBtn');
-const offlineBannerEl = document.getElementById('offlineBanner');
+// Offline banner removed - no longer needed
+// const offlineBannerEl = document.getElementById('offlineBanner');
 
-function showOfflineBannerIfNeeded() {
-  if (!offlineBannerEl) return;
-  const shouldShow = isUsingChatMocks() || navigator.onLine === false;
-  offlineBannerEl.classList.toggle('hidden', !shouldShow);
-}
+// function showOfflineBannerIfNeeded() {
+//   if (!offlineBannerEl) return;
+//   const shouldShow = isUsingChatMocks() || navigator.onLine === false;
+//   offlineBannerEl.classList.toggle('hidden', !shouldShow);
+// }
 
 function renderTopicPicker(topics) {
   topicPickerEl.innerHTML = '';
@@ -153,12 +154,10 @@ function updateContextBadge() {
     if (state.context.storyRef) {
       let panelParam = '';
       if (state.context.panelId) {
-        const panelNum = state.context.panelId.replace(/^panel-?/i, '').replace(/^panel/i, '');
-        if (panelNum) {
-          panelParam = `?panel=${panelNum}`;
-        }
+        const panelId = state.context.panelId ? Number(state.context.panelId.replace(/^panel-?/i, '').replace(/^panel/i, '')) - 1 : 0;
+        panelParam = `panel=${panelId}`;
       }
-      window.location.href = `/stories/${state.context.storyRef}/read${panelParam}`;
+      window.location.href = `/stories/reader.html?storyId=${state.context.storyRef}&${panelParam}`;
     }
   };
 }
@@ -189,18 +188,17 @@ async function handleSendMessage() {
     hasContext: Boolean(state.context.storyRef)
   });
 
-  const aiResponse = await sendMessage(state.topicId, messageText, state.context);
+  const aiResponse = await sendMessage(state.topicId, messageText, state.context, state.sessionId, state.messages);
   state.messages.pop();
   state.messages.push(aiResponse);
   renderMessages();
   state.isLoading = false;
   sendBtnEl.disabled = false;
 
-  saveTranscript(state.sessionId, {
+  await saveTranscript(state.sessionId, {
     topicId: state.topicId,
     messages: state.messages,
     context: state.context,
-    childId: 'guest-child',
     createdAt: state.messages[0]?.timestamp || new Date().toISOString()
   });
   
@@ -229,7 +227,7 @@ async function handleSendMessage() {
 async function loadStoryTitle(storyId) {
   if (!storyId) return;
   try {
-    const { getStoryById } = await import('../stories/story-services.js');
+    const { getStoryById } = await import('/stories/story-services.js');
     const story = await getStoryById(storyId);
     if (story) {
       state.storyTitle = story.title;
@@ -296,11 +294,10 @@ async function initChatSession() {
     panelId: state.context.panelId
   });
 
-  saveTranscript(state.sessionId, {
+  await saveTranscript(state.sessionId, {
     topicId: state.topicId,
     messages: state.messages,
     context: state.context,
-    childId: 'guest-child',
     createdAt: state.messages[0]?.timestamp || new Date().toISOString()
   });
 }
@@ -321,16 +318,12 @@ backBtnEl.addEventListener('click', async () => {
     });
   }
   if (state.context.storyRef) {
-    let panelParam = '';
-    if (state.context.panelId) {
-      const panelNum = state.context.panelId.replace(/^panel-?/i, '').replace(/^panel/i, '');
-      if (panelNum) {
-        panelParam = `?panel=${panelNum}`;
-      }
-    }
-    window.location.href = `/stories/${state.context.storyRef}/read${panelParam}`;
+    const panelId = state.context.panelId ? Number(state.context.panelId.replace(/^panel-?/i, '').replace(/^panel/i, '')) - 1 : 0;
+    const panelParam = state.context.panelId ? `&panel=${panelId}` : '';
+    const path = state.context.panelId ? "reader.html" : "story.html";
+    window.location.href = `/stories/${path}?storyId=${state.context.storyRef}${panelParam}`;
   } else {
-    window.location.href = './index.html';
+    window.location.href = '/stories/index.html';
   }
 });
 
@@ -339,9 +332,10 @@ escalationBtnEl.addEventListener('click', () => {
   alert("That's a great question! You can ask a parent or teacher for help with this. They'll be happy to explain it to you! 👨‍👩‍👧‍👦");
 });
 
-showOfflineBannerIfNeeded();
-window.addEventListener('online', showOfflineBannerIfNeeded);
-window.addEventListener('offline', showOfflineBannerIfNeeded);
+// Offline banner functionality removed
+// showOfflineBannerIfNeeded();
+// window.addEventListener('online', showOfflineBannerIfNeeded);
+// window.addEventListener('offline', showOfflineBannerIfNeeded);
 
 initChatSession();
 

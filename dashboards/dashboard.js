@@ -41,21 +41,8 @@ async function checkAuth() {
     const currentPage = window.location.pathname;
 
     if (currentPage.includes('parent-dashboard.html') && profile.account_type !== 'parent') {
-        if (profile.account_type === 'teacher') {
-            window.location.href = 'teacher-dashboard.html';
-        } else if (profile.account_type === 'student') {
-            window.location.href = 'student-dashboard.html';
-        } else {
-            window.location.href = '../index.html';
-        }
-        return;
-    }
-
-    if (currentPage.includes('teacher-dashboard.html') && profile.account_type !== 'teacher') {
-        if (profile.account_type === 'parent') {
-            window.location.href = 'parent-dashboard.html';
-        } else if (profile.account_type === 'student') {
-            window.location.href = 'student-dashboard.html';
+        if (profile.account_type === 'student') {
+            window.location.href = '../stories/index.html';
         } else {
             window.location.href = '../index.html';
         }
@@ -80,7 +67,7 @@ async function loadUserProfile(userId) {
 
         if (profile) {
             let displayName;
-            if (profile.account_type === 'parent' || profile.account_type === 'teacher') {
+            if (profile.account_type === 'parent') {
                 displayName = profile.email;
             } else {
                 displayName = profile.first_name || profile.full_name || profile.username || profile.email;
@@ -89,7 +76,7 @@ async function loadUserProfile(userId) {
 
             if (profile.avatar_url) {
                 userAvatar.innerHTML = `<img src="${profile.avatar_url}" alt="Avatar">`;
-            } else if (profile.email && (profile.account_type === 'parent' || profile.account_type === 'teacher')) {
+            } else if (profile.email && (profile.account_type === 'parent')) {
                 userAvatar.textContent = profile.email.charAt(0).toUpperCase();
             } else if (profile.first_name) {
                 userAvatar.textContent = profile.first_name.charAt(0).toUpperCase();
@@ -125,7 +112,7 @@ logoutBtn.addEventListener('click', async () => {
         sessionStorage.clear();
 
         // Redirect to auth page with account type and mode query parameters
-        const redirectUrl = currentAccountType 
+        const redirectUrl = currentAccountType
             ? `../auth/auth.html?type=${currentAccountType}&mode=login`
             : '../auth/auth.html';
         window.location.href = redirectUrl;

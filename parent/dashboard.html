@@ -21,37 +21,85 @@
     .font-fredoka {
       font-family: 'Fredoka', sans-serif;
     }
+
+    /* Avatar Selection Styles */
+    .avatar-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+      padding: 4px;
+    }
+
+    .avatar-card {
+      background: rgba(255, 255, 255, 0.5);
+      border: 2px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .avatar-card:hover {
+      transform: translateY(-4px);
+      border-color: #a855f7;
+      box-shadow: 0 10px 20px rgba(168, 85, 247, 0.15);
+    }
+
+    .avatar-card.selected {
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.1));
+      border: 3px solid #fbbf24;
+      transform: translateY(-4px);
+    }
+
+    .avatar-card.selected::after {
+      content: '✓';
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 28px;
+      height: 28px;
+      background: #22c55e;
+      border: 2px solid white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+      box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3);
+    }
+
+    .avatar-image-wrapper {
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 8px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .avatar-image-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .avatar-name {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: #475569;
+      text-align: center;
+    }
   </style>
 </head>
 
 <body class="min-h-screen bg-white text-slate-800">
-  <!-- Header -->
-  <nav class="fixed w-full z-50 backdrop-blur-xl bg-white/95 border-b border-purple-200 shadow-lg">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-20">
-        <div class="flex items-center space-x-4">
-          <div
-            class="w-14 h-14 bg-gradient-to-br from-purple-500 via-pink-500 to-pink-600 rounded-3xl flex items-center justify-center border-4 border-purple-200 shadow-lg">
-            <span class="text-3xl">🚀</span>
-          </div>
-          <a href="./index.html"
-            class="font-fredoka text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">SciQuest
-            Heroes</a>
-        </div>
-        <div class="hidden lg:flex items-center space-x-6">
-          <a href="./dashboard.html" class="font-fredoka text-purple-600 font-bold">Dashboard</a>
-          <button id="logoutBtn"
-            class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold px-4 py-2 rounded-full border border-purple-200 hover:bg-purple-50">
-            Logout
-          </button>
-        </div>
-        <button id="logoutBtnMobile"
-          class="lg:hidden font-fredoka text-slate-700 hover:text-purple-600 transition font-bold px-3 py-2 rounded-full border border-purple-200 hover:bg-purple-50 text-sm">
-          Logout
-        </button>
-      </div>
-    </div>
-  </nav>
+  <!-- Shared Navigation -->
+  <div id="nav-container"></div>
+  <script type="module" src="../components/nav.js"></script>
 
   <!-- Main Content -->
   <div class="pt-24 pb-12">
@@ -70,7 +118,13 @@
         <aside class="w-full lg:w-auto">
           <div
             class="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-3xl p-6 shadow-[0_0_20px_rgba(139,92,246,0.15)] sticky top-28">
-            <h2 class="font-fredoka text-3xl font-bold text-slate-700 mb-6">Your Young Heroes</h2>
+            <div class="flex justify-between items-center mb-6">
+              <h2 class="font-fredoka text-2xl font-bold text-slate-700">Your Young Heroes</h2>
+              <button id="addChildSidebarBtn"
+                class="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-2 px-4 rounded-full hover:from-purple-600 hover:to-pink-600 transition shadow-md text-sm flex items-center gap-2">
+                <span class="text-lg leading-none">+</span> Add
+              </button>
+            </div>
             <div id="childrenList" class="space-y-4">
               <!-- Child cards will be rendered here -->
             </div>
@@ -83,7 +137,7 @@
           <div id="emptyState"
             class="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-3xl p-12 text-center shadow-[0_0_20px_rgba(139,92,246,0.15)]">
             <div class="text-6xl mb-4">🦸</div>
-            <p class="text-slate-600 text-lg font-medium">Select a hero on the left to see their progress.</p>
+            <p class="text-slate-600 text-lg font-medium mb-6">Select a hero on the left to see their progress.</p>
           </div>
 
           <!-- Selected Child Detail -->
@@ -171,34 +225,129 @@
 
   <script type="module" src="./dashboard.js"></script>
   <script type="module" src="../shared/logo-handler.js"></script>
-  <script type="module">
-    // Logout functionality
-    const handleLogout = async () => {
-      try {
-        // Try Supabase logout if available
-        const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm');
-        const { supabaseConfig } = await import('../config.js');
 
-        if (supabaseConfig?.url && supabaseConfig?.anonKey) {
-          const supabase = createClient(supabaseConfig.url, supabaseConfig.anonKey);
-          const { error } = await supabase.auth.signOut();
-          if (error) throw error;
-        }
-      } catch (error) {
-        console.log('Supabase logout skipped (mock mode)');
-      }
+  <!-- Add Child Modal -->
+  <div id="addChildModal"
+    class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div
+      class="bg-white border-2 border-purple-200 rounded-3xl p-8 max-w-7xl w-full mx-4 shadow-[0_0_40px_rgba(139,92,246,0.3)] relative max-h-[90vh] overflow-y-auto">
+      <button id="closeAddChildModalBtn"
+        class="absolute top-4 right-4 text-slate-600 hover:text-slate-900 text-2xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-purple-50 transition">
+        ×
+      </button>
 
-      // Clear all storage
-      localStorage.clear();
-      sessionStorage.clear();
+      <div class="text-center mb-8">
+        <h3
+          class="font-fredoka text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+          Add a New Hero</h3>
+        <p class="text-slate-600">Create a profile for your child to start their learning journey.</p>
+      </div>
 
-      // Redirect to auth page
-      window.location.href = '../auth/auth.html';
-    };
+      <form id="addChildForm" class="space-y-6">
+        <!-- Step 1: Child Details -->
+        <div id="addChildStep1">
+          <div class="grid md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label class="block text-slate-700 font-bold mb-2 text-sm" for="newChildFirstName">First Name</label>
+              <input type="text" id="newChildFirstName" required
+                class="w-full px-4 py-3 rounded-xl border-2 border-purple-100 focus:border-purple-400 focus:outline-none transition bg-purple-50/30"
+                placeholder="e.g. Alex" />
+            </div>
+            <div>
+              <label class="block text-slate-700 font-bold mb-2 text-sm" for="newChildLastName">Last Name
+                (Optional)</label>
+              <input type="text" id="newChildLastName"
+                class="w-full px-4 py-3 rounded-xl border-2 border-purple-100 focus:border-purple-400 focus:outline-none transition bg-purple-50/30"
+                placeholder="e.g. Smith" />
+            </div>
+          </div>
 
-    document.getElementById('logoutBtn')?.addEventListener('click', handleLogout);
-    document.getElementById('logoutBtnMobile')?.addEventListener('click', handleLogout);
-  </script>
+          <div class="mb-6">
+            <label class="block text-slate-700 font-bold mb-2 text-sm" for="newChildEmail">Email Address</label>
+            <input type="email" id="newChildEmail" required
+              class="w-full px-4 py-3 rounded-xl border-2 border-purple-100 focus:border-purple-400 focus:outline-none transition bg-purple-50/30"
+              placeholder="child@example.com" />
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label class="block text-slate-700 font-bold mb-2 text-sm" for="newChildPassword">Password</label>
+              <input type="password" id="newChildPassword" required
+                class="w-full px-4 py-3 rounded-xl border-2 border-purple-100 focus:border-purple-400 focus:outline-none transition bg-purple-50/30"
+                placeholder="••••••••" />
+            </div>
+            <div>
+              <label class="block text-slate-700 font-bold mb-2 text-sm" for="newChildRetypePassword">Confirm
+                Password</label>
+              <input type="password" id="newChildRetypePassword" required
+                class="w-full px-4 py-3 rounded-xl border-2 border-purple-100 focus:border-purple-400 focus:outline-none transition bg-purple-50/30"
+                placeholder="••••••••" />
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-6 mb-6">
+            <div>
+              <label class="block text-slate-700 font-bold mb-2 text-sm" for="newChildAge">Age</label>
+              <input type="number" id="newChildAge" required min="4" max="16"
+                class="w-full px-4 py-3 rounded-xl border-2 border-purple-100 focus:border-purple-400 focus:outline-none transition bg-purple-50/30"
+                placeholder="Age" />
+            </div>
+            <div>
+              <label class="block text-slate-700 font-bold mb-2 text-sm" for="newChildGrade">Grade</label>
+              <select id="newChildGrade" required
+                class="w-full px-4 py-3 rounded-xl border-2 border-purple-100 focus:border-purple-400 focus:outline-none transition bg-purple-50/30 appearance-none">
+                <option value="1">1st Grade</option>
+                <option value="2">2nd Grade</option>
+                <option value="3">3rd Grade</option>
+                <option value="4">4th Grade</option>
+                <option value="5">5th Grade</option>
+                <option value="6">6th Grade</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="pt-4">
+            <button type="button" id="nextStepBtn"
+              class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-4 rounded-2xl hover:from-purple-600 hover:to-pink-600 transition shadow-lg text-lg flex items-center justify-center gap-2">
+              NEXT: CHOOSE AVATAR <span>→</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 2: Avatar Selection -->
+        <div id="addChildStep2" class="hidden">
+          <div class="text-center mb-6">
+            <h4 class="font-fredoka text-xl font-bold text-slate-700 mb-2">Choose an Avatar</h4>
+            <p class="text-slate-500 text-sm">Select a character for your child's profile</p>
+          </div>
+
+          <div id="modalAvatarGrid" class="avatar-grid mb-6">
+            <!-- Avatars will be loaded here -->
+            <div class="col-span-full text-center py-8 text-slate-500">
+              <div
+                class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-purple-200 border-t-purple-500 mb-2">
+              </div>
+              <p>Loading avatars...</p>
+            </div>
+          </div>
+
+          <div class="flex gap-4 pt-4">
+            <button type="button" id="backStepBtn"
+              class="flex-1 bg-white border-2 border-purple-200 text-slate-600 font-bold py-4 rounded-2xl hover:bg-purple-50 transition text-lg">
+              BACK
+            </button>
+            <button type="submit" id="saveChildBtn" disabled
+              class="flex-[2] bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-4 rounded-2xl hover:from-purple-600 hover:to-pink-600 transition shadow-lg text-lg disabled:opacity-50 disabled:cursor-not-allowed">
+              SAVE CHILD ACCOUNT
+            </button>
+          </div>
+        </div>
+
+        <div id="addChildError"
+          class="hidden bg-red-50 text-red-600 p-4 rounded-xl text-sm font-medium border border-red-200 mt-4"></div>
+      </form>
+    </div>
+  </div>
 </body>
 
 </html>
