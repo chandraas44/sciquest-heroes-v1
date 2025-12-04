@@ -1,8 +1,11 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
-import { supabaseConfig, createSupabaseClientAsync } from '/config.js';
+import { supabaseConfig, createSupabaseClientAsync, getEnvVarAsync, configReady, getEnvVar } from '/config.js';
 
-const EDGE_ANALYTICS_URL = import.meta.env?.VITE_EDGE_ANALYTICS_URL || '';
-const USE_BADGES_MOCKS = (import.meta.env?.VITE_USE_BADGES_MOCKS ?? 'true') === 'true';
+// Use runtime config system (from Netlify function)
+// Initialize with build-time fallback, will be updated after config is ready
+let EDGE_ANALYTICS_URL = getEnvVar('VITE_EDGE_ANALYTICS_URL') || '';
+let USE_BADGES_MOCKS_RAW = getEnvVar('VITE_USE_BADGES_MOCKS');
+let USE_BADGES_MOCKS = (USE_BADGES_MOCKS_RAW ?? 'true') === 'true';
 const USE_ANALYTICS_QUEUE = true;
 const BADGE_AWARDS_STORAGE_KEY = 'sqh_badge_awards_v1';
 const ANALYTICS_QUEUE_KEY = 'sqh_analytics_queue_v1';
@@ -10,6 +13,13 @@ const ANALYTICS_QUEUE_KEY = 'sqh_analytics_queue_v1';
 let supabaseClient = null;
 let cachedMockBadgeData = null;
 let cachedBadgeRules = null;
+
+// Update environment variables after Netlify config is ready
+configReady.then(async () => {
+  EDGE_ANALYTICS_URL = (await getEnvVarAsync('VITE_EDGE_ANALYTICS_URL')) || '';
+  USE_BADGES_MOCKS_RAW = await getEnvVarAsync('VITE_USE_BADGES_MOCKS');
+  USE_BADGES_MOCKS = (USE_BADGES_MOCKS_RAW ?? 'true') === 'true';
+});
 
 async function hasSupabaseConfig() {
   const config = await supabaseConfig.ready().catch(() => ({ url: null, anonKey: null }));
@@ -23,14 +33,18 @@ async function getSupabaseClient() {
   return supabaseClient;
 }
 
-function shouldUseMockData() {
-  if (USE_BADGES_MOCKS) return true;
+async function shouldUseMockData() {
+  const useMocksRaw = await getEnvVarAsync('VITE_USE_BADGES_MOCKS');
+  const useMocks = (useMocksRaw ?? 'true') === 'true';
+  if (useMocks) return true;
   // Check sync config (has build-time fallback)
   return !(supabaseConfig?.url && supabaseConfig?.anonKey);
 }
 
 export function isUsingBadgesMocks() {
-  return shouldUseMockData();
+  // This needs to be async-aware, but keeping sync for compatibility
+  // Callers should use shouldUseMockData() for accurate results
+  return USE_BADGES_MOCKS;
 }
 
 async function loadMockBadgeData() {
@@ -47,7 +61,7 @@ async function loadMockBadgeData() {
 async function loadBadgeRules() {
   if (cachedBadgeRules) return cachedBadgeRules;
   
-  if (shouldUseMockData()) {
+  if (await shouldUseMockData()) {
     const res = await fetch(new URL('./badge-rules.json', import.meta.url));
     if (!res.ok) {
       throw new Error('Unable to load badge rules');
@@ -90,7 +104,7 @@ async function loadBadgeRules() {
 }
 
 export async function loadBadgeCatalog() {
-  if (shouldUseMockData()) {
+  if (await shouldUseMockData()) {
     const data = await loadMockBadgeData();
     return data.badges || [];
   }
@@ -339,7 +353,7 @@ export async function awardBadge(childId, badgeId, context) {
   saveBadgeAwardToStorage(childId, badgeId, context);
   
   // Queue Supabase insert if available
-  if (!shouldUseMockData() && await hasSupabaseConfig()) {
+  if (!await shouldUseMockData() && await hasSupabaseConfig()) {
     const client = await getSupabaseClient();
     if (client) {
       try {
@@ -423,10 +437,10 @@ export async function logBadgeEvent(eventName, eventData = {}) {
   }
 
   // If Supabase is configured, also try direct send (future)
-  // Check sync config (has build-time fallback)
-  const hasConfig = Boolean(supabaseConfig?.url && supabaseConfig?.anonKey);
-  if (EDGE_ANALYTICS_URL && hasConfig) {
-    fetch(EDGE_ANALYTICS_URL, {
+  const hasConfig = await hasSupabaseConfig();
+  const edgeUrl = await getEnvVarAsync('VITE_EDGE_ANALYTICS_URL');
+  if (edgeUrl && hasConfig) {
+    fetch(edgeUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(event)

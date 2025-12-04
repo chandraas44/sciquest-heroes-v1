@@ -1,7 +1,9 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
-import { supabaseConfig, createSupabaseClientAsync } from '../config.js';
+import { supabaseConfig, createSupabaseClientAsync, getEnvVarAsync, configReady, getEnvVar } from '../config.js';
 
-const EDGE_ANALYTICS_URL = import.meta.env?.VITE_EDGE_ANALYTICS_URL || '';
+// Use runtime config system (from Netlify function)
+// Initialize with build-time fallback, will be updated after config is ready
+let EDGE_ANALYTICS_URL = getEnvVar('VITE_EDGE_ANALYTICS_URL') || '';
 
 const USE_ANALYTICS_QUEUE = true;
 const ANALYTICS_QUEUE_KEY = 'sqh_analytics_queue_v1';
@@ -10,6 +12,10 @@ const DASHBOARD_PROGRESS_KEY = 'sqh_dashboard_progress_v1';
 let supabaseClient = null;
 let cachedMockDashboardData = null;
 
+// Update environment variables after Netlify config is ready
+configReady.then(async () => {
+  EDGE_ANALYTICS_URL = (await getEnvVarAsync('VITE_EDGE_ANALYTICS_URL')) || '';
+});
 
 async function hasSupabaseConfig() {
   const config = await supabaseConfig.ready().catch(() => ({ url: null, anonKey: null }));
@@ -597,7 +603,7 @@ function getTopicIcon(topic) {
   return iconMap[topic] || '📚';
 }
 
-export function logAnalyticsEvent(eventName, eventData = {}) {
+export async function logAnalyticsEvent(eventName, eventData = {}) {
   if (!USE_ANALYTICS_QUEUE) return;
 
   const event = {
@@ -616,8 +622,10 @@ export function logAnalyticsEvent(eventName, eventData = {}) {
   }
 
   // If Supabase is configured, also try direct send (future)
-  if (EDGE_ANALYTICS_URL && hasSupabaseConfig()) {
-    fetch(EDGE_ANALYTICS_URL, {
+  const hasConfig = await hasSupabaseConfig();
+  const edgeUrl = await getEnvVarAsync('VITE_EDGE_ANALYTICS_URL');
+  if (edgeUrl && hasConfig) {
+    fetch(edgeUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(event)

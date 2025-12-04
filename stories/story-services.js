@@ -1,8 +1,11 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
-import { supabaseConfig, createSupabaseClientAsync } from '../config.js';
+import { supabaseConfig, createSupabaseClientAsync, getEnvVarAsync, configReady, getEnvVar } from '../config.js';
 
-const EDGE_ANALYTICS_URL = import.meta.env?.VITE_EDGE_ANALYTICS_URL || '';
-const USE_STORY_MOCKS = (import.meta.env?.VITE_USE_STORY_MOCKS ?? 'true') === 'true';
+// Use runtime config system (from Netlify function)
+// Initialize with build-time fallback, will be updated after config is ready
+let EDGE_ANALYTICS_URL = getEnvVar('VITE_EDGE_ANALYTICS_URL') || '';
+let USE_STORY_MOCKS_RAW = getEnvVar('VITE_USE_STORY_MOCKS');
+let USE_STORY_MOCKS = (USE_STORY_MOCKS_RAW ?? 'true') === 'true';
 const USE_ANALYTICS_QUEUE = true;
 const DEFAULT_CHILD_ID = 'guest-child';
 const PROGRESS_STORAGE_KEY = 'sqh_story_progress_v1';
@@ -10,6 +13,13 @@ const ANALYTICS_QUEUE_KEY = 'sqh_analytics_queue_v1';
 
 let supabaseClient = null;
 let cachedMockStories = null;
+
+// Update environment variables after Netlify config is ready
+configReady.then(async () => {
+  EDGE_ANALYTICS_URL = (await getEnvVarAsync('VITE_EDGE_ANALYTICS_URL')) || '';
+  USE_STORY_MOCKS_RAW = await getEnvVarAsync('VITE_USE_STORY_MOCKS');
+  USE_STORY_MOCKS = (USE_STORY_MOCKS_RAW ?? 'true') === 'true';
+});
 
 async function hasSupabaseConfig() {
   const config = await supabaseConfig.ready().catch(() => ({ url: null, anonKey: null }));
@@ -23,8 +33,10 @@ export async function getSupabaseClient() {
   return supabaseClient;
 }
 
-function shouldUseMockData() {
-  if (USE_STORY_MOCKS) return true;
+async function shouldUseMockData() {
+  const useMocksRaw = await getEnvVarAsync('VITE_USE_STORY_MOCKS');
+  const useMocks = (useMocksRaw ?? 'true') === 'true';
+  if (useMocks) return true;
   // Check sync config (has build-time fallback)
   return !(supabaseConfig?.url && supabaseConfig?.anonKey);
 }
@@ -41,7 +53,7 @@ async function loadMockStories() {
 }
 
 export async function getStoryList() {
-  if (shouldUseMockData()) {
+  if (await shouldUseMockData()) {
     return loadMockStories();
   }
 
@@ -85,7 +97,7 @@ export async function getStoryList() {
 
 export async function getStoryById(storyId) {
   if (!storyId) throw new Error('storyId is required');
-  if (shouldUseMockData()) {
+  if (await shouldUseMockData()) {
     const stories = await loadMockStories();
     return stories.find((story) => story.id === storyId) || null;
   }
@@ -192,7 +204,7 @@ export async function saveStoryProgress({
   persistProgress(store);
 
   const client = await getSupabaseClient();
-  if (client && !shouldUseMockData()) {
+  if (client && !(await shouldUseMockData())) {
     try {
       // Try saving with user_id first
       const payload = {
@@ -311,7 +323,7 @@ export async function flushAnalyticsQueue() {
   }
 
   // Only try Supabase if not in mock mode
-  if (shouldUseMockData()) return;
+  if (await shouldUseMockData()) return;
 
   const client = await getSupabaseClient();
   if (client) {
@@ -323,7 +335,7 @@ export async function logAnalyticsEvent(eventType, payload = {}) {
   if (!eventType) return;
   
   // In mock mode, just queue analytics without trying Supabase
-  if (shouldUseMockData()) {
+  if (await shouldUseMockData()) {
     const entry = {
       eventType,
       payload,
@@ -365,14 +377,20 @@ export async function logAnalyticsEvent(eventType, payload = {}) {
   enqueueAnalyticsEntry(entry);
 }
 
-export function isUsingStoryMocks() {
-  return shouldUseMockData();
+export async function isUsingStoryMocks() {
+  return await shouldUseMockData();
 }
 
-if (typeof window !== 'undefined' && !shouldUseMockData()) {
-  window.addEventListener('online', () => {
-    flushAnalyticsQueue();
+// Setup analytics queue flushing when not in mock mode
+if (typeof window !== 'undefined') {
+  configReady.then(async () => {
+    const useMocks = await shouldUseMockData();
+    if (!useMocks) {
+      window.addEventListener('online', () => {
+        flushAnalyticsQueue();
+      });
+      flushAnalyticsQueue();
+    }
   });
-  flushAnalyticsQueue();
 }
 

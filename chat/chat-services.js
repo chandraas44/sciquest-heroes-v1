@@ -1,7 +1,8 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
-import { supabaseConfig, createSupabaseClientAsync, getEnvVar, configReady } from '/config.js';
+import { supabaseConfig, createSupabaseClientAsync, getEnvVarAsync, configReady, getEnvVar } from '/config.js';
 
 // Use runtime config system (from Netlify function)
+// Initialize with build-time fallback, will be updated after config is ready
 let EDGE_ANALYTICS_URL = getEnvVar('VITE_EDGE_ANALYTICS_URL') || '';
 let N8N_CHAT_URL = getEnvVar('VITE_N8N_CHAT_URL')?.trim() || '';
 let USE_CHAT_MOCKS_RAW = getEnvVar('VITE_USE_CHAT_MOCKS');
@@ -21,10 +22,10 @@ if (!initialN8nUrl) {
 }
 
 // Update environment variables after Netlify config is ready
-configReady.then(() => {
-  EDGE_ANALYTICS_URL = getEnvVar('VITE_EDGE_ANALYTICS_URL') || '';
-  N8N_CHAT_URL = getEnvVar('VITE_N8N_CHAT_URL')?.trim() || '';
-  USE_CHAT_MOCKS_RAW = getEnvVar('VITE_USE_CHAT_MOCKS');
+configReady.then(async () => {
+  EDGE_ANALYTICS_URL = (await getEnvVarAsync('VITE_EDGE_ANALYTICS_URL')) || '';
+  N8N_CHAT_URL = (await getEnvVarAsync('VITE_N8N_CHAT_URL'))?.trim() || '';
+  USE_CHAT_MOCKS_RAW = await getEnvVarAsync('VITE_USE_CHAT_MOCKS');
   USE_CHAT_MOCKS = (USE_CHAT_MOCKS_RAW ?? 'true') === 'true';
   
   // Re-log n8n configuration status after config is ready
@@ -716,7 +717,7 @@ export function getN8nStatus() {
   // Re-log diagnostics after config is ready
   configReady.then(() => {
     console.group('[chat] 🔍 Environment Configuration Diagnostics (Runtime)');
-    console.log('VITE_N8N_CHAT_URL (runtime):', getEnvVar('VITE_N8N_CHAT_URL')?.trim() || 'empty');
+    console.log('VITE_N8N_CHAT_URL (runtime):', getEnvVarAsync('VITE_N8N_CHAT_URL')?.trim() || 'empty');
     console.log('VITE_N8N_CHAT_URL (cached):', N8N_CHAT_URL || 'empty');
     console.log('VITE_USE_CHAT_MOCKS (runtime):', USE_CHAT_MOCKS);
     console.log('Will use n8n:', Boolean(N8N_CHAT_URL && !shouldUseMockData()));

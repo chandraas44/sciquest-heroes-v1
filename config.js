@@ -87,7 +87,7 @@ async function fetchEnvFromNetlify() {
  * Note: This is synchronous and will use build-time fallbacks immediately.
  * For guaranteed Netlify values, use getEnvVarAsync() or waitForConfig()
  */
-function getEnvVar(key) {
+export function getEnvVar(key) {
   // First, try cached runtime variables from Netlify function
   if (cachedEnvVars && cachedEnvVars[key]) {
     return cachedEnvVars[key];
