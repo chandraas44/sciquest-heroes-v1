@@ -400,7 +400,7 @@ export async function getBadgeProgress(childId, badgeId) {
   return result.progress || null;
 }
 
-export function logBadgeEvent(eventName, eventData = {}) {
+export async function logBadgeEvent(eventName, eventData = {}) {
   if (!USE_ANALYTICS_QUEUE) return;
 
   const event = {
@@ -423,7 +423,9 @@ export function logBadgeEvent(eventName, eventData = {}) {
   }
 
   // If Supabase is configured, also try direct send (future)
-  if (EDGE_ANALYTICS_URL && await hasSupabaseConfig()) {
+  // Check sync config (has build-time fallback)
+  const hasConfig = Boolean(supabaseConfig?.url && supabaseConfig?.anonKey);
+  if (EDGE_ANALYTICS_URL && hasConfig) {
     fetch(EDGE_ANALYTICS_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

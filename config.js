@@ -107,14 +107,6 @@ function getEnvVar(key) {
   return undefined;
 }
 
-/**
- * Get environment variable value (async - waits for fetch to complete)
- */
-async function getEnvVarAsync(key) {
-  await fetchEnvFromNetlify();
-  return getEnvVar(key);
-}
-
 // Start fetching immediately (non-blocking) when in browser
 let initPromise = null;
 if (typeof window !== 'undefined') {
