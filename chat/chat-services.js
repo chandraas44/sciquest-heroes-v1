@@ -1,10 +1,11 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
-import { supabaseConfig, createSupabaseClientAsync } from '/config.js';
+import { supabaseConfig, createSupabaseClientAsync, getEnvVar, configReady } from '/config.js';
 
-const EDGE_ANALYTICS_URL = import.meta.env?.VITE_EDGE_ANALYTICS_URL || '';
-const N8N_CHAT_URL = import.meta.env?.VITE_N8N_CHAT_URL?.trim() || '';
-const USE_CHAT_MOCKS_RAW = import.meta.env?.VITE_USE_CHAT_MOCKS;
-const USE_CHAT_MOCKS = (USE_CHAT_MOCKS_RAW ?? 'true') === 'true';
+// Use runtime config system (from Netlify function)
+let EDGE_ANALYTICS_URL = getEnvVar('VITE_EDGE_ANALYTICS_URL') || '';
+let N8N_CHAT_URL = getEnvVar('VITE_N8N_CHAT_URL')?.trim() || '';
+let USE_CHAT_MOCKS_RAW = getEnvVar('VITE_USE_CHAT_MOCKS');
+let USE_CHAT_MOCKS = (USE_CHAT_MOCKS_RAW ?? 'true') === 'true';
 const USE_ANALYTICS_QUEUE = true;
 const DEFAULT_CHILD_ID = 'guest-child';
 const TRANSCRIPT_STORAGE_KEY = 'sqh_chat_transcripts_v1';
@@ -12,20 +13,37 @@ const ANALYTICS_QUEUE_KEY = 'sqh_analytics_queue_v1';
 
 // Will log diagnostics after functions are defined (see end of file)
 
-// Log n8n configuration status on module load
-if (N8N_CHAT_URL) {
-  console.log('[chat] ✅ n8n integration enabled:', N8N_CHAT_URL);
-  if (USE_CHAT_MOCKS) {
-    console.warn('[chat] ⚠️ WARNING: n8n URL is configured BUT mock mode is enabled!');
-    console.warn('[chat] ⚠️ n8n will NOT be used. Set VITE_USE_CHAT_MOCKS=false in .env to use n8n');
-    console.warn('[chat] ⚠️ Current value:', USE_CHAT_MOCKS_RAW || 'undefined (defaults to true)');
-  } else {
-    console.log('[chat] ✅ Mock mode disabled - n8n will be used');
-  }
-} else {
-  console.warn('[chat] ❌ n8n integration disabled (VITE_N8N_CHAT_URL not set)');
-  console.warn('[chat] 💡 Add VITE_N8N_CHAT_URL to .env or .env.local file');
+// Log n8n configuration status on module load (build-time check)
+// Will be updated after runtime config loads
+const initialN8nUrl = getEnvVar('VITE_N8N_CHAT_URL')?.trim() || '';
+if (!initialN8nUrl) {
+  console.log('[chat] Checking n8n configuration... (will check runtime config)');
 }
+
+// Update environment variables after Netlify config is ready
+configReady.then(() => {
+  EDGE_ANALYTICS_URL = getEnvVar('VITE_EDGE_ANALYTICS_URL') || '';
+  N8N_CHAT_URL = getEnvVar('VITE_N8N_CHAT_URL')?.trim() || '';
+  USE_CHAT_MOCKS_RAW = getEnvVar('VITE_USE_CHAT_MOCKS');
+  USE_CHAT_MOCKS = (USE_CHAT_MOCKS_RAW ?? 'true') === 'true';
+  
+  // Re-log n8n configuration status after config is ready
+  if (N8N_CHAT_URL) {
+    console.log('[chat] ✅ n8n integration enabled (runtime):', N8N_CHAT_URL);
+    if (USE_CHAT_MOCKS) {
+      console.warn('[chat] ⚠️ WARNING: n8n URL is configured BUT mock mode is enabled!');
+      console.warn('[chat] ⚠️ n8n will NOT be used. Set VITE_USE_CHAT_MOCKS=false in Netlify env vars to use n8n');
+      console.warn('[chat] ⚠️ Current value:', USE_CHAT_MOCKS_RAW || 'undefined (defaults to true)');
+    } else {
+      console.log('[chat] ✅ Mock mode disabled - n8n will be used');
+    }
+  } else {
+    console.warn('[chat] ❌ n8n integration disabled (VITE_N8N_CHAT_URL not set in Netlify)');
+    console.warn('[chat] 💡 Add VITE_N8N_CHAT_URL to Netlify environment variables');
+  }
+}).catch(() => {
+  // Silent fail - will use build-time values as fallback
+});
 
 let supabaseClient = null;
 let cachedMockChatData = null;
@@ -685,16 +703,25 @@ export function getN8nStatus() {
 }
 
 // Detailed diagnostic logging after all functions are defined
+// This will run immediately with build-time values, then update after runtime config loads
 (function logDiagnostics() {
-  console.group('[chat] 🔍 Environment Configuration Diagnostics');
-  console.log('VITE_N8N_CHAT_URL (raw):', import.meta.env?.VITE_N8N_CHAT_URL || 'undefined');
-  console.log('VITE_N8N_CHAT_URL (processed):', N8N_CHAT_URL || 'empty');
-  console.log('VITE_USE_CHAT_MOCKS (raw):', USE_CHAT_MOCKS_RAW || 'undefined');
-  console.log('VITE_USE_CHAT_MOCKS (processed):', USE_CHAT_MOCKS);
+  console.group('[chat] 🔍 Environment Configuration Diagnostics (Initial)');
+  console.log('VITE_N8N_CHAT_URL (runtime):', N8N_CHAT_URL || 'empty');
+  console.log('VITE_USE_CHAT_MOCKS (runtime):', USE_CHAT_MOCKS);
   console.log('hasSupabaseConfig():', hasSupabaseConfig());
   console.log('shouldUseMockData():', shouldUseMockData());
   console.log('Will use n8n:', Boolean(N8N_CHAT_URL && !shouldUseMockData()));
   console.groupEnd();
+  
+  // Re-log diagnostics after config is ready
+  configReady.then(() => {
+    console.group('[chat] 🔍 Environment Configuration Diagnostics (Runtime)');
+    console.log('VITE_N8N_CHAT_URL (runtime):', getEnvVar('VITE_N8N_CHAT_URL')?.trim() || 'empty');
+    console.log('VITE_N8N_CHAT_URL (cached):', N8N_CHAT_URL || 'empty');
+    console.log('VITE_USE_CHAT_MOCKS (runtime):', USE_CHAT_MOCKS);
+    console.log('Will use n8n:', Boolean(N8N_CHAT_URL && !shouldUseMockData()));
+    console.groupEnd();
+  }).catch(() => {});
 })();
 
 function readAnalyticsQueue() {
