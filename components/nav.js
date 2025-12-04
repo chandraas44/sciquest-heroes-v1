@@ -78,19 +78,15 @@ function getConfigPath() {
  */
 async function checkAuth() {
   try {
-    // Try to import Supabase config
     const configPath = getConfigPath();
-    const { supabaseConfig } = await import(configPath);
-
-    if (!supabaseConfig?.url || !supabaseConfig?.anonKey) {
-      return false;
-    }
     const { createSupabaseClientAsync } = await import(configPath);
     const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm');
+    
+    // createSupabaseClientAsync already waits for Netlify config and handles null
     const supabase = await createSupabaseClientAsync(createClient);
     if (!supabase) return false;
+    
     const { data: { session } } = await supabase.auth.getSession();
-
     return !!session;
   } catch (error) {
     console.warn('[nav] Auth check failed, assuming not authenticated:', error);
@@ -147,16 +143,12 @@ function getCurrentPage() {
 async function loadUserProfile(userId, basePath) {
   try {
     const configPath = getConfigPath();
-    const { supabaseConfig } = await import(configPath);
-
-    if (!supabaseConfig?.url || !supabaseConfig?.anonKey) {
-      return null;
-    }
-    
     const { createSupabaseClientAsync } = await import(configPath);
     const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm');
+    
+    // createSupabaseClientAsync already waits for Netlify config and handles null
     const supabase = await createSupabaseClientAsync(createClient);
-    if (!supabase) return false;
+    if (!supabase) return null;
     
     const { data: profile, error } = await supabase
       .from('user_profiles')
@@ -165,7 +157,6 @@ async function loadUserProfile(userId, basePath) {
       .maybeSingle();
 
     if (error) throw error;
-
     return profile;
   } catch (error) {
     console.warn('[nav] Failed to load user profile:', error);
@@ -320,15 +311,13 @@ function buildNavLinks(isAuthenticated, basePath, currentPage, profile) {
  */
 async function handleLogout() {
   try {
-    // Try Supabase logout if available
     const configPath = getConfigPath();
-    const { supabaseConfig } = await import(configPath);
-
-    if (supabaseConfig?.url && supabaseConfig?.anonKey) {
-      const { createSupabaseClientAsync } = await import(configPath);
-      const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm');
-      const supabase = await createSupabaseClientAsync(createClient);
-      if (!supabase) return;
+    const { createSupabaseClientAsync } = await import(configPath);
+    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm');
+    
+    // createSupabaseClientAsync already waits for Netlify config and handles null
+    const supabase = await createSupabaseClientAsync(createClient);
+    if (supabase) {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
     }
@@ -386,12 +375,12 @@ async function loadNavigation() {
     if (isAuthenticated) {
       try {
         const configPath = getConfigPath();
-        const { supabaseConfig } = await import(configPath);
-        if (supabaseConfig?.url && supabaseConfig?.anonKey) {
-          const { createSupabaseClientAsync } = await import(configPath);
-          const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm');
-          const supabase = await createSupabaseClientAsync(createClient);
-          if (!supabase) return;
+        const { createSupabaseClientAsync } = await import(configPath);
+        const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm');
+        
+        // createSupabaseClientAsync already waits for Netlify config and handles null
+        const supabase = await createSupabaseClientAsync(createClient);
+        if (supabase) {
           const { data: { session } } = await supabase.auth.getSession();
           if (session?.user?.id) {
             profile = await loadUserProfile(session.user.id, basePath);

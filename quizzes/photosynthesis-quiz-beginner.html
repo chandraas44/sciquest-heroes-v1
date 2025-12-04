@@ -10,532 +10,843 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             font-family: 'Inter', sans-serif;
             color: #1e293b;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         .font-fredoka {
             font-family: 'Fredoka', sans-serif;
         }
 
-        .quiz-container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 24px;
+        /* Animated Background */
+        .quiz-background {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quiz-background::before {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -100px;
+            left: -100px;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .quiz-background::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: -80px;
+            right: -80px;
+            animation: float 15s infinite ease-in-out reverse;
+        }
+
+        .floating-orb {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+            animation: float 18s infinite ease-in-out;
+        }
+
+        .floating-orb:nth-child(1) {
+            width: 200px;
+            height: 200px;
+            top: 20%;
+            right: 10%;
+            animation-delay: -5s;
+        }
+
+        .floating-orb:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            bottom: 30%;
+            left: 5%;
+            animation-delay: -10s;
+        }
+
+        .floating-orb:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            top: 60%;
+            right: 20%;
+            animation-delay: -3s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.05); }
+            66% { transform: translate(-20px, 20px) scale(0.95); }
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background: rgba(255,255,255,0.2);
+            border-radius: 999px;
+            height: 12px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+            border-radius: 999px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Quiz Card */
+        .quiz-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            max-width: 700px;
+            width: 100%;
             padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 10;
         }
 
-        .quiz-header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 3px solid #e2e8f0;
+        /* Question Transition */
+        .question-container {
+            position: relative;
+            min-height: 400px;
         }
 
-        .quiz-title {
-            font-family: 'Fredoka', sans-serif;
-            font-size: 36px;
-            font-weight: 800;
-            color: #1e293b;
-            margin-bottom: 12px;
+        .question-slide {
+            animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .quiz-subtitle {
-            font-size: 18px;
-            color: #64748b;
-            font-weight: 600;
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
-        .question-card {
-            background: #f8fafc;
-            border: 2px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 24px;
-            transition: all 0.3s ease;
+        @keyframes slideOut {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
         }
 
-        .question-card:hover {
-            border-color: #667eea;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
-        }
-
-        .question-number {
-            font-family: 'Fredoka', sans-serif;
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-
-        .question-text {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 16px;
-            line-height: 1.6;
-        }
-
+        /* Options */
         .option {
             background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 14px 18px;
-            margin: 8px 0;
+            border: 3px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 18px 24px;
+            margin: 12px 0;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             font-weight: 500;
             font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .option:hover {
-            border-color: #667eea;
-            background: #f0f4ff;
-            transform: translateX(4px);
+            border-color: #a855f7;
+            background: linear-gradient(135deg, #faf5ff 0%, #fdf4ff 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -5px rgba(168, 85, 247, 0.3);
         }
 
         .option.selected {
-            border-color: #667eea;
-            background: #e0e7ff;
-            font-weight: 600;
+            border-color: #a855f7;
+            background: linear-gradient(135deg, #f3e8ff 0%, #fce7f3 100%);
+            transform: scale(1.02);
         }
 
         .option.correct {
-            background: #d1fae5;
             border-color: #22c55e;
-            color: #166534;
+            background: linear-gradient(135deg, #dcfce7 0%, #d1fae5 100%);
+            animation: correctPulse 0.5s ease;
         }
 
         .option.incorrect {
-            background: #fee2e2;
             border-color: #ef4444;
-            color: #991b1b;
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            animation: shake 0.5s ease;
         }
 
-        .option.disabled {
-            pointer-events: none;
-            opacity: 0.6;
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
         }
 
-        .submit-btn {
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-8px); }
+            80% { transform: translateX(8px); }
+        }
+
+        .option-letter {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
             color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-weight: 700;
-            font-size: 18px;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .option.correct .option-letter {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+        }
+
+        .option.incorrect .option-letter {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        /* Navigation Dots */
+        .dots-container {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 24px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.4);
             cursor: pointer;
             transition: all 0.3s ease;
-            font-family: 'Fredoka', sans-serif;
-            width: 100%;
-            margin-top: 24px;
         }
 
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+        .dot:hover {
+            background: rgba(255,255,255,0.7);
+            transform: scale(1.2);
         }
 
-        .submit-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+        .dot.active {
+            background: #fbbf24;
+            transform: scale(1.3);
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
         }
 
-        .results-section {
-            display: none;
-            margin-top: 40px;
-            padding-top: 40px;
-            border-top: 3px solid #e2e8f0;
+        .dot.answered {
+            background: #22c55e;
         }
 
-        .results-section.show {
-            display: block;
+        .dot.answered.active {
+            background: #fbbf24;
         }
 
-        .score-display {
-            text-align: center;
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-            color: white;
-            border-radius: 16px;
-            padding: 32px;
-            margin-bottom: 32px;
-        }
-
-        .score-text {
-            font-family: 'Fredoka', sans-serif;
-            font-size: 48px;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-
-        .score-label {
-            font-size: 20px;
-            font-weight: 600;
-            opacity: 0.9;
-        }
-
-        .answer-key {
-            background: #f8fafc;
-            border-radius: 16px;
-            padding: 24px;
-            margin-top: 24px;
-        }
-
-        .answer-key-title {
-            font-family: 'Fredoka', sans-serif;
-            font-size: 24px;
-            font-weight: 800;
-            color: #1e293b;
-            margin-bottom: 20px;
-        }
-
-        .answer-item {
-            padding: 12px 0;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .answer-item:last-child {
-            border-bottom: none;
-        }
-
-        .answer-question {
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 4px;
-        }
-
-        .answer-correct {
-            color: #22c55e;
-            font-weight: 600;
-        }
-
-        .back-btn {
-            background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
-            border-radius: 12px;
-            padding: 12px 24px;
+        /* Buttons */
+        .nav-btn {
+            padding: 14px 28px;
+            border-radius: 14px;
             font-weight: 700;
             font-size: 16px;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 24px;
             font-family: 'Fredoka', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .back-btn:hover {
-            background: #667eea;
+        .nav-btn.primary {
+            background: linear-gradient(135deg, #a855f7, #ec4899);
             color: white;
+            border: none;
+        }
+
+        .nav-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(168, 85, 247, 0.4);
+        }
+
+        .nav-btn.secondary {
+            background: white;
+            color: #7c3aed;
+            border: 2px solid #e9d5ff;
+        }
+
+        .nav-btn.secondary:hover {
+            background: #faf5ff;
+            border-color: #a855f7;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Results Section */
+        .results-container {
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .results-container.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .score-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            box-shadow: 0 20px 40px -10px rgba(168, 85, 247, 0.4);
+            animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            80% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .score-number {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 52px;
+            font-weight: 700;
+            color: white;
+            line-height: 1;
+        }
+
+        .score-total {
+            font-size: 18px;
+            color: rgba(255,255,255,0.9);
+            font-weight: 600;
+        }
+
+        .stars-container {
+            margin: 20px 0;
+            font-size: 36px;
+            animation: starsIn 0.8s ease 0.3s both;
+        }
+
+        @keyframes starsIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .button-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 32px;
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            overflow: hidden;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 20px;
+            top: -20px;
+            animation: confettiFall 3s linear forwards;
+        }
+
+        @keyframes confettiFall {
+            0% { 
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% { 
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
         }
 
         @media (max-width: 768px) {
-            .quiz-container {
+            .quiz-card {
                 padding: 24px;
+                margin: 16px;
+                border-radius: 24px;
             }
 
-            .quiz-title {
-                font-size: 28px;
+            .question-container {
+                min-height: 350px;
             }
 
-            .question-text {
-                font-size: 16px;
+            .option {
+                padding: 14px 18px;
+                font-size: 15px;
+            }
+
+            .score-circle {
+                width: 140px;
+                height: 140px;
+            }
+
+            .score-number {
+                font-size: 40px;
             }
         }
     </style>
 </head>
-<body class="min-h-screen bg-white text-slate-800">
-      <!-- Shared Navigation -->
+<body>
+    <!-- Shared Navigation -->
     <div id="nav-container"></div>
     <script type="module" src="/components/nav.js"></script>
-    
-    <div class="pb-24 pt-24">
-        <div class="quiz-container">
-            <div class="quiz-header">
-                <h1 class="quiz-title">🌱 Photosynthesis Quiz - Beginner</h1>
-                <p class="quiz-subtitle">Test your understanding of how plants make food!</p>
+
+    <div class="quiz-background pt-24 pb-12">
+        <!-- Floating Orbs -->
+        <div class="floating-orb"></div>
+        <div class="floating-orb"></div>
+        <div class="floating-orb"></div>
+
+        <div class="max-w-4xl mx-auto px-4 relative z-10">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="font-fredoka text-4xl md:text-5xl font-bold text-white mb-3 drop-shadow-lg">
+                    🌱 Photosynthesis Quiz
+                </h1>
+                <p class="text-white/90 text-lg font-medium">Beginner Level - Test your plant knowledge!</p>
             </div>
 
-            <form id="quizForm">
-                <!-- Question 1 -->
-                <div class="question-card">
-                    <div class="question-number">Question 1</div>
-                    <div class="question-text">What do plants need most to grow and make food?</div>
-                    <div class="option" data-value="A" data-correct="false">A. Only water</div>
-                    <div class="option" data-value="B" data-correct="true">B. Sunlight, water, and air</div>
-                    <div class="option" data-value="C" data-correct="false">C. Only soil</div>
-                    <div class="option" data-value="D" data-correct="false">D. Only sunlight</div>
+            <!-- Progress Bar -->
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-white/90 font-semibold text-sm">Question <span id="currentNum">1</span> of 10</span>
+                    <span class="text-white/90 font-semibold text-sm" id="progressPercent">10%</span>
                 </div>
-
-                <!-- Question 2 -->
-                <div class="question-card">
-                    <div class="question-number">Question 2</div>
-                    <div class="question-text">Why do we see green leaves on trees and plants?</div>
-                    <div class="option" data-value="A" data-correct="false">A. Because they like the color green</div>
-                    <div class="option" data-value="B" data-correct="true">B. Because they have a special green color inside them</div>
-                    <div class="option" data-value="C" data-correct="false">C. Because they are painted green</div>
-                    <div class="option" data-value="D" data-correct="false">D. Because they grow in green places</div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar" style="width: 10%"></div>
                 </div>
-
-                <!-- Question 3 -->
-                <div class="question-card">
-                    <div class="question-number">Question 3</div>
-                    <div class="question-text">When you see a tree in your backyard making new leaves in spring, what is it doing?</div>
-                    <div class="option" data-value="A" data-correct="false">A. Just resting</div>
-                    <div class="option" data-value="B" data-correct="true">B. Making food from sunlight</div>
-                    <div class="option" data-value="C" data-correct="false">C. Sleeping</div>
-                    <div class="option" data-value="D" data-correct="false">D. Nothing special</div>
-                </div>
-
-                <!-- Question 4 -->
-                <div class="question-card">
-                    <div class="question-number">Question 4</div>
-                    <div class="question-text">What happens to a plant if you put it in a dark room with no windows?</div>
-                    <div class="option" data-value="A" data-correct="true">A. It won't grow well because it needs sunlight</div>
-                    <div class="option" data-value="B" data-correct="false">B. It will grow faster</div>
-                    <div class="option" data-value="C" data-correct="false">C. It will turn blue</div>
-                    <div class="option" data-value="D" data-correct="false">D. Nothing will happen</div>
-                </div>
-
-                <!-- Question 5 -->
-                <div class="question-card">
-                    <div class="question-number">Question 5</div>
-                    <div class="question-text">When you water a plant, what does the plant use that water for?</div>
-                    <div class="option" data-value="A" data-correct="false">A. To wash itself</div>
-                    <div class="option" data-value="B" data-correct="true">B. To help make food with sunlight</div>
-                    <div class="option" data-value="C" data-correct="false">C. To drink like we do</div>
-                    <div class="option" data-value="D" data-correct="false">D. To keep cool only</div>
-                </div>
-
-                <!-- Question 6 -->
-                <div class="question-card">
-                    <div class="question-number">Question 6</div>
-                    <div class="question-text">Why do farmers plant crops in fields where there is lots of sunshine?</div>
-                    <div class="option" data-value="A" data-correct="false">A. Because it looks pretty</div>
-                    <div class="option" data-value="B" data-correct="false">B. Because they like sunny days</div>
-                    <div class="option" data-value="C" data-correct="true">C. Because plants need sunlight to make food and grow</div>
-                    <div class="option" data-value="D" data-correct="false">D. Because it's easier to see the plants</div>
-                </div>
-
-                <!-- Question 7 -->
-                <div class="question-card">
-                    <div class="question-number">Question 7</div>
-                    <div class="question-text">What do plants give us that we need to breathe?</div>
-                    <div class="option" data-value="A" data-correct="false">A. Water</div>
-                    <div class="option" data-value="B" data-correct="true">B. Oxygen (the air we breathe)</div>
-                    <div class="option" data-value="C" data-correct="false">C. Food only</div>
-                    <div class="option" data-value="D" data-correct="false">D. Nothing</div>
-                </div>
-
-                <!-- Question 8 -->
-                <div class="question-card">
-                    <div class="question-number">Question 8</div>
-                    <div class="question-text">If you have a houseplant near a window, why does it grow better there?</div>
-                    <div class="option" data-value="A" data-correct="false">A. Because windows are pretty</div>
-                    <div class="option" data-value="B" data-correct="true">B. Because it gets more sunlight to make food</div>
-                    <div class="option" data-value="C" data-correct="false">C. Because it can see outside</div>
-                    <div class="option" data-value="D" data-correct="false">D. Because windows keep it warm only</div>
-                </div>
-
-                <!-- Question 9 -->
-                <div class="question-card">
-                    <div class="question-number">Question 9</div>
-                    <div class="question-text">What do plants make that helps them grow bigger and stronger?</div>
-                    <div class="option" data-value="A" data-correct="false">A. Only water</div>
-                    <div class="option" data-value="B" data-correct="true">B. Food (sugar) from sunlight, water, and air</div>
-                    <div class="option" data-value="C" data-correct="false">C. Only air</div>
-                    <div class="option" data-value="D" data-correct="false">D. Nothing special</div>
-                </div>
-
-                <!-- Question 10 -->
-                <div class="question-card">
-                    <div class="question-number">Question 10</div>
-                    <div class="question-text">Why is it important to have plants and trees in our neighborhoods and parks?</div>
-                    <div class="option" data-value="A" data-correct="false">A. Only because they look nice</div>
-                    <div class="option" data-value="B" data-correct="true">B. Because they make the air we breathe and help us stay healthy</div>
-                    <div class="option" data-value="C" data-correct="false">C. Because they don't need any care</div>
-                    <div class="option" data-value="D" data-correct="false">D. Only because animals live in them</div>
-                </div>
-
-                <button type="submit" class="submit-btn w-full px-5 py-3 rounded-xl from-purple-500 to-pink-500 text-white font-semibold hover:from-purple-600 hover:to-pink-600 transition shadow-md disabled:opacity-50 disabled:cursor-not-allowed text-sm bg-gradient-to-r" id="submitBtn">
-                    <i class="fas fa-check-circle mr-2"></i>Submit Quiz
-                </button>
-            </form>
-
-            <div class="results-section" id="resultsSection">
-                <div class="score-display">
-                    <div class="score-text" id="scoreText">0/10</div>
-                    <div class="score-label" id="scoreLabel">Great job!</div>
-                </div>
-
-                <div class="answer-key">
-                    <h2 class="answer-key-title">Answer Key</h2>
-                    <div class="answer-item">
-                        <div class="answer-question">Question 1: What do plants need most to grow and make food?</div>
-                        <div class="answer-correct">Correct Answer: B</div>
-                    </div>
-                    <div class="answer-item">
-                        <div class="answer-question">Question 2: Why do we see green leaves on trees and plants?</div>
-                        <div class="answer-correct">Correct Answer: B</div>
-                    </div>
-                    <div class="answer-item">
-                        <div class="answer-question">Question 3: When you see a tree in your backyard making new leaves in spring, what is it doing?</div>
-                        <div class="answer-correct">Correct Answer: B</div>
-                    </div>
-                    <div class="answer-item">
-                        <div class="answer-question">Question 4: What happens to a plant if you put it in a dark room with no windows?</div>
-                        <div class="answer-correct">Correct Answer: A</div>
-                    </div>
-                    <div class="answer-item">
-                        <div class="answer-question">Question 5: When you water a plant, what does the plant use that water for?</div>
-                        <div class="answer-correct">Correct Answer: B</div>
-                    </div>
-                    <div class="answer-item">
-                        <div class="answer-question">Question 6: Why do farmers plant crops in fields where there is lots of sunshine?</div>
-                        <div class="answer-correct">Correct Answer: C</div>
-                    </div>
-                    <div class="answer-item">
-                        <div class="answer-question">Question 7: What do plants give us that we need to breathe?</div>
-                        <div class="answer-correct">Correct Answer: B</div>
-                    </div>
-                    <div class="answer-item">
-                        <div class="answer-question">Question 8: If you have a houseplant near a window, why does it grow better there?</div>
-                        <div class="answer-correct">Correct Answer: B</div>
-                    </div>
-                    <div class="answer-item">
-                        <div class="answer-question">Question 9: What do plants make that helps them grow bigger and stronger?</div>
-                        <div class="answer-correct">Correct Answer: B</div>
-                    </div>
-                    <div class="answer-item">
-                        <div class="answer-question">Question 10: Why is it important to have plants and trees in our neighborhoods and parks?</div>
-                        <div class="answer-correct">Correct Answer: B</div>
-                    </div>
-                </div>
-
-                <a href="/stories/index.html" class="back-btn">
-                    <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
-                </a>
             </div>
+
+            <!-- Quiz Card -->
+            <div class="quiz-card mx-auto" id="quizCard">
+                <!-- Question Container -->
+                <div class="question-container" id="questionContainer">
+                    <!-- Questions will be rendered here -->
+                </div>
+
+                <!-- Navigation -->
+                <div class="flex justify-between items-center mt-8 pt-6 border-t border-slate-200">
+                    <button class="nav-btn secondary" id="prevBtn" disabled>
+                        <i class="fas fa-arrow-left"></i> Previous
+                    </button>
+                    <button class="nav-btn primary" id="nextBtn">
+                        Next <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <!-- Results Container -->
+                <div class="results-container" id="resultsContainer">
+                    <div class="score-circle">
+                        <div class="score-number" id="scoreNumber">0</div>
+                        <div class="score-total">out of 10</div>
+                    </div>
+                    <div class="stars-container" id="starsContainer"></div>
+                    <h2 class="font-fredoka text-2xl font-bold text-slate-800 mb-2" id="resultTitle">Great Job!</h2>
+                    <p class="text-slate-600 text-lg mb-6" id="resultMessage">You're learning about plants!</p>
+                    
+                    <div class="button-group">
+                        <button class="nav-btn primary" id="retryBtn">
+                            <i class="fas fa-redo"></i> Try Again
+                        </button>
+                        <a href="/stories/index.html" class="nav-btn secondary">
+                            <i class="fas fa-home"></i> Back to Stories
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dot Navigation -->
+            <div class="dots-container" id="dotsContainer"></div>
         </div>
     </div>
 
+    <!-- Confetti Container -->
+    <div class="confetti" id="confettiContainer"></div>
+
     <!-- Footer -->
-    <footer class="bg-gradient-to-br from-purple-50 to-pink-50 border-t border-purple-200 mt-auto py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-center items-center">
-            <p class="text-slate-500 text-xs font-medium">© 2025 SciQuest Heroes. Safe learning for curious minds.</p>
-        </div>
+    <footer class="bg-gradient-to-br from-purple-600 to-pink-600 py-6">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-white/80 text-sm font-medium">© 2025 SciQuest Heroes. Safe learning for curious minds.</p>
         </div>
     </footer>
 
     <script type="module">
         import { saveQuizResult, getCurrentUserId } from '../quiz-handler.js';
 
-        const quizForm = document.getElementById('quizForm');
-        const submitBtn = document.getElementById('submitBtn');
-        const resultsSection = document.getElementById('resultsSection');
-        const scoreText = document.getElementById('scoreText');
-        const scoreLabel = document.getElementById('scoreLabel');
-        const options = document.querySelectorAll('.option');
-        let selectedAnswers = {};
-        let quizSubmitted = false;
-
-        // Handle option selection
-        options.forEach(option => {
-            option.addEventListener('click', function() {
-                if (quizSubmitted) return;
-
-                const questionCard = this.closest('.question-card');
-                const questionOptions = questionCard.querySelectorAll('.option');
-                
-                // Remove selected class from all options in this question
-                questionOptions.forEach(opt => opt.classList.remove('selected'));
-                
-                // Add selected class to clicked option
-                this.classList.add('selected');
-                
-                // Store the answer
-                const questionNumber = questionCard.querySelector('.question-number').textContent;
-                selectedAnswers[questionNumber] = this.dataset.value;
-            });
-        });
-
-        // Handle form submission
-        quizForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            if (quizSubmitted) return;
-
-            // Check if all questions are answered
-            const totalQuestions = document.querySelectorAll('.question-card').length;
-            if (Object.keys(selectedAnswers).length < totalQuestions) {
-                alert('Please answer all questions before submitting!');
-                return;
+        // Quiz Questions Data
+        const questions = [
+            {
+                question: "What do plants need most to grow and make food?",
+                options: [
+                    { letter: "A", text: "Only water", correct: false },
+                    { letter: "B", text: "Sunlight, water, and air", correct: true },
+                    { letter: "C", text: "Only soil", correct: false },
+                    { letter: "D", text: "Only sunlight", correct: false }
+                ]
+            },
+            {
+                question: "Why do we see green leaves on trees and plants?",
+                options: [
+                    { letter: "A", text: "Because they like the color green", correct: false },
+                    { letter: "B", text: "Because they have a special green color inside them", correct: true },
+                    { letter: "C", text: "Because they are painted green", correct: false },
+                    { letter: "D", text: "Because they grow in green places", correct: false }
+                ]
+            },
+            {
+                question: "When you see a tree in your backyard making new leaves in spring, what is it doing?",
+                options: [
+                    { letter: "A", text: "Just resting", correct: false },
+                    { letter: "B", text: "Making food from sunlight", correct: true },
+                    { letter: "C", text: "Sleeping", correct: false },
+                    { letter: "D", text: "Nothing special", correct: false }
+                ]
+            },
+            {
+                question: "What happens to a plant if you put it in a dark room with no windows?",
+                options: [
+                    { letter: "A", text: "It won't grow well because it needs sunlight", correct: true },
+                    { letter: "B", text: "It will grow faster", correct: false },
+                    { letter: "C", text: "It will turn blue", correct: false },
+                    { letter: "D", text: "Nothing will happen", correct: false }
+                ]
+            },
+            {
+                question: "When you water a plant, what does the plant use that water for?",
+                options: [
+                    { letter: "A", text: "To wash itself", correct: false },
+                    { letter: "B", text: "To help make food with sunlight", correct: true },
+                    { letter: "C", text: "To drink like we do", correct: false },
+                    { letter: "D", text: "To keep cool only", correct: false }
+                ]
+            },
+            {
+                question: "Why do farmers plant crops in fields where there is lots of sunshine?",
+                options: [
+                    { letter: "A", text: "Because it looks pretty", correct: false },
+                    { letter: "B", text: "Because they like sunny days", correct: false },
+                    { letter: "C", text: "Because plants need sunlight to make food and grow", correct: true },
+                    { letter: "D", text: "Because it's easier to see the plants", correct: false }
+                ]
+            },
+            {
+                question: "What do plants give us that we need to breathe?",
+                options: [
+                    { letter: "A", text: "Water", correct: false },
+                    { letter: "B", text: "Oxygen (the air we breathe)", correct: true },
+                    { letter: "C", text: "Food only", correct: false },
+                    { letter: "D", text: "Nothing", correct: false }
+                ]
+            },
+            {
+                question: "If you have a houseplant near a window, why does it grow better there?",
+                options: [
+                    { letter: "A", text: "Because windows are pretty", correct: false },
+                    { letter: "B", text: "Because it gets more sunlight to make food", correct: true },
+                    { letter: "C", text: "Because it can see outside", correct: false },
+                    { letter: "D", text: "Because windows keep it warm only", correct: false }
+                ]
+            },
+            {
+                question: "What do plants make that helps them grow bigger and stronger?",
+                options: [
+                    { letter: "A", text: "Only water", correct: false },
+                    { letter: "B", text: "Food (sugar) from sunlight, water, and air", correct: true },
+                    { letter: "C", text: "Only air", correct: false },
+                    { letter: "D", text: "Nothing special", correct: false }
+                ]
+            },
+            {
+                question: "Why is it important to have plants and trees in our neighborhoods and parks?",
+                options: [
+                    { letter: "A", text: "Only because they look nice", correct: false },
+                    { letter: "B", text: "Because they make the air we breathe and help us stay healthy", correct: true },
+                    { letter: "C", text: "Because they don't need any care", correct: false },
+                    { letter: "D", text: "Only because animals live in them", correct: false }
+                ]
             }
+        ];
 
-            quizSubmitted = true;
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Submitting...';
+        // State
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let isRevealed = false;
 
+        // DOM Elements
+        const questionContainer = document.getElementById('questionContainer');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const dotsContainer = document.getElementById('dotsContainer');
+        const progressBar = document.getElementById('progressBar');
+        const progressPercent = document.getElementById('progressPercent');
+        const currentNum = document.getElementById('currentNum');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const confettiContainer = document.getElementById('confettiContainer');
+
+        // Initialize
+        function init() {
+            renderDots();
+            renderQuestion();
+            updateNavigation();
+        }
+
+        // Render Dots
+        function renderDots() {
+            dotsContainer.innerHTML = questions.map((_, i) => 
+                `<div class="dot ${i === 0 ? 'active' : ''}" data-index="${i}"></div>`
+            ).join('');
+
+            dotsContainer.querySelectorAll('.dot').forEach(dot => {
+                dot.addEventListener('click', () => {
+                    if (!isRevealed) {
+                        goToQuestion(parseInt(dot.dataset.index));
+                    }
+                });
+            });
+        }
+
+        // Update Dots
+        function updateDots() {
+            dotsContainer.querySelectorAll('.dot').forEach((dot, i) => {
+                dot.classList.remove('active');
+                if (i === currentQuestion) dot.classList.add('active');
+                if (answers[i] !== null) dot.classList.add('answered');
+            });
+        }
+
+        // Render Question
+        function renderQuestion() {
+            const q = questions[currentQuestion];
+            
+            questionContainer.innerHTML = `
+                <div class="question-slide">
+                    <div class="mb-6">
+                        <span class="inline-block px-4 py-2 rounded-full bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 font-semibold text-sm mb-4">
+                            Question ${currentQuestion + 1}
+                        </span>
+                        <h2 class="font-fredoka text-2xl md:text-3xl font-bold text-slate-800 leading-snug">
+                            ${q.question}
+                        </h2>
+                    </div>
+                    <div class="options-container">
+                        ${q.options.map((opt, i) => `
+                            <div class="option ${answers[currentQuestion] === i ? 'selected' : ''}" data-index="${i}" data-correct="${opt.correct}">
+                                <span class="option-letter">${opt.letter}</span>
+                                <span class="option-text">${opt.text}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            // Add click listeners
+            questionContainer.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', () => selectOption(option));
+            });
+
+            // Update progress
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            progressPercent.textContent = `${Math.round(progress)}%`;
+            currentNum.textContent = currentQuestion + 1;
+        }
+
+        // Select Option
+        function selectOption(optionEl) {
+            if (isRevealed) return;
+
+            const index = parseInt(optionEl.dataset.index);
+            answers[currentQuestion] = index;
+
+            // Update UI
+            questionContainer.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            optionEl.classList.add('selected');
+
+            updateDots();
+            updateNavigation();
+        }
+
+        // Go to Question
+        function goToQuestion(index) {
+            if (index < 0 || index >= questions.length) return;
+            currentQuestion = index;
+            renderQuestion();
+            updateDots();
+            updateNavigation();
+        }
+
+        // Update Navigation
+        function updateNavigation() {
+            prevBtn.disabled = currentQuestion === 0;
+            
+            const isLastQuestion = currentQuestion === questions.length - 1;
+            const allAnswered = answers.every(a => a !== null);
+
+            if (isLastQuestion) {
+                nextBtn.innerHTML = '<i class="fas fa-check-circle"></i> Submit Quiz';
+                nextBtn.disabled = !allAnswered;
+                nextBtn.onclick = submitQuiz;
+            } else {
+                nextBtn.innerHTML = 'Next <i class="fas fa-arrow-right"></i>';
+                nextBtn.disabled = false;
+                nextBtn.onclick = () => goToQuestion(currentQuestion + 1);
+            }
+        }
+
+        // Submit Quiz
+        async function submitQuiz() {
+            isRevealed = true;
+            
             // Calculate score
             let score = 0;
-            options.forEach(option => {
-                const questionCard = option.closest('.question-card');
-                const isSelected = option.classList.contains('selected');
-                const isCorrect = option.dataset.correct === 'true';
-
-                if (isSelected && isCorrect) {
+            questions.forEach((q, i) => {
+                if (answers[i] !== null && q.options[answers[i]].correct) {
                     score++;
-                    option.classList.add('correct');
-                } else if (isSelected && !isCorrect) {
-                    option.classList.add('incorrect');
                 }
-
-                // Show correct answer
-                if (isCorrect) {
-                    option.classList.add('correct');
-                }
-
-                option.classList.add('disabled');
             });
 
-            // Display results
-            scoreText.textContent = `${score}/10`;
+            // Show results
+            questionContainer.style.display = 'none';
+            document.querySelector('.flex.justify-between').style.display = 'none';
+            resultsContainer.classList.add('show');
+
+            // Update score display
+            document.getElementById('scoreNumber').textContent = score;
+
+            // Stars based on score
+            const starsContainer = document.getElementById('starsContainer');
+            const starCount = score >= 9 ? 5 : score >= 7 ? 4 : score >= 5 ? 3 : score >= 3 ? 2 : 1;
+            starsContainer.innerHTML = '⭐'.repeat(starCount) + '☆'.repeat(5 - starCount);
+
+            // Result message
+            const resultTitle = document.getElementById('resultTitle');
+            const resultMessage = document.getElementById('resultMessage');
+
             if (score === 10) {
-                scoreLabel.textContent = "Perfect! You're a photosynthesis expert! 🌟";
+                resultTitle.textContent = "Perfect Score! 🏆";
+                resultMessage.textContent = "You're a photosynthesis expert! Amazing work!";
+                createConfetti();
             } else if (score >= 7) {
-                scoreLabel.textContent = 'Excellent work! You understand photosynthesis well! 🌱';
+                resultTitle.textContent = "Excellent Work! 🌟";
+                resultMessage.textContent = "You understand photosynthesis really well!";
+                createConfetti();
             } else if (score >= 5) {
-                scoreLabel.textContent = 'Good job! Keep learning about plants! 🌿';
+                resultTitle.textContent = "Good Job! 🌱";
+                resultMessage.textContent = "Keep learning about how plants make food!";
             } else {
-                scoreLabel.textContent = 'Nice try! Review the answers and try again! 💪';
+                resultTitle.textContent = "Nice Try! 💪";
+                resultMessage.textContent = "Review the story and try again. You've got this!";
             }
 
-            resultsSection.classList.add('show');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-
-            // Save results to database
+            // Save to database
             try {
                 const userId = await getCurrentUserId();
                 if (userId) {
-                    const result = await saveQuizResult(userId, 'photosynthesis', 'beginner', score);
-                    if (result.success) {
-                        console.log('Quiz results saved successfully');
-                    } else {
-                        console.error('Failed to save quiz results:', result.error);
-                    }
+                    await saveQuizResult(userId, 'photosynthesis', 'beginner', score);
+                    console.log('Quiz results saved successfully');
                 }
             } catch (error) {
                 console.error('Error saving quiz results:', error);
             }
+        }
+
+        // Create Confetti
+        function createConfetti() {
+            const colors = ['#a855f7', '#ec4899', '#fbbf24', '#22c55e', '#3b82f6'];
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti-piece';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                confettiContainer.appendChild(confetti);
+            }
+
+            setTimeout(() => {
+                confettiContainer.innerHTML = '';
+            }, 5000);
+        }
+
+        // Retry Quiz
+        document.getElementById('retryBtn').addEventListener('click', () => {
+            currentQuestion = 0;
+            answers = new Array(questions.length).fill(null);
+            isRevealed = false;
+
+            questionContainer.style.display = 'block';
+            document.querySelector('.flex.justify-between').style.display = 'flex';
+            resultsContainer.classList.remove('show');
+
+            renderQuestion();
+            updateDots();
+            updateNavigation();
         });
+
+        // Previous button
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestion > 0) {
+                goToQuestion(currentQuestion - 1);
+            }
+        });
+
+        // Initialize
+        init();
     </script>
 </body>
 </html>
-

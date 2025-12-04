@@ -651,6 +651,7 @@ if (isSpeechSynthesisSupported()) {
 }
 
 // Glossary definitions for Photosynthesis story (kid-friendly)
+// This is the default fallback glossary
 const GLOSSARY_DEFINITIONS = {
   'leaf': 'The flat, green part of a plant that catches sunlight and makes food.',
   'plant': 'A living thing that grows in soil and makes its own food using sunlight.',
@@ -674,6 +675,9 @@ const GLOSSARY_DEFINITIONS = {
   'food': 'What living things eat to get energy. Plants make their own food!',
   'plant food': 'The sugar that plants make for themselves using photosynthesis.'
 };
+
+// Story-specific glossary definitions (loaded from story metadata)
+let storyGlossaryDefinitions = null;
 
 // Offline banner functionality removed
 // function showOfflineBannerIfNeeded() {
@@ -1117,6 +1121,9 @@ function updateGlossary(terms = []) {
     return;
   }
   
+  // Get glossary definitions - prefer story-specific, fallback to default
+  const glossaryDefs = storyGlossaryDefinitions || GLOSSARY_DEFINITIONS;
+  
   terms.forEach((term) => {
     const termContainer = document.createElement('div');
     termContainer.className = 'w-full';
@@ -1125,7 +1132,11 @@ function updateGlossary(terms = []) {
     pill.className = 'glossary-pill w-full text-left px-4 py-3 rounded-xl bg-indigo-100 border border-indigo-200 text-indigo-700 font-semibold hover:bg-indigo-200 transition cursor-pointer';
     pill.textContent = term;
     
-    const definition = GLOSSARY_DEFINITIONS[term.toLowerCase()] || GLOSSARY_DEFINITIONS[term] || `A word from this story.`;
+    // Look up definition: try lowercase first, then original case, then fallback
+    const definition = glossaryDefs[term.toLowerCase()] || 
+                      glossaryDefs[term] || 
+                      `A word from this story.`;
+    
     const definitionEl = document.createElement('div');
     definitionEl.className = 'hidden mt-2 px-4 py-3 bg-purple-50 border border-purple-200 rounded-xl text-slate-700 text-sm leading-relaxed';
     definitionEl.innerHTML = `<span class="font-semibold text-purple-700">${term}:</span> ${definition}`;
@@ -1332,6 +1343,15 @@ async function loadStory() {
   state.story = story;
   state.panels = panels.length ? panels : story.panels || [];
   state.panelCount = state.panels.length;
+  
+  // Load story-specific glossary definitions from metadata if available
+  if (story.metadata && story.metadata.glossaryDefinitions) {
+    storyGlossaryDefinitions = story.metadata.glossaryDefinitions;
+    console.log('[story-viewer] Loaded story-specific glossary definitions:', Object.keys(storyGlossaryDefinitions).length, 'terms');
+  } else {
+    // Reset to default if no story-specific glossary
+    storyGlossaryDefinitions = null;
+  }
 
   console.log('[story-viewer] Story loaded:', {
     storyId,
