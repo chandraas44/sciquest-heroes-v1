@@ -103,7 +103,7 @@ async function renderAvatars() {
 
         card.innerHTML = `
             <div class="avatar-image-wrapper">
-                <img src="${avatar.image}" alt="${avatar.name}" onerror="this.src='assets/avatars/Bolt.png'">
+                <img src="${avatar.image}" alt="${avatar.name}" onerror="this.src='https://api.dicebear.com/7.x/fun-emoji/svg?seed=${avatar.name}'">
             </div>
             <div class="avatar-name">${avatar.name}</div>
         `;
@@ -168,8 +168,16 @@ confirmBtn.addEventListener('click', async () => {
 
         localStorage.removeItem('newStudentSignup');
 
+        // Check for returnTo parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const returnTo = urlParams.get('returnTo');
+
         setTimeout(() => {
-            window.location.href = 'stories/index.html';
+            if (returnTo) {
+                window.location.href = returnTo;
+            } else {
+                window.location.href = 'stories/index.html';
+            }
         }, 500);
     } catch (error) {
         showError('Failed to save avatar. Please try again.');
@@ -179,7 +187,14 @@ confirmBtn.addEventListener('click', async () => {
 });
 
 skipBtn.addEventListener('click', () => {
-    window.location.href = 'stories/index.html';
+    const urlParams = new URLSearchParams(window.location.search);
+    const returnTo = urlParams.get('returnTo');
+
+    if (returnTo) {
+        window.location.href = returnTo;
+    } else {
+        window.location.href = 'stories/index.html';
+    }
 });
 
 async function checkAuth() {

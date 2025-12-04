@@ -384,28 +384,58 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        .avatar-edit-btn {
+            position: absolute;
+            bottom: -5px;
+            right: -5px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            border: 4px solid white;
+            z-index: 10;
+            font-size: 20px;
+        }
+
+        .avatar-edit-btn:hover {
+            transform: scale(1.15) rotate(15deg);
+            box-shadow: 0 8px 25px rgba(168, 85, 247, 0.6);
+        }
     </style>
 </head>
 
 <body>
-      <!-- Shared Navigation -->
+    <!-- Shared Navigation -->
     <div id="nav-container"></div>
     <script type="module" src="/components/nav.js"></script>
 
     <div class="container">
         <div class="profile-card">
             <div class="profile-header">
-                <div class="profile-avatar-large" id="profileAvatar">
-                    U
+                <div style="position: relative;">
+                    <div class="profile-avatar-large" id="profileAvatar">
+                        U
+                    </div>
+                    <a href="avatar-selection.html?returnTo=profile.html" class="avatar-edit-btn" title="Change Avatar">
+                        <i class="fas fa-camera"></i>
+                    </a>
                 </div>
                 <div>
                     <h1 class="font-fredoka text-4xl font-black text-slate-800 mb-2" id="profileTitle">
                         My Profile
                     </h1>
-                    <span class="badge badge-student" id="accountTypeBadge">Child</span>
+                    <span class="badge" id="accountTypeBadge"></span>
                 </div>
             </div>
-
             <div class="error-message" id="errorMessage"></div>
             <div class="success-message" id="successMessage"></div>
 
@@ -416,8 +446,15 @@
                         <input type="text" id="firstName" class="form-input" placeholder="Enter first name">
                     </div>
                     <div>
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" id="username" class="form-input" placeholder="Username" disabled>
+                        <label for="lastName" class="form-label">Last Name</label>
+                        <input type="text" id="lastName" class="form-input" placeholder="Enter last name">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div>
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" id="email" class="form-input" placeholder="your@email.com" disabled>
                     </div>
                 </div>
 
@@ -436,25 +473,34 @@
                     </div>
                     <div>
                         <label for="parentEmail" class="form-label">Parent's Email</label>
-                        <input type="email" id="parentEmail" class="form-input" placeholder="parent@email.com">
+                        <input type="email" id="parentEmail" class="form-input" placeholder="parent@email.com" disabled>
                     </div>
                 </div>
 
-                <div class="mb-5">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" id="email" class="form-input" placeholder="your@email.com" disabled>
-                </div>
-
-                <div class="mb-5">
+                <div class="mb-5" style="display: none;">
                     <label for="fullName" class="form-label">Full Name (Optional)</label>
                     <input type="text" id="fullName" class="form-input" placeholder="Full name">
                 </div>
 
+                <div style="margin-top: 40px; border-top: 2px solid #e2e8f0; padding-top: 32px;">
+                    <h3 class="font-fredoka text-2xl font-bold text-slate-800 mb-6">Security</h3>
+                    <div class="form-row">
+                        <div>
+                            <label for="newPassword" class="form-label">New Password</label>
+                            <input type="password" id="newPassword" class="form-input" placeholder="Enter new password">
+                        </div>
+                        <div>
+                            <label for="confirmPassword" class="form-label">Confirm Password</label>
+                            <input type="password" id="confirmPassword" class="form-input"
+                                placeholder="Confirm new password">
+                        </div>
+                    </div>
+                </div>
                 <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-top: 32px;">
                     <button type="submit" class="btn-3d">
                         <span id="saveBtnText">Save Changes</span>
                     </button>
-                    <a href="index.html" class="btn-secondary">
+                    <a href="index.html" class="btn-secondary" id="backToHomeBtn">
                         Back to Home
                     </a>
                 </div>
