@@ -193,7 +193,7 @@ function addUserMenuToNavbar(profile) {
             localStorage.clear();
             sessionStorage.clear();
 
-            window.location.reload();
+            window.location.href = 'auth/auth.html?mode=login';
         } catch (error) {
             console.error('Logout error:', error);
             alert('Failed to logout. Please try again.');
@@ -207,7 +207,7 @@ function getDashboardLink(accountType) {
     } else if (accountType === 'teacher') {
         return 'dashboards/teacher-dashboard.html';
     } else if (accountType === 'student') {
-        return 'dashboards/student-dashboard.html';
+        return 'stories/index.html';
     }
     return 'index.html#avatars';
 }

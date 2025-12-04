@@ -6,9 +6,6 @@ const supabaseAnonKey = supabaseConfig.anonKey;
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-const userMenuTrigger = document.getElementById('userMenuTrigger');
-const dropdownMenu = document.getElementById('dropdownMenu');
-const logoutBtn = document.getElementById('logoutBtn');
 const userAvatarSmall = document.getElementById('userAvatarSmall');
 const userNameNav = document.getElementById('userNameNav');
 const profileAvatar = document.getElementById('profileAvatar');
@@ -19,13 +16,16 @@ const errorMessage = document.getElementById('errorMessage');
 const successMessage = document.getElementById('successMessage');
 const saveBtnText = document.getElementById('saveBtnText');
 const studentFieldsRow = document.getElementById('studentFieldsRow');
+const backToHomeBtn = document.getElementById('backToHomeBtn');
 
 const firstNameInput = document.getElementById('firstName');
-const usernameInput = document.getElementById('username');
+const lastNameInput = document.getElementById('lastName');
 const gradeLevelInput = document.getElementById('gradeLevel');
 const parentEmailInput = document.getElementById('parentEmail');
 const emailInput = document.getElementById('email');
 const fullNameInput = document.getElementById('fullName');
+const newPasswordInput = document.getElementById('newPassword');
+const confirmPasswordInput = document.getElementById('confirmPassword');
 
 let currentProfile = null;
 
@@ -56,67 +56,106 @@ async function checkAuth() {
         return;
     }
 
-    const { data: profile } = await supabase
-        .from('user_profiles')
-        .select('account_type')
-        .eq('id', session.user.id)
-        .maybeSingle();
-
-    if (profile && profile.account_type !== 'student') {
-        window.location.href = 'index.html';
-        return;
-    }
-
-    loadUserProfile(session.user.id);
+    console.log('Session user:', session.user.email);
+    loadUserProfile(session.user.id, session.user.email);
 }
 
-async function loadUserProfile(userId) {
+async function loadUserProfile(userId, sessionEmail) {
     try {
+        console.log('Loading profile for user:', userId);
         const { data: profile, error } = await supabase
             .from('user_profiles')
             .select('*')
             .eq('id', userId)
             .maybeSingle();
 
-        if (error) throw error;
+        if (error) {
+            console.error('Supabase error:', error);
+            throw error;
+        }
+
+        console.log('Profile data fetched:', profile);
 
         if (profile) {
             currentProfile = profile;
 
             const displayName = profile.first_name || profile.full_name || profile.username || profile.email;
-            userNameNav.textContent = displayName;
-            profileTitle.textContent = `${displayName}'s Profile`;
+            if (userNameNav) userNameNav.textContent = displayName;
+            if (profileTitle) profileTitle.textContent = `${displayName}'s Profile`;
 
-            firstNameInput.value = profile.first_name || '';
-            usernameInput.value = profile.username || '';
-            emailInput.value = profile.email || '';
-            fullNameInput.value = profile.full_name || '';
+            if (firstNameInput) firstNameInput.value = profile.first_name || '';
+            if (lastNameInput) lastNameInput.value = profile.last_name || '';
+            if (emailInput) emailInput.value = profile.email || sessionEmail || '';
+            if (fullNameInput) fullNameInput.value = profile.full_name || '';
+
+            console.log('Setting inputs:', {
+                first: firstNameInput ? firstNameInput.value : 'N/A',
+                last: lastNameInput ? lastNameInput.value : 'N/A',
+                email: emailInput ? emailInput.value : 'N/A'
+            });
 
             if (profile.account_type === 'student') {
-                studentFieldsRow.style.display = 'grid';
-                gradeLevelInput.value = profile.grade_level || '';
-                parentEmailInput.value = profile.parent_email || '';
-                accountTypeBadge.className = 'badge badge-student';
-                accountTypeBadge.textContent = 'Student';
+                if (studentFieldsRow) studentFieldsRow.style.display = 'grid';
+                if (gradeLevelInput) gradeLevelInput.value = profile.grade_level || '';
+                if (parentEmailInput) parentEmailInput.value = profile.parent_email || '';
+                if (accountTypeBadge) {
+                    accountTypeBadge.className = 'badge badge-student';
+                    accountTypeBadge.textContent = 'Student';
+                }
             } else if (profile.account_type === 'parent') {
-                accountTypeBadge.className = 'badge badge-parent';
-                accountTypeBadge.textContent = 'Parent';
+                if (accountTypeBadge) {
+                    accountTypeBadge.className = 'badge badge-parent';
+                    accountTypeBadge.textContent = 'Parent';
+                }
+                // Hide avatar edit button for parents
+                const avatarEditBtn = document.querySelector('.avatar-edit-btn');
+                if (avatarEditBtn) {
+                    avatarEditBtn.style.display = 'none';
+                }
             } else if (profile.account_type === 'teacher') {
-                accountTypeBadge.className = 'badge badge-teacher';
-                accountTypeBadge.textContent = 'Teacher';
+                if (accountTypeBadge) {
+                    accountTypeBadge.className = 'badge badge-teacher';
+                    accountTypeBadge.textContent = 'Teacher';
+                }
+            }
+
+            if (backToHomeBtn) {
+                if (profile.account_type === 'parent') {
+                    backToHomeBtn.href = '/parent/dashboard.html';
+                } else if (profile.account_type === 'teacher') {
+                    backToHomeBtn.href = 'dashboards/teacher-dashboard.html';
+                } else if (profile.account_type === 'student') {
+                    backToHomeBtn.href = 'stories/index.html';
+                }
             }
 
             if (profile.avatar_url) {
-                userAvatarSmall.innerHTML = `<img src="${profile.avatar_url}" alt="Avatar">`;
-                profileAvatar.innerHTML = `<img src="${profile.avatar_url}" alt="Avatar">`;
+                if (userAvatarSmall) userAvatarSmall.innerHTML = `<img src="${profile.avatar_url}" alt="Avatar">`;
+                if (profileAvatar) profileAvatar.innerHTML = `<img src="${profile.avatar_url}" alt="Avatar">`;
             } else if (profile.first_name) {
                 const initial = profile.first_name.charAt(0).toUpperCase();
-                userAvatarSmall.textContent = initial;
-                profileAvatar.textContent = initial;
+                if (userAvatarSmall) userAvatarSmall.textContent = initial;
+                if (profileAvatar) profileAvatar.textContent = initial;
             } else if (profile.username) {
                 const initial = profile.username.charAt(0).toUpperCase();
-                userAvatarSmall.textContent = initial;
-                profileAvatar.textContent = initial;
+                if (userAvatarSmall) userAvatarSmall.textContent = initial;
+                if (profileAvatar) profileAvatar.textContent = initial;
+            } else {
+                // Fallback if no name/avatar
+                const initial = (profile.email || 'U').charAt(0).toUpperCase();
+                if (userAvatarSmall) userAvatarSmall.textContent = initial;
+                if (profileAvatar) profileAvatar.textContent = initial;
+            }
+        } else {
+            console.warn('No profile found for user:', userId);
+            if (emailInput) emailInput.value = sessionEmail || '';
+            if (userNameNav) userNameNav.textContent = sessionEmail || 'User';
+            if (profileTitle) profileTitle.textContent = 'My Profile';
+
+            if (sessionEmail) {
+                const initial = sessionEmail.charAt(0).toUpperCase();
+                if (userAvatarSmall) userAvatarSmall.textContent = initial;
+                if (profileAvatar) profileAvatar.textContent = initial;
             }
         }
     } catch (error) {
@@ -125,47 +164,37 @@ async function loadUserProfile(userId) {
     }
 }
 
-userMenuTrigger.addEventListener('click', (e) => {
-    e.stopPropagation();
-    dropdownMenu.classList.toggle('show');
-});
 
-document.addEventListener('click', (e) => {
-    if (!userMenuTrigger.contains(e.target) && !dropdownMenu.contains(e.target)) {
-        dropdownMenu.classList.remove('show');
-    }
-});
-
-logoutBtn.addEventListener('click', async () => {
-    try {
-        const { error } = await supabase.auth.signOut();
-        if (error) throw error;
-
-        localStorage.clear();
-        sessionStorage.clear();
-
-        window.location.href = 'auth/auth.html';
-    } catch (error) {
-        console.error('Logout error:', error);
-        alert('Failed to logout. Please try again.');
-    }
-});
 
 profileForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     hideMessages();
 
     const firstName = firstNameInput.value.trim();
+    const lastName = lastNameInput.value.trim();
     const fullName = fullNameInput.value.trim();
+    const newPassword = newPasswordInput.value;
+    const confirmPassword = confirmPasswordInput.value;
 
     if (!firstName && currentProfile.account_type === 'student') {
         showError('First name is required');
         return;
     }
 
+    if (newPassword || confirmPassword) {
+        if (newPassword !== confirmPassword) {
+            showError('Passwords do not match');
+            return;
+        }
+        if (newPassword.length < 6) {
+            showError('Password must be at least 6 characters long');
+            return;
+        }
+    }
+
     const updateData = {
         first_name: firstName || null,
-        full_name: fullName || null
+        last_name: lastName || null
     };
 
     if (currentProfile.account_type === 'student') {
@@ -207,18 +236,33 @@ profileForm.addEventListener('submit', async (e) => {
             throw new Error('No active session');
         }
 
-        const { error } = await supabase
+        // Update profile data
+        const { error: profileError } = await supabase
             .from('user_profiles')
             .update(updateData)
             .eq('id', session.user.id);
 
-        if (error) throw error;
+        if (profileError) throw profileError;
+
+        // Update password if provided
+        if (newPassword) {
+            const { error: authError } = await supabase.auth.updateUser({
+                password: newPassword
+            });
+
+            if (authError) throw authError;
+        }
 
         showSuccess('Profile updated successfully!');
+
+        // Clear password fields
+        newPasswordInput.value = '';
+        confirmPasswordInput.value = '';
+
         await loadUserProfile(session.user.id);
     } catch (error) {
         console.error('Error updating profile:', error);
-        showError('Failed to update profile. Please try again.');
+        showError(error.message || 'Failed to update profile. Please try again.');
     } finally {
         submitBtn.disabled = false;
         saveBtnText.textContent = 'Save Changes';

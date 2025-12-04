@@ -9,7 +9,7 @@
       "username": "akhil_scientist",
       "gradeLevel": "Grade 5",
       "age": 11,
-      "avatarUrl": "/avatars/child1.png",
+      "avatarUrl": "https://api.dicebear.com/7.x/fun-emoji/svg?seed=Akhil",
       "lastActive": "2025-01-15T14:30:00Z",
       "currentTopic": "Photosynthesis",
       "status": "On Track"
@@ -23,7 +23,7 @@
       "username": "maya_explorer",
       "gradeLevel": "Grade 3",
       "age": 9,
-      "avatarUrl": "/avatars/child2.png",
+      "avatarUrl": "https://api.dicebear.com/7.x/fun-emoji/svg?seed=Maya",
       "lastActive": "2025-01-15T10:15:00Z",
       "currentTopic": "Solar System",
       "status": "On Track"
@@ -37,7 +37,7 @@
       "username": "ryan_astro",
       "gradeLevel": "Grade 4",
       "age": 10,
-      "avatarUrl": "/avatars/child3.png",
+      "avatarUrl": "https://api.dicebear.com/7.x/fun-emoji/svg?seed=Ryan",
       "lastActive": "2025-01-10T16:45:00Z",
       "currentTopic": "Ocean Life",
       "status": "Needs Attention"
@@ -114,20 +114,56 @@
       },
       "activity": {
         "last7Days": [
-          { "date": "2025-01-09", "sessions": 1 },
-          { "date": "2025-01-10", "sessions": 0 },
-          { "date": "2025-01-11", "sessions": 2 },
-          { "date": "2025-01-12", "sessions": 1 },
-          { "date": "2025-01-13", "sessions": 3 },
-          { "date": "2025-01-14", "sessions": 2 },
-          { "date": "2025-01-15", "sessions": 3 }
+          {
+            "date": "2025-01-09",
+            "sessions": 1
+          },
+          {
+            "date": "2025-01-10",
+            "sessions": 0
+          },
+          {
+            "date": "2025-01-11",
+            "sessions": 2
+          },
+          {
+            "date": "2025-01-12",
+            "sessions": 1
+          },
+          {
+            "date": "2025-01-13",
+            "sessions": 3
+          },
+          {
+            "date": "2025-01-14",
+            "sessions": 2
+          },
+          {
+            "date": "2025-01-15",
+            "sessions": 3
+          }
         ],
         "topicsExplored": [
-          { "topic": "Photosynthesis", "count": 8 },
-          { "topic": "Solar System", "count": 6 },
-          { "topic": "Moon & Gravity", "count": 5 },
-          { "topic": "Ocean Life", "count": 3 },
-          { "topic": "Dinosaurs", "count": 2 }
+          {
+            "topic": "Photosynthesis",
+            "count": 8
+          },
+          {
+            "topic": "Solar System",
+            "count": 6
+          },
+          {
+            "topic": "Moon & Gravity",
+            "count": 5
+          },
+          {
+            "topic": "Ocean Life",
+            "count": 3
+          },
+          {
+            "topic": "Dinosaurs",
+            "count": 2
+          }
         ]
       }
     },
@@ -186,18 +222,48 @@
       },
       "activity": {
         "last7Days": [
-          { "date": "2025-01-09", "sessions": 0 },
-          { "date": "2025-01-10", "sessions": 1 },
-          { "date": "2025-01-11", "sessions": 1 },
-          { "date": "2025-01-12", "sessions": 0 },
-          { "date": "2025-01-13", "sessions": 2 },
-          { "date": "2025-01-14", "sessions": 1 },
-          { "date": "2025-01-15", "sessions": 1 }
+          {
+            "date": "2025-01-09",
+            "sessions": 0
+          },
+          {
+            "date": "2025-01-10",
+            "sessions": 1
+          },
+          {
+            "date": "2025-01-11",
+            "sessions": 1
+          },
+          {
+            "date": "2025-01-12",
+            "sessions": 0
+          },
+          {
+            "date": "2025-01-13",
+            "sessions": 2
+          },
+          {
+            "date": "2025-01-14",
+            "sessions": 1
+          },
+          {
+            "date": "2025-01-15",
+            "sessions": 1
+          }
         ],
         "topicsExplored": [
-          { "topic": "Solar System", "count": 5 },
-          { "topic": "Dinosaurs", "count": 2 },
-          { "topic": "Ocean Life", "count": 1 }
+          {
+            "topic": "Solar System",
+            "count": 5
+          },
+          {
+            "topic": "Dinosaurs",
+            "count": 2
+          },
+          {
+            "topic": "Ocean Life",
+            "count": 1
+          }
         ]
       }
     },
@@ -241,16 +307,40 @@
       },
       "activity": {
         "last7Days": [
-          { "date": "2025-01-09", "sessions": 0 },
-          { "date": "2025-01-10", "sessions": 1 },
-          { "date": "2025-01-11", "sessions": 0 },
-          { "date": "2025-01-12", "sessions": 0 },
-          { "date": "2025-01-13", "sessions": 0 },
-          { "date": "2025-01-14", "sessions": 0 },
-          { "date": "2025-01-15", "sessions": 0 }
+          {
+            "date": "2025-01-09",
+            "sessions": 0
+          },
+          {
+            "date": "2025-01-10",
+            "sessions": 1
+          },
+          {
+            "date": "2025-01-11",
+            "sessions": 0
+          },
+          {
+            "date": "2025-01-12",
+            "sessions": 0
+          },
+          {
+            "date": "2025-01-13",
+            "sessions": 0
+          },
+          {
+            "date": "2025-01-14",
+            "sessions": 0
+          },
+          {
+            "date": "2025-01-15",
+            "sessions": 0
+          }
         ],
         "topicsExplored": [
-          { "topic": "Ocean Life", "count": 2 }
+          {
+            "topic": "Ocean Life",
+            "count": 2
+          }
         ]
       }
     }
@@ -263,7 +353,10 @@
         "description": "Ask your first question in chat",
         "icon": "💭",
         "hint": "Ask 1 question in chat",
-        "unlockedFor": ["child-akhil", "child-maya"]
+        "unlockedFor": [
+          "child-akhil",
+          "child-maya"
+        ]
       },
       {
         "id": "photosynthesis-explorer",
@@ -271,7 +364,9 @@
         "description": "Complete all stories about photosynthesis",
         "icon": "🌱",
         "hint": "Complete your first science story about plants",
-        "unlockedFor": ["child-akhil"]
+        "unlockedFor": [
+          "child-akhil"
+        ]
       },
       {
         "id": "quiz-hero",
@@ -279,7 +374,10 @@
         "description": "Score 80% or higher on any quiz",
         "icon": "🏆",
         "hint": "Score 80%+ on a quiz",
-        "unlockedFor": ["child-akhil", "child-maya"]
+        "unlockedFor": [
+          "child-akhil",
+          "child-maya"
+        ]
       },
       {
         "id": "story-master",
@@ -287,7 +385,9 @@
         "description": "Complete 5 stories",
         "icon": "📚",
         "hint": "Complete 5 stories",
-        "unlockedFor": ["child-akhil"]
+        "unlockedFor": [
+          "child-akhil"
+        ]
       },
       {
         "id": "streak-star",
@@ -295,11 +395,10 @@
         "description": "Maintain a 7-day learning streak",
         "icon": "⭐",
         "hint": "Learn for 7 days in a row",
-        "unlockedFor": ["child-akhil"]
+        "unlockedFor": [
+          "child-akhil"
+        ]
       }
     ]
   }
 }
-
-
-
