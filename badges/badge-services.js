@@ -1,5 +1,5 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
-import { supabaseConfig } from '/config.js';
+import { supabaseConfig, createSupabaseClientAsync } from '/config.js';
 
 const EDGE_ANALYTICS_URL = import.meta.env?.VITE_EDGE_ANALYTICS_URL || '';
 const USE_BADGES_MOCKS = (import.meta.env?.VITE_USE_BADGES_MOCKS ?? 'true') === 'true';
@@ -11,21 +11,22 @@ let supabaseClient = null;
 let cachedMockBadgeData = null;
 let cachedBadgeRules = null;
 
-function hasSupabaseConfig() {
-  return Boolean(supabaseConfig?.url && supabaseConfig?.anonKey);
+async function hasSupabaseConfig() {
+  const config = await supabaseConfig.ready().catch(() => ({ url: null, anonKey: null }));
+  return Boolean(config?.url && config?.anonKey);
 }
 
-function getSupabaseClient() {
-  if (!hasSupabaseConfig()) return null;
+async function getSupabaseClient() {
   if (!supabaseClient) {
-    supabaseClient = createClient(supabaseConfig.url, supabaseConfig.anonKey);
+    supabaseClient = await createSupabaseClientAsync(createClient);
   }
   return supabaseClient;
 }
 
 function shouldUseMockData() {
   if (USE_BADGES_MOCKS) return true;
-  return !hasSupabaseConfig();
+  // Check sync config (has build-time fallback)
+  return !(supabaseConfig?.url && supabaseConfig?.anonKey);
 }
 
 export function isUsingBadgesMocks() {
@@ -56,7 +57,7 @@ async function loadBadgeRules() {
     return cachedBadgeRules;
   }
 
-  const client = getSupabaseClient();
+  const client = await getSupabaseClient();
   if (!client) {
     const res = await fetch(new URL('./badge-rules.json', import.meta.url));
     if (!res.ok) {
@@ -94,7 +95,7 @@ export async function loadBadgeCatalog() {
     return data.badges || [];
   }
 
-  const client = getSupabaseClient();
+  const client = await getSupabaseClient();
   if (!client) {
     const data = await loadMockBadgeData();
     return data.badges || [];
@@ -338,8 +339,8 @@ export async function awardBadge(childId, badgeId, context) {
   saveBadgeAwardToStorage(childId, badgeId, context);
   
   // Queue Supabase insert if available
-  if (!shouldUseMockData() && hasSupabaseConfig()) {
-    const client = getSupabaseClient();
+  if (!shouldUseMockData() && await hasSupabaseConfig()) {
+    const client = await getSupabaseClient();
     if (client) {
       try {
         await client.from('badge_awards').insert({
@@ -422,7 +423,7 @@ export function logBadgeEvent(eventName, eventData = {}) {
   }
 
   // If Supabase is configured, also try direct send (future)
-  if (EDGE_ANALYTICS_URL && hasSupabaseConfig()) {
+  if (EDGE_ANALYTICS_URL && await hasSupabaseConfig()) {
     fetch(EDGE_ANALYTICS_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

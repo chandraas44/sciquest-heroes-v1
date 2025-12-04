@@ -1,10 +1,14 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
-import { supabaseConfig } from './config.js';
+import { createSupabaseClientAsync } from './config.js';
 
-const supabaseUrl = supabaseConfig.url;
-const supabaseAnonKey = supabaseConfig.anonKey;
+let supabase = null;
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+async function getSupabaseClient() {
+  if (!supabase) {
+    supabase = await createSupabaseClientAsync(createClient);
+  }
+  return supabase;
+}
 
 /**
  * Determines the appropriate quiz level based on grade level
@@ -80,6 +84,8 @@ export async function saveQuizResult(userId, topic, level, score) {
  */
 export async function getCurrentUserId() {
     try {
+        const supabase = await getSupabaseClient();
+        if (!supabase) return null;
         const { data: { session } } = await supabase.auth.getSession();
         if (!session || !session.user) {
             return null;

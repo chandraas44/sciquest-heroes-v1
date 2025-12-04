@@ -1,12 +1,18 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
-import { supabaseConfig } from '/config.js';
+import { createSupabaseClientAsync } from '/config.js';
 
-const supabaseUrl = supabaseConfig.url;
-const supabaseAnonKey = supabaseConfig.anonKey;
+let supabase = null;
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+async function getSupabaseClient() {
+  if (!supabase) {
+    supabase = await createSupabaseClientAsync(createClient);
+  }
+  return supabase;
+}
 
 async function checkAuthAndUpdateUI() {
+    const supabase = await getSupabaseClient();
+    if (!supabase) return;
     const { data: { session } } = await supabase.auth.getSession();
 
     if (session) {
@@ -187,6 +193,13 @@ function addUserMenuToNavbar(profile) {
 
     logoutBtn.addEventListener('click', async () => {
         try {
+            const supabase = await getSupabaseClient();
+            if (!supabase) {
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.reload();
+                return;
+            }
             const { error } = await supabase.auth.signOut();
             if (error) throw error;
 

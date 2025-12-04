@@ -1,14 +1,17 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
-import { supabaseConfig } from '/config.js';
+import { createSupabaseClientAsync } from '/config.js';
 
-const supabaseUrl = supabaseConfig.url;
-const supabaseAnonKey = supabaseConfig.anonKey;
+let supabase = null;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-    console.error('Missing Supabase configuration');
+async function getSupabaseClient() {
+  if (!supabase) {
+    supabase = await createSupabaseClientAsync(createClient);
+    if (!supabase) {
+      console.error('Failed to initialize Supabase client');
+    }
+  }
+  return supabase;
 }
-
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 let isSignUpMode = false;
 let accountType = '';
@@ -126,6 +129,10 @@ function setLoading(isLoading) {
 
 async function createUserProfile(userId, email, accountType) {
     try {
+        const supabase = await getSupabaseClient();
+        if (!supabase) {
+            throw new Error('Failed to connect to database');
+        }
         const { data: existingProfile } = await supabase
             .from('user_profiles')
             .select('*')
@@ -179,6 +186,12 @@ authForm.addEventListener('submit', async (e) => {
     setLoading(true);
 
     try {
+        const supabase = await getSupabaseClient();
+        if (!supabase) {
+            showError('Failed to connect to database. Please try again.');
+            setLoading(false);
+            return;
+        }
         if (isSignUpMode) {
             const { data, error } = await supabase.auth.signUp({
                 email: email,
@@ -211,6 +224,12 @@ authForm.addEventListener('submit', async (e) => {
             console.log('Email:', email);
             console.log('Account type from context:', accountType || 'not specified');
 
+            const supabase = await getSupabaseClient();
+            if (!supabase) {
+                showError('Failed to connect to database. Please try again.');
+                setLoading(false);
+                return;
+            }
             const { data, error } = await supabase.auth.signInWithPassword({
                 email: email,
                 password: password
@@ -463,6 +482,11 @@ googleSignInBtn.addEventListener('click', async () => {
     }
 
     try {
+        const supabase = await getSupabaseClient();
+        if (!supabase) {
+            showError('Failed to connect to database. Please try again.');
+            return;
+        }
         const { data, error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
@@ -517,6 +541,14 @@ document.getElementById('resetPasswordForm').addEventListener('submit', async (e
     resetBtnText.innerHTML = '<span class="loading-spinner"></span>Sending...';
 
     try {
+        const supabase = await getSupabaseClient();
+        if (!supabase) {
+            resetErrorMessage.textContent = 'Failed to connect to database. Please try again.';
+            resetErrorMessage.classList.add('show');
+            resetSubmitBtn.disabled = false;
+            resetBtnText.textContent = 'Send Reset Link';
+            return;
+        }
         const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
             redirectTo: window.location.origin + '/auth/auth.html'
         });
@@ -541,14 +573,22 @@ document.getElementById('resetPasswordForm').addEventListener('submit', async (e
     }
 });
 
-supabase.auth.onAuthStateChange((event, session) => {
-    (async () => {
-        if (event === 'SIGNED_IN' && session) {
-            console.log('=== Auth State Change: SIGNED_IN ===');
-            console.log('User ID:', session.user.id);
-            console.log('User email:', session.user.email);
+// Initialize auth state change listener after client is ready
+(async () => {
+    const supabase = await getSupabaseClient();
+    if (!supabase) return;
+    
+    supabase.auth.onAuthStateChange((event, session) => {
+        (async () => {
+            if (event === 'SIGNED_IN' && session) {
+                console.log('=== Auth State Change: SIGNED_IN ===');
+                console.log('User ID:', session.user.id);
+                console.log('User email:', session.user.email);
 
-            const { data: profile, error: profileError } = await supabase
+                const supabase = await getSupabaseClient();
+                if (!supabase) return;
+                
+                const { data: profile, error: profileError } = await supabase
                 .from('user_profiles')
                 .select('*')
                 .eq('id', session.user.id)
@@ -595,4 +635,5 @@ supabase.auth.onAuthStateChange((event, session) => {
             }
         }
     })();
-});
+    });
+})();

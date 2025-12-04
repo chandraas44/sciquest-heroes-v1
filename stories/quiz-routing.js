@@ -25,7 +25,10 @@ export async function getUserProfile() {
       return null;
     }
 
-    const supabase = createClient(supabaseConfig.url, supabaseConfig.anonKey);
+    const { createSupabaseClientAsync } = await import('../config.js');
+    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm');
+    const supabase = await createSupabaseClientAsync(createClient);
+    if (!supabase) return null;
     
     // Get current session
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();

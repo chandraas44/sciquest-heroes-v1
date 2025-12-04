@@ -79,7 +79,10 @@ async function initLogoHandler() {
     if (!supabaseConfig?.url || !supabaseConfig?.anonKey) return;
 
     try {
-        const supabase = createClient(supabaseConfig.url, supabaseConfig.anonKey);
+        const { createSupabaseClientAsync } = await import('../config.js');
+        const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm');
+        const supabase = await createSupabaseClientAsync(createClient);
+        if (!supabase) return;
         const { data: { session } } = await supabase.auth.getSession();
 
         if (session) {

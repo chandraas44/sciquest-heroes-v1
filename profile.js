@@ -1,10 +1,14 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
-import { supabaseConfig } from './config.js';
+import { createSupabaseClientAsync } from './config.js';
 
-const supabaseUrl = supabaseConfig.url;
-const supabaseAnonKey = supabaseConfig.anonKey;
+let supabase = null;
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+async function getSupabaseClient() {
+  if (!supabase) {
+    supabase = await createSupabaseClientAsync(createClient);
+  }
+  return supabase;
+}
 
 const userMenuTrigger = document.getElementById('userMenuTrigger');
 const dropdownMenu = document.getElementById('dropdownMenu');
@@ -49,6 +53,11 @@ function hideMessages() {
 }
 
 async function checkAuth() {
+    const supabase = await getSupabaseClient();
+    if (!supabase) {
+        window.location.href = 'auth/auth.html';
+        return;
+    }
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session) {
@@ -72,6 +81,11 @@ async function checkAuth() {
 
 async function loadUserProfile(userId) {
     try {
+        const supabase = await getSupabaseClient();
+        if (!supabase) {
+            showError('Failed to connect to database');
+            return;
+        }
         const { data: profile, error } = await supabase
             .from('user_profiles')
             .select('*')
@@ -138,6 +152,13 @@ document.addEventListener('click', (e) => {
 
 logoutBtn.addEventListener('click', async () => {
     try {
+        const supabase = await getSupabaseClient();
+        if (!supabase) {
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.href = 'auth/auth.html';
+            return;
+        }
         const { error } = await supabase.auth.signOut();
         if (error) throw error;
 
@@ -201,6 +222,11 @@ profileForm.addEventListener('submit', async (e) => {
     saveBtnText.innerHTML = '<span class="loading-spinner"></span>Saving...';
 
     try {
+        const supabase = await getSupabaseClient();
+        if (!supabase) {
+            showError('Failed to connect to database');
+            return;
+        }
         const { data: { session } } = await supabase.auth.getSession();
 
         if (!session) {

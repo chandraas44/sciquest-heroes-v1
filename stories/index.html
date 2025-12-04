@@ -130,11 +130,11 @@
     const handleLogout = async () => {
       try {
         // Try Supabase logout if available
+        const { createSupabaseClientAsync } = await import('../config.js');
         const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm');
-        const { supabaseConfig } = await import('../config.js');
 
-        if (supabaseConfig?.url && supabaseConfig?.anonKey) {
-          const supabase = createClient(supabaseConfig.url, supabaseConfig.anonKey);
+        const supabase = await createSupabaseClientAsync(createClient);
+        if (supabase) {
           const { error } = await supabase.auth.signOut();
           if (error) throw error;
         }

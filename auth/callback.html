@@ -114,12 +114,20 @@
 
             <script type="module">
                 import { createClient } from '@supabase/supabase-js';
-                import { supabaseConfig } from '/config.js';
+                import { createSupabaseClientAsync } from '/config.js';
 
-                const supabase = createClient(supabaseConfig.url, supabaseConfig.anonKey);
+                let supabase = null;
 
                 async function handleCallback() {
                     try {
+                        // Initialize Supabase client
+                        supabase = await createSupabaseClientAsync(createClient);
+                        if (!supabase) {
+                            handleError('Failed to connect to database. Redirecting...');
+                            setTimeout(() => window.location.href = 'auth.html', 2000);
+                            return;
+                        }
+                        
                         // Get the session from the URL fragment or local storage
                         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 

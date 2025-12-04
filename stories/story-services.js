@@ -1,5 +1,5 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
-import { supabaseConfig } from '../config.js';
+import { supabaseConfig, createSupabaseClientAsync } from '../config.js';
 
 const EDGE_ANALYTICS_URL = import.meta.env?.VITE_EDGE_ANALYTICS_URL || '';
 const USE_STORY_MOCKS = (import.meta.env?.VITE_USE_STORY_MOCKS ?? 'true') === 'true';
@@ -11,21 +11,22 @@ const ANALYTICS_QUEUE_KEY = 'sqh_analytics_queue_v1';
 let supabaseClient = null;
 let cachedMockStories = null;
 
-function hasSupabaseConfig() {
-  return Boolean(supabaseConfig?.url && supabaseConfig?.anonKey);
+async function hasSupabaseConfig() {
+  const config = await supabaseConfig.ready().catch(() => ({ url: null, anonKey: null }));
+  return Boolean(config?.url && config?.anonKey);
 }
 
-export function getSupabaseClient() {
-  if (!hasSupabaseConfig()) return null;
+export async function getSupabaseClient() {
   if (!supabaseClient) {
-    supabaseClient = createClient(supabaseConfig.url, supabaseConfig.anonKey);
+    supabaseClient = await createSupabaseClientAsync(createClient);
   }
   return supabaseClient;
 }
 
 function shouldUseMockData() {
   if (USE_STORY_MOCKS) return true;
-  return !hasSupabaseConfig();
+  // Check sync config (has build-time fallback)
+  return !(supabaseConfig?.url && supabaseConfig?.anonKey);
 }
 
 async function loadMockStories() {
@@ -44,7 +45,7 @@ export async function getStoryList() {
     return loadMockStories();
   }
 
-  const client = getSupabaseClient();
+  const client = await getSupabaseClient();
   if (!client) {
     return loadMockStories();
   }
@@ -89,7 +90,7 @@ export async function getStoryById(storyId) {
     return stories.find((story) => story.id === storyId) || null;
   }
 
-  const client = getSupabaseClient();
+  const client = await getSupabaseClient();
   if (!client) {
     const stories = await loadMockStories();
     return stories.find((story) => story.id === storyId) || null;
@@ -159,7 +160,7 @@ export function getStoryProgressSummary(storyId, childId = DEFAULT_CHILD_ID) {
  */
 async function getCurrentUserId() {
   try {
-    const client = getSupabaseClient();
+    const client = await getSupabaseClient();
     if (!client) return null;
     const { data: { session } } = await client.auth.getSession();
     return session?.user?.id || null;
@@ -190,7 +191,7 @@ export async function saveStoryProgress({
   };
   persistProgress(store);
 
-  const client = getSupabaseClient();
+  const client = await getSupabaseClient();
   if (client && !shouldUseMockData()) {
     try {
       // Try saving with user_id first
@@ -312,7 +313,7 @@ export async function flushAnalyticsQueue() {
   // Only try Supabase if not in mock mode
   if (shouldUseMockData()) return;
 
-  const client = getSupabaseClient();
+  const client = await getSupabaseClient();
   if (client) {
     await flushQueueWithSupabase(client);
   }
@@ -343,7 +344,7 @@ export async function logAnalyticsEvent(eventType, payload = {}) {
     if (ok) return;
   }
 
-  const client = getSupabaseClient();
+  const client = await getSupabaseClient();
   if (client) {
     try {
       const { error } = await client.from('analytics_events').insert({

@@ -86,8 +86,10 @@ async function checkAuth() {
       return false;
     }
     
+    const { createSupabaseClientAsync } = await import(configPath);
     const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm');
-    const supabase = createClient(supabaseConfig.url, supabaseConfig.anonKey);
+    const supabase = await createSupabaseClientAsync(createClient);
+    if (!supabase) return false;
     const { data: { session } } = await supabase.auth.getSession();
     
     return !!session;
@@ -156,8 +158,10 @@ async function loadUserProfile(userId, basePath) {
       return null;
     }
     
+    const { createSupabaseClientAsync } = await import(configPath);
     const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm');
-    const supabase = createClient(supabaseConfig.url, supabaseConfig.anonKey);
+    const supabase = await createSupabaseClientAsync(createClient);
+    if (!supabase) return false;
     
     const { data: profile, error } = await supabase
       .from('user_profiles')
@@ -290,8 +294,10 @@ async function handleLogout() {
     const { supabaseConfig } = await import(configPath);
     
     if (supabaseConfig?.url && supabaseConfig?.anonKey) {
+      const { createSupabaseClientAsync } = await import(configPath);
       const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm');
-      const supabase = createClient(supabaseConfig.url, supabaseConfig.anonKey);
+      const supabase = await createSupabaseClientAsync(createClient);
+      if (!supabase) return;
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
     }
@@ -364,8 +370,10 @@ async function loadNavigation() {
         const { supabaseConfig } = await import(configPath);
         
         if (supabaseConfig?.url && supabaseConfig?.anonKey) {
+          const { createSupabaseClientAsync } = await import(configPath);
           const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm');
-          const supabase = createClient(supabaseConfig.url, supabaseConfig.anonKey);
+          const supabase = await createSupabaseClientAsync(createClient);
+          if (!supabase) return;
           const { data: { session } } = await supabase.auth.getSession();
           
           if (session?.user?.id) {

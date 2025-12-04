@@ -1,5 +1,5 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
-import { supabaseConfig } from '../config.js';
+import { supabaseConfig, createSupabaseClientAsync } from '../config.js';
 
 const EDGE_ANALYTICS_URL = import.meta.env?.VITE_EDGE_ANALYTICS_URL || '';
 
@@ -11,14 +11,14 @@ let supabaseClient = null;
 let cachedMockDashboardData = null;
 
 
-function hasSupabaseConfig() {
-  return Boolean(supabaseConfig?.url && supabaseConfig?.anonKey);
+async function hasSupabaseConfig() {
+  const config = await supabaseConfig.ready().catch(() => ({ url: null, anonKey: null }));
+  return Boolean(config?.url && config?.anonKey);
 }
 
-export function getSupabaseClient() {
-  if (!hasSupabaseConfig()) return null;
+export async function getSupabaseClient() {
   if (!supabaseClient) {
-    supabaseClient = createClient(supabaseConfig.url, supabaseConfig.anonKey);
+    supabaseClient = await createSupabaseClientAsync(createClient);
   }
   return supabaseClient;
 }

@@ -695,7 +695,9 @@ async function getCurrentUserName() {
       return 'Hero'; // Fallback name
     }
     
-    const supabase = createClient(supabaseConfig.url, supabaseConfig.anonKey);
+    const { createSupabaseClientAsync } = await import('../config.js');
+    const supabase = await createSupabaseClientAsync(createClient);
+    if (!supabase) return 'Hero';
     const { data: { session } } = await supabase.auth.getSession();
     
     if (!session) return 'Hero';

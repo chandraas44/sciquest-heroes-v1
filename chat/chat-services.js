@@ -1,5 +1,5 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
-import { supabaseConfig } from '/config.js';
+import { supabaseConfig, createSupabaseClientAsync } from '/config.js';
 
 const EDGE_ANALYTICS_URL = import.meta.env?.VITE_EDGE_ANALYTICS_URL || '';
 const N8N_CHAT_URL = import.meta.env?.VITE_N8N_CHAT_URL?.trim() || '';
@@ -30,20 +30,22 @@ if (N8N_CHAT_URL) {
 let supabaseClient = null;
 let cachedMockChatData = null;
 
-function hasSupabaseConfig() {
-  return Boolean(supabaseConfig?.url && supabaseConfig?.anonKey);
+async function hasSupabaseConfig() {
+  const config = await supabaseConfig.ready().catch(() => ({ url: null, anonKey: null }));
+  return Boolean(config?.url && config?.anonKey);
 }
 
-function getSupabaseClient() {
-  if (!hasSupabaseConfig()) return null;
+async function getSupabaseClient() {
   if (!supabaseClient) {
-    supabaseClient = createClient(supabaseConfig.url, supabaseConfig.anonKey);
+    supabaseClient = await createSupabaseClientAsync(createClient);
   }
   return supabaseClient;
 }
 
 function shouldUseMockData() {
-  const result = USE_CHAT_MOCKS || !hasSupabaseConfig();
+  // Check sync config (has build-time fallback)
+  const hasConfig = Boolean(supabaseConfig?.url && supabaseConfig?.anonKey);
+  const result = USE_CHAT_MOCKS || !hasConfig;
   if (result && N8N_CHAT_URL) {
     console.warn('[chat] ⚠️ Mock data will be used because:', 
       USE_CHAT_MOCKS ? 'VITE_USE_CHAT_MOCKS is true' : 'Supabase config missing');
@@ -72,7 +74,7 @@ export async function getTopicCatalog() {
     return data.topics || [];
   }
 
-  const client = getSupabaseClient();
+  const client = await getSupabaseClient();
   if (!client) {
     const data = await loadMockChatData();
     return data.topics || [];
@@ -100,7 +102,7 @@ export async function getTopicById(topicId) {
     return data.topics.find((topic) => topic.id === topicId) || null;
   }
 
-  const client = getSupabaseClient();
+  const client = await getSupabaseClient();
   if (!client) {
     const data = await loadMockChatData();
     return data.topics.find((topic) => topic.id === topicId) || null;
@@ -135,7 +137,7 @@ export async function getTopicById(topicId) {
 }
 
 async function getCurrentUserProfile() {
-  const client = getSupabaseClient();
+  const client = await getSupabaseClient();
   if (!client) return null;
   
   try {
@@ -164,7 +166,7 @@ function getGuideName(topicName) {
 }
 
 async function getOrCreatePhotosynthesisTopic() {
-  const client = getSupabaseClient();
+  const client = await getSupabaseClient();
   if (!client) {
     // Return mock topic if Supabase not available
     return {
@@ -526,7 +528,7 @@ export async function sendMessage(topicId, message, context = {}, sessionId = nu
   }
 
   // 2. FALLBACK: Supabase RPC
-  const client = getSupabaseClient();
+  const client = await getSupabaseClient();
   if (client && !shouldUseMockData()) {
     try {
       // Resolve topic for RPC call
@@ -572,7 +574,7 @@ export async function applySafetyFilter(message) {
     return { safe: true };
   }
 
-  const client = getSupabaseClient();
+  const client = await getSupabaseClient();
   if (!client) {
     return { safe: true };
   }
@@ -616,7 +618,7 @@ function persistTranscripts(store) {
  */
 async function getCurrentUserId() {
   try {
-    const client = getSupabaseClient();
+    const client = await getSupabaseClient();
     if (!client) return null;
     const { data: { session } } = await client.auth.getSession();
     return session?.user?.id || null;
@@ -635,7 +637,7 @@ export async function saveTranscript(sessionId, transcript) {
   };
   persistTranscripts(store);
 
-  const client = getSupabaseClient();
+  const client = await getSupabaseClient();
   if (client && !shouldUseMockData()) {
     // Get actual user ID if not provided in transcript
     let userId = transcript.childId;
@@ -754,7 +756,7 @@ export async function logChatEvent(eventType, payload = {}) {
 
   enqueueAnalyticsEntry(entry);
 
-  const client = getSupabaseClient();
+  const client = await getSupabaseClient();
   if (client && !shouldUseMockData()) {
     // FIX: Use try/catch with await instead of .catch() on query builder
     try {

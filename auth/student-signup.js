@@ -1,14 +1,17 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
-import { supabaseConfig } from '/config.js';
+import { createSupabaseClientAsync } from '/config.js';
 
-const supabaseUrl = supabaseConfig.url;
-const supabaseAnonKey = supabaseConfig.anonKey;
+let supabase = null;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-    console.error('Missing Supabase configuration');
+async function getSupabaseClient() {
+  if (!supabase) {
+    supabase = await createSupabaseClientAsync(createClient);
+    if (!supabase) {
+      console.error('Failed to initialize Supabase client');
+    }
+  }
+  return supabase;
 }
-
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 let currentPanel = 1;
 let formData = {
@@ -81,6 +84,8 @@ function goToPanel(panelNumber) {
 
 async function checkEmailAvailability(email) {
     try {
+        const supabase = await getSupabaseClient();
+        if (!supabase) return false;
         const { data, error } = await supabase.rpc('check_email_availability', {
             check_email: email
         });
@@ -175,6 +180,14 @@ panel2Form.addEventListener('submit', async (e) => {
         const isEmailAvailable = await checkEmailAvailability(email);
         if (!isEmailAvailable) {
             showError('This email is already registered. Please use a different email or try logging in.');
+            signupBtn.disabled = false;
+            signupBtnText.textContent = 'Sign Up';
+            return;
+        }
+
+        const supabase = await getSupabaseClient();
+        if (!supabase) {
+            showError('Failed to connect to database. Please try again.');
             signupBtn.disabled = false;
             signupBtnText.textContent = 'Sign Up';
             return;
