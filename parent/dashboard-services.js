@@ -228,9 +228,9 @@ export async function getChildProgress(childId) {
       }
     }
 
-    // Aggregate quiz attempts
-    const { data: quizAttempts, error: quizError } = await client
-      .from('quiz_attempts')
+    // Aggregate quiz results
+    const { data: quizResults, error: quizError } = await client
+      .from('quiz_results')
       .select('*')
       .eq('user_id', childId);
 
@@ -263,7 +263,7 @@ export async function getChildProgress(childId) {
 
     // Check if all arrays are empty (Supabase available but no data)
     const storyData = mappedProgress || [];
-    const quizData = quizAttempts || [];
+    const quizData = quizResults || [];
     const chatData = chatInteractions || [];
     
     const isEmpty = storyData.length === 0 && quizData.length === 0 && chatData.length === 0;
@@ -460,30 +460,33 @@ function aggregateStoryProgress(storyProgress) {
   };
 }
 
-function aggregateQuizProgress(quizAttempts) {
-  if (!quizAttempts.length) {
+function aggregateQuizProgress(quizResults) {
+  if (!quizResults || !quizResults.length) {
     return { attempts: 0, averageScore: 0, byTopic: [] };
   }
 
-  const totalScore = quizAttempts.reduce((sum, attempt) => sum + (attempt.score || 0), 0);
-  const averageScore = Math.round(totalScore / quizAttempts.length);
+  const totalScore = quizResults.reduce((sum, result) => sum + (result.score || 0), 0);
+  const averageScore = Math.round(totalScore / quizResults.length);
 
-  // Group by topic
+  // Group by topic (quiz_results uses quiz_topic, map to topic_tag for consistency)
   const byTopic = {};
-  quizAttempts.forEach((attempt) => {
-    const topic = attempt.topic_tag || 'Unknown';
+  quizResults.forEach((result) => {
+    // Use quiz_topic from quiz_results table, fallback to 'Unknown'
+    const topic = result.quiz_topic || 'Unknown';
     if (!byTopic[topic]) {
       byTopic[topic] = { attempts: 0, scores: [], lastAttempt: null };
     }
     byTopic[topic].attempts++;
-    byTopic[topic].scores.push(attempt.score || 0);
-    if (!byTopic[topic].lastAttempt || new Date(attempt.created_at) > new Date(byTopic[topic].lastAttempt)) {
-      byTopic[topic].lastAttempt = attempt.created_at;
+    byTopic[topic].scores.push(result.score || 0);
+    // Use completed_at from quiz_results (preferred) or created_at as fallback
+    const attemptDate = result.completed_at || result.created_at;
+    if (!byTopic[topic].lastAttempt || new Date(attemptDate) > new Date(byTopic[topic].lastAttempt)) {
+      byTopic[topic].lastAttempt = attemptDate;
     }
   });
 
   return {
-    attempts: quizAttempts.length,
+    attempts: quizResults.length,
     averageScore,
     byTopic: Object.entries(byTopic).map(([topic, data]) => ({
       topic,
@@ -512,11 +515,11 @@ function aggregateChatProgress(chatInteractions) {
   };
 }
 
-function calculateStreak(storyProgress, quizAttempts, chatInteractions) {
+function calculateStreak(storyProgress, quizResults, chatInteractions) {
   // Simple streak calculation based on last activity
   const allActivities = [
-    ...storyProgress.map((sp) => new Date(sp.updated_at)),
-    ...quizAttempts.map((qa) => new Date(qa.created_at)),
+    ...storyProgress.map((sp) => new Date(sp.updated_at || sp.created_at)),
+    ...quizResults.map((qr) => new Date(qr.completed_at || qr.created_at)),
     ...chatInteractions.map((ci) => new Date(ci.created_at))
   ];
 
@@ -554,7 +557,7 @@ function calculateStreak(storyProgress, quizAttempts, chatInteractions) {
   };
 }
 
-function aggregateActivity(storyProgress, quizAttempts, chatInteractions) {
+function aggregateActivity(storyProgress, quizResults, chatInteractions) {
   const last7Days = [];
   const today = new Date();
 
@@ -564,8 +567,8 @@ function aggregateActivity(storyProgress, quizAttempts, chatInteractions) {
     const dateStr = date.toISOString().split('T')[0];
 
     const activities = [
-      ...storyProgress.filter((sp) => sp.updated_at?.startsWith(dateStr)),
-      ...quizAttempts.filter((qa) => qa.created_at?.startsWith(dateStr)),
+      ...storyProgress.filter((sp) => (sp.updated_at || sp.created_at)?.startsWith(dateStr)),
+      ...quizResults.filter((qr) => (qr.completed_at || qr.created_at)?.startsWith(dateStr)),
       ...chatInteractions.filter((ci) => ci.created_at?.startsWith(dateStr))
     ];
 
@@ -577,8 +580,9 @@ function aggregateActivity(storyProgress, quizAttempts, chatInteractions) {
 
   // Topics explored
   const topicsExplored = {};
-  [...storyProgress, ...quizAttempts, ...chatInteractions].forEach((activity) => {
-    const topic = activity.topic_tag || activity.topic_id || 'Unknown';
+  [...storyProgress, ...quizResults, ...chatInteractions].forEach((activity) => {
+    // Handle quiz_results which uses quiz_topic instead of topic_tag
+    const topic = activity.topic_tag || activity.quiz_topic || activity.topic_id || 'Unknown';
     topicsExplored[topic] = (topicsExplored[topic] || 0) + 1;
   });
 

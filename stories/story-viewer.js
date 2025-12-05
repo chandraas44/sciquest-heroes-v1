@@ -708,7 +708,7 @@ async function getCurrentUserName() {
     
     const { data: profile } = await supabase
       .from('user_profiles')
-      .select('first_name, full_name, username')
+      .select('first_name, username')
       .eq('id', session.user.id)
       .maybeSingle();
     

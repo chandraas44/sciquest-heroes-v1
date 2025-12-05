@@ -357,14 +357,20 @@ export async function awardBadge(childId, badgeId, context) {
     const client = await getSupabaseClient();
     if (client) {
       try {
-        await client.from('badge_awards').insert({
+        // Use upsert with onConflict to handle duplicate awards gracefully
+        // This prevents errors if badge is already awarded (idempotent operation)
+        await client.from('badge_awards').upsert({
           user_id: childId,
           badge_id: badgeId,
           awarded_at: new Date().toISOString(),
-          context: context
+          context: context || {}
+        }, {
+          onConflict: 'user_id,badge_id'
         });
+        console.log('[badges] Badge award saved to Supabase:', badgeId);
       } catch (error) {
-        console.warn('[badges] Supabase badge award insert failed, stored locally only', error);
+        console.warn('[badges] Supabase badge award save failed, stored locally only', error);
+        // Don't throw - localStorage backup already saved
       }
     }
   }

@@ -664,19 +664,31 @@ export async function saveTranscript(sessionId, transcript) {
       userId = await getCurrentUserId() || DEFAULT_CHILD_ID;
     }
     
-    client
-      .from('chat_sessions')
-      .upsert({
-        session_id: sessionId,
-        user_id: userId,
-        topic_id: transcript.topicId,
-        messages: transcript.messages,
-        context: transcript.context,
-        updated_at: new Date().toISOString()
-      })
-      .catch((error) => {
-        console.warn('[chat] Supabase transcript save failed', error);
-      });
+    // Get the latest message timestamp for last_message_at
+    const messages = transcript.messages || [];
+    const lastMessage = messages.length > 0 ? messages[messages.length - 1] : null;
+    const lastMessageAt = lastMessage?.timestamp || new Date().toISOString();
+    
+    try {
+      await client
+        .from('chat_sessions')
+        .upsert({
+          session_id: sessionId,
+          user_id: userId,
+          topic_id: transcript.topicId,
+          messages: transcript.messages || [],
+          context: transcript.context || {},
+          last_message_at: lastMessageAt,
+          updated_at: new Date().toISOString(),
+          created_at: transcript.createdAt || new Date().toISOString()
+        }, {
+          onConflict: 'session_id'
+        });
+      console.log('[chat] Transcript saved to Supabase successfully');
+    } catch (error) {
+      console.warn('[chat] Supabase transcript save failed', error);
+      // Don't throw - localStorage backup already saved
+    }
   }
 }
 
