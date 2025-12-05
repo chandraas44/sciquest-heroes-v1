@@ -1324,7 +1324,7 @@ function openNarrationModal(panelIndex, imageUrl, narration) {
         </div>
         <div class="flex-1 overflow-y-auto p-6">
           <div class="mb-6">
-            <img id="modalPanelImage" src="" alt="Panel ${panelIndex + 1}" class="w-full rounded-2xl shadow-lg border-2 border-purple-100" />
+            <img id="modalPanelImage" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Panel ${panelIndex + 1}" class="w-full rounded-2xl shadow-lg border-2 border-purple-100" />
           </div>
           <div class="bg-purple-50 border-2 border-purple-200 rounded-2xl p-6">
             <p id="modalNarrationText" class="text-lg text-slate-700 leading-relaxed"></p>
