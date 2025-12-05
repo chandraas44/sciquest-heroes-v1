@@ -49,8 +49,10 @@ export async function getStoryList() {
   // Always load Photosynthesis Adventure mock story to show at the top
   const mockStories = await loadMockStories();
   const photosynthesisStory = mockStories.find(s => s.id === 'photosynthesis-adventure');
+
+  const useMocks = await shouldUseMockData();
   
-  if (shouldUseMockData()) {
+  if (useMocks) {
     return mockStories;
   }
 
