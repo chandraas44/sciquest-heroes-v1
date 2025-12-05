@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
-        content="Science made fun through personalized comic stories that spark curiosity in kids. Real statistics show why curiosity matters for future success.">
+        content="Personalized science comics that spark curiosity in kids ages 5-12. Safe, COPPA-compliant learning platform for parents and teachers.">
     <title>SciQuest Heroes - Spark Curiosity, Ignite Learning | Science Comics for Kids</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -15,8 +15,6 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fredoka:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
         rel="stylesheet">
     
-    <!-- QR Code Library -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     
     <style>
         * {
@@ -126,43 +124,7 @@
             box-shadow: 0 4px 0 #92400e, 0 6px 15px rgba(0, 0, 0, 0.3);
         }
 
-        /* Waitlist Box */
-        .waitlist-box {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
-            backdrop-filter: blur(20px);
-            border: 3px solid #1e293b;
-            border-radius: 30px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 500px;
-            margin: 0 auto;
-        }
 
-        /* QR Code Box */
-        .qr-code-box {
-            background: white;
-            border: 4px solid #1e293b;
-            border-radius: 20px;
-            padding: 30px;
-            display: inline-block;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Stat Cards */
-        .stat-card {
-            background: white;
-            border: 3px solid #e2e8f0;
-            border-radius: 24px;
-            padding: 32px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-10px);
-            border-color: #a855f7;
-            box-shadow: 0 20px 40px rgba(168, 85, 247, 0.2);
-        }
 
         /* Benefit Cards */
         .benefit-card {
@@ -180,51 +142,6 @@
             box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2);
         }
 
-        /* Quote Cards */
-        .quote-card {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
-            border: 3px solid #1e293b;
-            border-radius: 24px;
-            padding: 40px;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .quote-card::before {
-            content: '"';
-            position: absolute;
-            top: -20px;
-            left: 30px;
-            font-size: 120px;
-            color: #a855f7;
-            opacity: 0.3;
-            font-family: Georgia, serif;
-            line-height: 1;
-        }
-
-        /* Progress Bar for Stats */
-        .stat-bar {
-            height: 40px;
-            background: #e2e8f0;
-            border-radius: 20px;
-            overflow: hidden;
-            position: relative;
-            border: 3px solid #1e293b;
-        }
-
-        .stat-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-            border-radius: 20px;
-            transition: width 2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding-right: 15px;
-            color: white;
-            font-weight: 800;
-            font-family: 'Fredoka', sans-serif;
-        }
 
         /* Reveal Animation */
         .reveal {
@@ -238,37 +155,6 @@
             transform: translateY(0);
         }
 
-        /* Particles */
-        .particles {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            pointer-events: none;
-        }
-
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.6);
-            border-radius: 50%;
-            animation: particleFloat 15s infinite;
-        }
-
-        @keyframes particleFloat {
-            0% {
-                transform: translateY(0) translateX(0) scale(1);
-                opacity: 0;
-            }
-            10%, 90% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-100vh) translateX(100px) scale(0.5);
-                opacity: 0;
-            }
-        }
 
         /* FAQ Accordion */
         .faq-item {
@@ -306,31 +192,7 @@
             padding: 0 24px 24px;
         }
 
-        /* Comparison Chart */
-        .comparison-chart {
-            background: white;
-            border: 4px solid #1e293b;
-            border-radius: 24px;
-            padding: 40px;
-        }
 
-        .chart-bar {
-            margin-bottom: 30px;
-        }
-
-        .chart-label {
-            font-weight: 700;
-            font-size: 18px;
-            margin-bottom: 10px;
-            color: #1e293b;
-        }
-
-        /* Section Dividers */
-        .section-divider {
-            height: 4px;
-            background: linear-gradient(90deg, transparent, #a855f7, transparent);
-            margin: 60px 0;
-        }
 
         /* Trust Badges */
         .trust-badge {
@@ -361,288 +223,81 @@
     <script type="module" src="/components/nav.js"></script>
 
     <!-- ============================================ -->
-    <!-- 1. HERO SECTION - Curiosity Focus -->
+    <!-- 1. HERO SECTION -->
     <!-- ============================================ -->
     <section class="hero-gradient min-h-screen flex items-center relative overflow-hidden pt-32 pb-20">
-        <div class="particles" id="heroParticles"></div>
-
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="grid lg:grid-cols-2 gap-12 items-center">
-                <!-- Left: Value Prop -->
-                <div class="text-center lg:text-left reveal">
-                    <div class="inline-block glass-card px-6 py-2 mb-6">
-                        <span class="font-fredoka font-bold text-white text-lg">🔬 Science Made Fun Through Curiosity</span>
-                    </div>
-
-                    <h1 class="font-fredoka text-5xl md:text-7xl font-black text-white leading-tight mb-6 drop-shadow-2xl">
-                        Spark Curiosity,<br>
-                        <span class="bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-300 bg-clip-text text-transparent">
-                            Ignite Learning
-                        </span>
-                    </h1>
-
-                    <p class="text-2xl md:text-3xl text-white font-bold mb-8 leading-relaxed">
-                        Personalized science comics that turn "why?" into "wow!" 
-                        <span class="text-yellow-300">Perfect for curious kids ages 5-12.</span>
-                    </p>
-
-                    <!-- Trust Signals -->
-                    <div class="flex flex-wrap gap-4 justify-center lg:justify-start mb-8">
-                        <div class="trust-badge">
-                            <i class="fas fa-shield-alt"></i>
-                            <span>COPPA Safe</span>
-                        </div>
-                        <div class="trust-badge">
-                            <i class="fas fa-graduation-cap"></i>
-                            <span>Research-Based</span>
-                        </div>
-                        <div class="trust-badge">
-                            <i class="fas fa-check-circle"></i>
-                            <span>100% Safe</span>
-                        </div>
-                    </div>
-
-                    <!-- Primary CTA -->
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
-                        <a href="auth/account-type-selection.html" class="btn-3d text-center">
-                            <i class="fas fa-rocket mr-3"></i>Start Free Trial
-                        </a>
-                        <button onclick="scrollToWaitlist()" 
-                            class="bg-white text-purple-600 border-4 border-purple-600 rounded-full px-8 py-5 font-fredoka font-black text-xl hover:bg-purple-50 transition">
-                            Join Waitlist
-                        </button>
-                    </div>
-
-                    <p class="text-white/90 font-semibold text-lg">
-                        ✓ No credit card needed • ✓ Cancel anytime • ✓ Free trial
-                    </p>
+            <div class="text-center reveal">
+                <div class="inline-block glass-card px-6 py-2 mb-6">
+                    <span class="font-fredoka font-bold text-white text-lg">Science Made Fun Through Curiosity</span>
                 </div>
 
-                <!-- Right: Waitlist Box -->
-                <div class="reveal">
-                    <div class="waitlist-box">
-                        <div class="text-center mb-6">
-                            <span class="text-5xl mb-4 block">📧</span>
-                            <h3 class="font-fredoka text-3xl font-black text-slate-800 mb-2">
-                                Join the Waitlist!
-                            </h3>
-                            <p class="text-slate-600 font-bold text-lg">
-                                Get early access + special launch discount
-                            </p>
-                        </div>
+                <h1 class="font-fredoka text-5xl md:text-7xl font-black text-white leading-tight mb-6 drop-shadow-2xl">
+                    Personalized Science Comics<br>
+                    <span class="bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-300 bg-clip-text text-transparent">
+                        That Spark Curiosity
+                    </span>
+                </h1>
 
-                        <form id="waitlistForm" class="space-y-4">
-                            <input type="email" 
-                                id="waitlistEmail"
-                                placeholder="Your email address" 
-                                required
-                                class="w-full px-6 py-4 border-3 border-slate-300 rounded-2xl text-lg font-bold focus:border-purple-500 focus:outline-none">
-                            
-                            <select id="waitlistType" 
-                                class="w-full px-6 py-4 border-3 border-slate-300 rounded-2xl text-lg font-bold focus:border-purple-500 focus:outline-none">
-                                <option value="parent">I'm a Parent</option>
-                                <option value="teacher">I'm a Teacher</option>
-                                <option value="both">Both</option>
-                            </select>
+                <p class="text-xl md:text-2xl text-white font-bold mb-8 leading-relaxed max-w-3xl mx-auto">
+                    Turn your child's "why?" into personalized science adventures. 
+                    Research shows curiosity is as important as intelligence for learning success.
+                </p>
 
-                            <button type="submit" 
-                                class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-fredoka font-black text-xl py-4 rounded-2xl hover:from-purple-700 hover:to-pink-700 transition shadow-lg">
-                                Join Waitlist ✨
-                            </button>
-                        </form>
-
-                        <p class="text-center text-sm text-slate-500 mt-4 font-bold">
-                            ✓ No spam • ✓ Unsubscribe anytime
-                        </p>
-
-                        <!-- QR Code -->
-                        <div class="mt-8 text-center">
-                            <p class="font-fredoka font-bold text-slate-800 mb-3">Scan to try on your phone!</p>
-                            <div class="qr-code-box">
-                                <canvas id="qrCodeCanvas" width="150" height="150"></canvas>
-                            </div>
-                        </div>
+                <!-- Trust Signals -->
+                <div class="flex flex-wrap gap-4 justify-center mb-8">
+                    <div class="trust-badge">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>COPPA Safe</span>
+                    </div>
+                    <div class="trust-badge">
+                        <i class="fas fa-check-circle"></i>
+                        <span>100% Safe</span>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- ============================================ -->
-    <!-- 2. WHY CURIOSITY MATTERS - Real Statistics -->
-    <!-- ============================================ -->
-    <section class="relative py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16 reveal">
-                <h2 class="font-fredoka text-5xl md:text-6xl font-black text-slate-800 mb-4">
-                    Why Curiosity Matters for Your Child's Future
-                </h2>
-                <p class="text-xl text-slate-600 font-bold">
-                    Real research. Real results. Real impact.
+                <!-- Primary CTA -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+                    <a href="auth/account-type-selection.html" class="btn-3d text-center">
+                        <i class="fas fa-rocket mr-3"></i>Start Free Trial
+                    </a>
+                </div>
+
+                <p class="text-white/90 font-semibold text-lg">
+                    ✓ No credit card needed • ✓ Cancel anytime • ✓ Free trial
                 </p>
             </div>
-
-            <!-- Key Statistics Grid -->
-            <div class="grid md:grid-cols-3 gap-8 mb-16">
-                <!-- Stat 1 -->
-                <div class="stat-card reveal">
-                    <div class="text-6xl mb-4">📊</div>
-                    <div class="font-fredoka text-5xl font-black text-purple-600 mb-3">As Strong</div>
-                    <p class="text-slate-700 font-bold text-lg leading-relaxed">
-                        Curiosity predicts academic success <strong>as well as</strong> self-control. 
-                        Research shows it's equally important for reading and math achievement.
-                    </p>
-                    <p class="text-slate-500 text-sm mt-4 font-semibold italic">
-                        Source: Education Week Research Study
-                    </p>
-                </div>
-
-                <!-- Stat 2 -->
-                <div class="stat-card reveal">
-                    <div class="text-6xl mb-4">📈</div>
-                    <div class="font-fredoka text-5xl font-black text-blue-600 mb-3">+112%</div>
-                    <p class="text-slate-700 font-bold text-lg leading-relaxed">
-                        A one standard deviation increase in curiosity leads to 
-                        <strong>112% higher knowledge retention</strong>. 
-                        Curious kids remember more!
-                    </p>
-                    <p class="text-slate-500 text-sm mt-4 font-semibold italic">
-                        Source: Poverty Action Lab Research
-                    </p>
-                </div>
-
-                <!-- Stat 3 -->
-                <div class="stat-card reveal">
-                    <div class="text-6xl mb-4">🌉</div>
-                    <div class="font-fredoka text-5xl font-black text-green-600 mb-3">Bridges Gaps</div>
-                    <p class="text-slate-700 font-bold text-lg leading-relaxed">
-                        Curious children from lower-income families perform similarly to more affluent peers. 
-                        Curiosity can <strong>bridge achievement gaps</strong>.
-                    </p>
-                    <p class="text-slate-500 text-sm mt-4 font-semibold italic">
-                        Source: National Institutes of Health Study
-                    </p>
-                </div>
-            </div>
-
-            <!-- The Problem: Curiosity Decline -->
-            <div class="bg-gradient-to-br from-red-50 to-orange-50 rounded-3xl p-12 mb-16 reveal">
-                <div class="text-center mb-8">
-                    <h3 class="font-fredoka text-4xl font-black text-slate-800 mb-4">
-                        The Problem: Curiosity Declines in School
-                    </h3>
-                    <p class="text-xl text-slate-600 font-bold">
-                        Here's what the research shows...
-                    </p>
-                </div>
-
-                <div class="max-w-4xl mx-auto">
-                    <div class="comparison-chart">
-                        <div class="chart-bar">
-                            <div class="chart-label flex justify-between items-center mb-3">
-                                <span>📍 At Home (Preschoolers)</span>
-                                <span class="text-green-600 font-black text-xl">26 questions/hour</span>
-                            </div>
-                            <div class="stat-bar">
-                                <div class="stat-bar-fill" style="width: 100%;">
-                                    <span class="text-2xl">26</span>
-                                </div>
-                            </div>
-                            <p class="text-slate-600 font-bold text-sm mt-2">
-                                Children naturally ask 26 questions per hour when curious at home
-                            </p>
-                        </div>
-
-                        <div class="chart-bar">
-                            <div class="chart-label flex justify-between items-center mb-3">
-                                <span>🏫 At School (Preschoolers)</span>
-                                <span class="text-red-600 font-black text-xl">Less than 2 questions/hour</span>
-                            </div>
-                            <div class="stat-bar">
-                                <div class="stat-bar-fill" style="width: 7.7%; background: linear-gradient(90deg, #ef4444 0%, #f97316 100%);">
-                                    <span class="text-2xl">&lt;2</span>
-                                </div>
-                            </div>
-                            <p class="text-slate-600 font-bold text-sm mt-2">
-                                The same children ask less than 2 questions per hour in school settings
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="text-center mt-8">
-                        <p class="text-2xl font-fredoka font-black text-slate-800 mb-2">
-                            That's a <span class="text-red-600">92% drop</span> in questions!
-                        </p>
-                        <p class="text-lg text-slate-600 font-bold">
-                            Traditional learning environments aren't designed to nurture curiosity
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Inspiring Quote -->
-            <div class="max-w-4xl mx-auto reveal">
-                <div class="quote-card">
-                    <p class="text-2xl md:text-3xl font-bold text-slate-800 leading-relaxed mb-6">
-                        "Curiosity is the engine of achievement. Research shows that curiosity is 
-                        as important as intelligence in determining how well students do in school."
-                    </p>
-                    <div class="flex items-center gap-4">
-                        <div class="w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-white font-bold text-xl">
-                            AE
-                        </div>
-                        <div>
-                            <p class="font-fredoka font-black text-slate-800 text-xl">Albert Einstein</p>
-                            <p class="text-slate-600 font-bold">Theoretical Physicist</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </section>
 
     <!-- ============================================ -->
-    <!-- 3. HOW WE HELP - Solution -->
+    <!-- 2. HOW WE HELP - Solution -->
     <!-- ============================================ -->
     <section class="relative py-20 bg-gradient-to-br from-purple-50 to-pink-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 reveal">
-                <h2 class="font-fredoka text-5xl md:text-6xl font-black text-slate-800 mb-4">
-                    How SciQuest Heroes Sparks Curiosity
+                <h2 class="font-fredoka text-4xl md:text-5xl font-black text-slate-800 mb-4">
+                    How SciQuest Heroes Works
                 </h2>
                 <p class="text-xl text-slate-600 font-bold">
-                    We turn "I wonder..." into "I learned!"
+                    Turn questions into personalized learning adventures
                 </p>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-8">
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                 <!-- Solution 1 -->
                 <div class="benefit-card reveal">
-                    <span class="text-6xl mb-4 block">❓</span>
-                    <h3 class="font-fredoka text-3xl font-black text-slate-800 mb-4">Question-Driven Learning</h3>
-                    <p class="text-slate-600 font-bold text-lg leading-relaxed">
-                        Kids ask questions → Stories unlock. Every "why?" becomes a personalized science adventure. 
-                        Learning driven by their curiosity, not just curriculum.
+                    <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-4">Question-Driven Learning</h3>
+                    <p class="text-slate-600 font-semibold text-base leading-relaxed">
+                        Every "why?" becomes a personalized science adventure. Learning driven by their curiosity, not just curriculum.
                     </p>
                 </div>
 
                 <!-- Solution 2 -->
                 <div class="benefit-card reveal">
-                    <span class="text-6xl mb-4 block">🎭</span>
-                    <h3 class="font-fredoka text-3xl font-black text-slate-800 mb-4">Personalized Comics</h3>
-                    <p class="text-slate-600 font-bold text-lg leading-relaxed">
-                        Your child is the hero of every story. When science is about THEM, curiosity naturally follows. 
-                        They see themselves as scientists and explorers.
-                    </p>
-                </div>
-
-                <!-- Solution 3 -->
-                <div class="benefit-card reveal">
-                    <span class="text-6xl mb-4 block">💬</span>
-                    <h3 class="font-fredoka text-3xl font-black text-slate-800 mb-4">Safe AI Chat</h3>
-                    <p class="text-slate-600 font-bold text-lg leading-relaxed">
-                        Kids can ask ANY question safely. No judgment, no limits. Every question is celebrated, 
-                        creating a culture where curiosity thrives.
+                    <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-4">Personalized Comics</h3>
+                    <p class="text-slate-600 font-semibold text-base leading-relaxed">
+                        Your child is the hero of every story. When science is about them, curiosity naturally follows.
                     </p>
                 </div>
             </div>
@@ -650,15 +305,15 @@
     </section>
 
     <!-- ============================================ -->
-    <!-- 4. FOR PARENTS SECTION -->
+    <!-- 3. FOR PARENTS SECTION -->
     <!-- ============================================ -->
     <section id="for-parents" class="relative py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 reveal">
                 <div class="inline-block bg-gradient-to-r from-blue-500 to-cyan-500 px-8 py-3 rounded-full mb-6">
-                    <span class="font-fredoka font-black text-white text-xl">👨‍👩‍👧 FOR PARENTS</span>
+                    <span class="font-fredoka font-black text-white text-xl">FOR PARENTS</span>
                 </div>
-                <h2 class="font-fredoka text-5xl md:text-6xl font-black text-slate-800 mb-4">
+                <h2 class="font-fredoka text-4xl md:text-5xl font-black text-slate-800 mb-4">
                     Nurture Your Child's Natural Curiosity
                 </h2>
                 <p class="text-xl text-slate-600 font-bold">
@@ -666,104 +321,73 @@
                 </p>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-8">
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                 <!-- Benefit 1 -->
                 <div class="benefit-card reveal">
-                    <span class="text-6xl mb-4 block">🔒</span>
-                    <h3 class="font-fredoka text-3xl font-black text-slate-800 mb-4">100% Safe Environment</h3>
-                    <p class="text-slate-600 font-bold text-lg leading-relaxed">
-                        COPPA compliant. No ads, no strangers. Your child can explore freely while you have complete control 
-                        and visibility through the parent dashboard.
+                    <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-4">Track Their Progress</h3>
+                    <p class="text-slate-600 font-semibold text-base leading-relaxed">
+                        See every question they ask, every topic they explore. Watch their curiosity expand in real-time through your parent dashboard.
                     </p>
                 </div>
 
                 <!-- Benefit 2 -->
                 <div class="benefit-card reveal">
-                    <span class="text-6xl mb-4 block">📊</span>
-                    <h3 class="font-fredoka text-3xl font-black text-slate-800 mb-4">See Their Curiosity Grow</h3>
-                    <p class="text-slate-600 font-bold text-lg leading-relaxed">
-                        Track every question they ask, every topic they explore, every "wow!" moment. 
-                        Watch their curiosity expand in real-time.
-                    </p>
-                </div>
-
-                <!-- Benefit 3 -->
-                <div class="benefit-card reveal">
-                    <span class="text-6xl mb-4 block">⏰</span>
-                    <h3 class="font-fredoka text-3xl font-black text-slate-800 mb-4">No Prep Needed</h3>
-                    <p class="text-slate-600 font-bold text-lg leading-relaxed">
-                        Your child can learn independently. While they're exploring photosynthesis, 
-                        you can handle dinner. Quality learning without the planning stress.
+                    <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-4">No Prep Needed</h3>
+                    <p class="text-slate-600 font-semibold text-base leading-relaxed">
+                        Your child learns independently. Quality learning without the planning stress. Perfect for busy parents.
                     </p>
                 </div>
             </div>
 
             <div class="text-center mt-12 reveal">
                 <a href="auth/account-type-selection.html" class="btn-3d">
-                    <i class="fas fa-rocket mr-3"></i>Start Free Trial for Your Child
+                    <i class="fas fa-rocket mr-3"></i>Start Free Trial
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- Section Divider -->
-    <div class="section-divider"></div>
-
     <!-- ============================================ -->
-    <!-- 5. FOR TEACHERS SECTION -->
+    <!-- 4. FOR TEACHERS SECTION -->
     <!-- ============================================ -->
     <section id="for-teachers" class="relative py-20 bg-gradient-to-br from-green-50 to-emerald-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 reveal">
                 <div class="inline-block bg-gradient-to-r from-green-500 to-emerald-500 px-8 py-3 rounded-full mb-6">
-                    <span class="font-fredoka font-black text-white text-xl">👩‍🏫 FOR TEACHERS</span>
+                    <span class="font-fredoka font-black text-white text-xl">FOR TEACHERS</span>
                 </div>
-                <h2 class="font-fredoka text-5xl md:text-6xl font-black text-slate-800 mb-4">
+                <h2 class="font-fredoka text-4xl md:text-5xl font-black text-slate-800 mb-4">
                     Rekindle Curiosity in Your Classroom
                 </h2>
                 <p class="text-xl text-slate-600 font-bold">
-                    Research shows curiosity declines in school. Let's change that.
+                    Ready-to-use lessons that foster curiosity
                 </p>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-8 mb-12">
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-12">
                 <!-- Benefit 1 -->
                 <div class="benefit-card reveal">
-                    <span class="text-6xl mb-4 block">📚</span>
-                    <h3 class="font-fredoka text-3xl font-black text-slate-800 mb-4">Ready-to-Use Lessons</h3>
-                    <p class="text-slate-600 font-bold text-lg leading-relaxed">
-                        Complete lesson plans aligned to NGSS standards. No extra prep time needed. 
-                        Just print and teach, knowing you're fostering curiosity.
+                    <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-4">Ready-to-Use Lessons</h3>
+                    <p class="text-slate-600 font-semibold text-base leading-relaxed">
+                        Complete lesson plans aligned to NGSS standards. No extra prep time needed. Just print and teach.
                     </p>
                 </div>
 
                 <!-- Benefit 2 -->
                 <div class="benefit-card reveal">
-                    <span class="text-6xl mb-4 block">👥</span>
-                    <h3 class="font-fredoka text-3xl font-black text-slate-800 mb-4">Track Class Curiosity</h3>
-                    <p class="text-slate-600 font-bold text-lg leading-relaxed">
-                        See who's asking questions, who's exploring, who needs encouragement. 
-                        Identify highly curious students and nurture them further.
-                    </p>
-                </div>
-
-                <!-- Benefit 3 -->
-                <div class="benefit-card reveal">
-                    <span class="text-6xl mb-4 block">🎯</span>
-                    <h3 class="font-fredoka text-3xl font-black text-slate-800 mb-4">Differentiation Made Easy</h3>
-                    <p class="text-slate-600 font-bold text-lg leading-relaxed">
-                        Same topic, different reading levels - automatically. Every student gets content 
-                        at their level, keeping curiosity alive for all.
+                    <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-4">Track Class Progress</h3>
+                    <p class="text-slate-600 font-semibold text-base leading-relaxed">
+                        See who's asking questions, who's exploring. Identify curious students and nurture them further.
                     </p>
                 </div>
             </div>
 
             <!-- Teacher CTA -->
             <div class="max-w-2xl mx-auto reveal">
-                <div class="bg-gradient-to-r from-green-500 to-emerald-500 rounded-3xl p-12 text-center text-white">
-                    <h3 class="font-fredoka text-4xl font-black mb-4">Try it FREE with your class</h3>
-                    <p class="text-xl font-bold mb-8 opacity-90">
-                        Free for first 30 students • See the curiosity difference yourself
+                <div class="bg-gradient-to-r from-green-500 to-emerald-500 rounded-3xl p-10 text-center text-white">
+                    <h3 class="font-fredoka text-3xl font-black mb-4">Try it FREE with your class</h3>
+                    <p class="text-lg font-bold mb-6 opacity-90">
+                        Free for first 30 students
                     </p>
                     <a href="auth/account-type-selection.html" 
                         class="bg-white text-green-600 border-4 border-white rounded-full px-10 py-5 font-fredoka font-black text-xl hover:bg-green-50 transition inline-block">
@@ -775,49 +399,47 @@
     </section>
 
     <!-- ============================================ -->
-    <!-- 6. HOW IT WORKS -->
+    <!-- 5. HOW IT WORKS -->
     <!-- ============================================ -->
     <section class="relative py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 reveal">
-                <h2 class="font-fredoka text-5xl md:text-6xl font-black text-slate-800 mb-4">
-                    How The Magic Works
+                <h2 class="font-fredoka text-4xl md:text-5xl font-black text-slate-800 mb-4">
+                    How It Works
                 </h2>
                 <p class="text-xl text-slate-600 font-bold">
-                    3 Simple Steps to Spark Curiosity
+                    Simple steps to spark curiosity
                 </p>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-8">
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
                 <div class="text-center reveal">
-                    <div class="bg-gradient-to-br from-purple-500 to-pink-500 rounded-full w-32 h-32 flex items-center justify-center mx-auto mb-6 text-6xl">
+                    <div class="bg-gradient-to-br from-purple-500 to-pink-500 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6 text-5xl text-white font-black">
                         <span>1</span>
                     </div>
-                    <h3 class="font-fredoka text-3xl font-black text-slate-800 mb-4">Sign Up Free</h3>
-                    <p class="text-slate-600 font-bold text-lg">
-                        Quick setup. Add your child, choose grade level. Takes 2 minutes!
+                    <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-4">Sign Up Free</h3>
+                    <p class="text-slate-600 font-semibold text-base">
+                        Quick setup. Add your child, choose grade level. Takes 2 minutes.
                     </p>
                 </div>
 
                 <div class="text-center reveal">
-                    <div class="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full w-32 h-32 flex items-center justify-center mx-auto mb-6 text-6xl">
+                    <div class="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6 text-5xl text-white font-black">
                         <span>2</span>
                     </div>
-                    <h3 class="font-fredoka text-3xl font-black text-slate-800 mb-4">Explore & Ask</h3>
-                    <p class="text-slate-600 font-bold text-lg">
-                        Choose from 50+ science topics. Ask questions. AI creates a personalized comic 
-                        with YOUR CHILD as the hero!
+                    <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-4">Explore & Ask</h3>
+                    <p class="text-slate-600 font-semibold text-base">
+                        Choose from 50+ science topics. Ask questions. AI creates a personalized comic with your child as the hero.
                     </p>
                 </div>
 
                 <div class="text-center reveal">
-                    <div class="bg-gradient-to-br from-orange-500 to-red-500 rounded-full w-32 h-32 flex items-center justify-center mx-auto mb-6 text-6xl">
+                    <div class="bg-gradient-to-br from-orange-500 to-red-500 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6 text-5xl text-white font-black">
                         <span>3</span>
                     </div>
-                    <h3 class="font-fredoka text-3xl font-black text-slate-800 mb-4">Learn & Discover</h3>
-                    <p class="text-slate-600 font-bold text-lg">
-                        Voice narration calls their name! Chat with AI, earn badges, explore more topics. 
-                        Curiosity becomes a habit!
+                    <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-4">Learn & Discover</h3>
+                    <p class="text-slate-600 font-semibold text-base">
+                        Voice narration calls their name. Chat with AI, earn badges, explore more topics.
                     </p>
                 </div>
             </div>
@@ -825,12 +447,12 @@
     </section>
 
     <!-- ============================================ -->
-    <!-- 7. PRICING - SIMPLIFIED -->
+    <!-- 6. PRICING -->
     <!-- ============================================ -->
     <section class="relative py-20 bg-gradient-to-br from-purple-600 via-pink-600 to-orange-600">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 reveal">
-                <h2 class="font-fredoka text-5xl md:text-6xl font-black text-white mb-4 drop-shadow-2xl">
+                <h2 class="font-fredoka text-4xl md:text-5xl font-black text-white mb-4 drop-shadow-2xl">
                     Simple, Honest Pricing
                 </h2>
                 <p class="text-xl text-white font-bold opacity-90">
@@ -841,24 +463,24 @@
             <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                 <!-- Free Tier -->
                 <div class="bg-white rounded-3xl p-10 border-4 border-slate-300 reveal">
-                    <h3 class="font-fredoka text-4xl font-black text-slate-800 mb-4">Try It FREE</h3>
+                    <h3 class="font-fredoka text-3xl font-black text-slate-800 mb-4">Try It FREE</h3>
                     <div class="mb-6">
-                        <span class="font-fredoka text-7xl font-black text-slate-800">$0</span>
+                        <span class="font-fredoka text-6xl font-black text-slate-800">$0</span>
                     </div>
-                    <p class="text-slate-600 font-bold text-lg mb-8">Try 3 stories, no credit card needed</p>
+                    <p class="text-slate-600 font-bold text-base mb-8">Try 3 stories, no credit card needed</p>
                     
-                    <ul class="space-y-4 mb-10">
+                    <ul class="space-y-3 mb-10">
                         <li class="flex items-start gap-3">
-                            <i class="fas fa-check-circle text-green-500 text-2xl mt-1"></i>
-                            <span class="text-slate-700 font-bold text-lg">3 Complete Stories</span>
+                            <i class="fas fa-check-circle text-green-500 text-xl mt-1"></i>
+                            <span class="text-slate-700 font-semibold text-base">3 Complete Stories</span>
                         </li>
                         <li class="flex items-start gap-3">
-                            <i class="fas fa-check-circle text-green-500 text-2xl mt-1"></i>
-                            <span class="text-slate-700 font-bold text-lg">Voice Narration</span>
+                            <i class="fas fa-check-circle text-green-500 text-xl mt-1"></i>
+                            <span class="text-slate-700 font-semibold text-base">Voice Narration</span>
                         </li>
                         <li class="flex items-start gap-3">
-                            <i class="fas fa-check-circle text-green-500 text-2xl mt-1"></i>
-                            <span class="text-slate-700 font-bold text-lg">Basic Chat</span>
+                            <i class="fas fa-check-circle text-green-500 text-xl mt-1"></i>
+                            <span class="text-slate-700 font-semibold text-base">Basic Chat</span>
                         </li>
                     </ul>
 
@@ -870,51 +492,51 @@
                 <!-- Paid Tier -->
                 <div class="bg-white rounded-3xl p-10 border-4 border-yellow-400 relative transform scale-105 reveal">
                     <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-yellow-400 border-4 border-slate-800 rounded-full px-6 py-2">
-                        <span class="font-fredoka font-black text-slate-800 text-lg">⭐ BEST VALUE</span>
+                        <span class="font-fredoka font-black text-slate-800 text-base">BEST VALUE</span>
                     </div>
 
-                    <h3 class="font-fredoka text-4xl font-black text-slate-800 mb-4">Monthly Membership</h3>
+                    <h3 class="font-fredoka text-3xl font-black text-slate-800 mb-4">Monthly Membership</h3>
                     <div class="mb-6">
-                        <span class="font-fredoka text-7xl font-black text-slate-800">$19</span>
-                        <span class="text-slate-600 text-2xl font-bold">/month</span>
+                        <span class="font-fredoka text-6xl font-black text-slate-800">$19</span>
+                        <span class="text-slate-600 text-xl font-bold">/month</span>
                     </div>
-                    <p class="text-slate-600 font-bold text-lg mb-8">Everything, unlimited</p>
+                    <p class="text-slate-600 font-bold text-base mb-8">Everything, unlimited</p>
                     
-                    <ul class="space-y-4 mb-10">
+                    <ul class="space-y-3 mb-10">
                         <li class="flex items-start gap-3">
-                            <i class="fas fa-check-circle text-green-500 text-2xl mt-1"></i>
-                            <span class="text-slate-700 font-bold text-lg">Unlimited Stories</span>
+                            <i class="fas fa-check-circle text-green-500 text-xl mt-1"></i>
+                            <span class="text-slate-700 font-semibold text-base">Unlimited Stories</span>
                         </li>
                         <li class="flex items-start gap-3">
-                            <i class="fas fa-check-circle text-green-500 text-2xl mt-1"></i>
-                            <span class="text-slate-700 font-bold text-lg">All Topics</span>
+                            <i class="fas fa-check-circle text-green-500 text-xl mt-1"></i>
+                            <span class="text-slate-700 font-semibold text-base">All Topics</span>
                         </li>
                         <li class="flex items-start gap-3">
-                            <i class="fas fa-check-circle text-green-500 text-2xl mt-1"></i>
-                            <span class="text-slate-700 font-bold text-lg">Advanced Features</span>
+                            <i class="fas fa-check-circle text-green-500 text-xl mt-1"></i>
+                            <span class="text-slate-700 font-semibold text-base">Advanced Features</span>
                         </li>
                         <li class="flex items-start gap-3">
-                            <i class="fas fa-check-circle text-green-500 text-2xl mt-1"></i>
-                            <span class="text-slate-700 font-bold text-lg">Up to 3 Kids</span>
+                            <i class="fas fa-check-circle text-green-500 text-xl mt-1"></i>
+                            <span class="text-slate-700 font-semibold text-base">Up to 3 Kids</span>
                         </li>
                     </ul>
 
                     <a href="auth/account-type-selection.html" class="btn-3d w-full text-center block">
                         Start Free Trial
                     </a>
-                    <p class="text-center text-slate-600 font-bold mt-4">Start with free trial, upgrade anytime</p>
+                    <p class="text-center text-slate-600 font-semibold mt-4 text-sm">Start with free trial, upgrade anytime</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- ============================================ -->
-    <!-- 8. FAQ SECTION -->
+    <!-- 7. FAQ SECTION -->
     <!-- ============================================ -->
     <section class="relative py-20 bg-white">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 reveal">
-                <h2 class="font-fredoka text-5xl md:text-6xl font-black text-slate-800 mb-4">
+                <h2 class="font-fredoka text-4xl md:text-5xl font-black text-slate-800 mb-4">
                     Questions? We've Got Answers
                 </h2>
             </div>
@@ -923,15 +545,12 @@
                 <!-- FAQ 1 -->
                 <div class="faq-item reveal">
                     <div class="faq-question" onclick="toggleFAQ(this)">
-                        <span>How does this actually improve curiosity?</span>
+                        <span>Is it safe for my child?</span>
                         <span class="faq-icon">+</span>
                     </div>
                     <div class="faq-answer">
-                        <p class="text-slate-600 font-bold text-lg leading-relaxed">
-                            Research shows that when learning is personalized and question-driven, children naturally ask more questions. 
-                            Our platform celebrates every "why?" and turns it into a learning opportunity. Instead of suppressing curiosity 
-                            (like traditional school settings), we amplify it. Kids see their questions lead to stories about them, 
-                            creating a positive feedback loop that encourages more questions.
+                        <p class="text-slate-600 font-semibold text-base leading-relaxed">
+                            Yes! We're COPPA compliant and parents control everything their child sees. No ads, no strangers, no external links. All conversations are monitored and you can review everything in your dashboard.
                         </p>
                     </div>
                 </div>
@@ -939,13 +558,12 @@
                 <!-- FAQ 2 -->
                 <div class="faq-item reveal">
                     <div class="faq-question" onclick="toggleFAQ(this)">
-                        <span>Is it safe for my child?</span>
+                        <span>Can teachers use this in class?</span>
                         <span class="faq-icon">+</span>
                     </div>
                     <div class="faq-answer">
-                        <p class="text-slate-600 font-bold text-lg leading-relaxed">
-                            Yes! We're COPPA compliant and parents control everything their child sees. No ads, no strangers, no external links. 
-                            All conversations are monitored and you can review everything in your dashboard.
+                        <p class="text-slate-600 font-semibold text-base leading-relaxed">
+                            Absolutely! We have special teacher accounts with class dashboards, lesson plans, and progress tracking. Try it free with your first 30 students.
                         </p>
                     </div>
                 </div>
@@ -953,27 +571,12 @@
                 <!-- FAQ 3 -->
                 <div class="faq-item reveal">
                     <div class="faq-question" onclick="toggleFAQ(this)">
-                        <span>Can teachers use this in class?</span>
-                        <span class="faq-icon">+</span>
-                    </div>
-                    <div class="faq-answer">
-                        <p class="text-slate-600 font-bold text-lg leading-relaxed">
-                            Absolutely! We have special teacher accounts with class dashboards, lesson plans, and progress tracking. 
-                            Perfect for addressing the curiosity decline that happens in school. Try it free with your first 30 students!
-                        </p>
-                    </div>
-                </div>
-
-                <!-- FAQ 4 -->
-                <div class="faq-item reveal">
-                    <div class="faq-question" onclick="toggleFAQ(this)">
                         <span>What age is this for?</span>
                         <span class="faq-icon">+</span>
                     </div>
                     <div class="faq-answer">
-                        <p class="text-slate-600 font-bold text-lg leading-relaxed">
-                            Perfect for kids ages 5-12. Stories automatically adjust to your child's grade level, 
-                            so content is always age-appropriate and understandable.
+                        <p class="text-slate-600 font-semibold text-base leading-relaxed">
+                            Perfect for kids ages 5-12. Stories automatically adjust to your child's grade level, so content is always age-appropriate and understandable.
                         </p>
                     </div>
                 </div>
@@ -982,106 +585,49 @@
     </section>
 
     <!-- ============================================ -->
-    <!-- 9. FINAL CTA - MULTIPLE PATHS -->
+    <!-- 8. FOOTER -->
     <!-- ============================================ -->
-    <section class="relative py-20 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12 reveal">
-                <h2 class="font-fredoka text-5xl md:text-7xl font-black text-white mb-6 drop-shadow-2xl">
-                    Ready to Spark Curiosity?
-                </h2>
-                <p class="text-2xl text-white font-bold opacity-90">
-                    Join us in nurturing the next generation of curious minds
-                </p>
-            </div>
-
-            <div class="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-                <!-- CTA 1: Start Now -->
-                <div class="bg-white rounded-3xl p-8 text-center reveal">
-                    <span class="text-5xl mb-4 block">🚀</span>
-                    <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-4">Start Free Trial Now</h3>
-                    <p class="text-slate-600 font-bold mb-6">3 stories free, no credit card</p>
-                    <a href="auth/account-type-selection.html" class="btn-3d w-full text-center block text-lg py-4">
-                        Get Started
-                    </a>
-                </div>
-
-                <!-- CTA 2: Join Waitlist -->
-                <div class="bg-white rounded-3xl p-8 text-center reveal">
-                    <span class="text-5xl mb-4 block">📧</span>
-                    <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-4">Join Waitlist</h3>
-                    <p class="text-slate-600 font-bold mb-6">Get early access + special discount</p>
-                    <button onclick="scrollToWaitlist()" class="btn-3d w-full text-center block text-lg py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white border-purple-600">
-                        Join Waitlist
-                    </button>
-                </div>
-
-                <!-- CTA 3: Request Demo -->
-                <div class="bg-white rounded-3xl p-8 text-center reveal">
-                    <span class="text-5xl mb-4 block">👩‍🏫</span>
-                    <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-4">Request Teacher Demo</h3>
-                    <p class="text-slate-600 font-bold mb-6">See how it works in your classroom</p>
-                    <button onclick="openDemoModal()" class="btn-3d w-full text-center block text-lg py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white border-green-500">
-                        Schedule Demo
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================ -->
-    <!-- 10. FOOTER -->
-    <!-- ============================================ -->
-    <footer class="bg-slate-900 py-16 border-t-4 border-yellow-400">
+    <footer class="bg-white py-16 border-t-4 border-purple-500">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid md:grid-cols-4 gap-12 mb-12">
                 <div>
                     <div class="flex items-center space-x-3 mb-6">
-                        <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center overflow-hidden">
+                        <div class="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center overflow-hidden">
                             <img src="/images/Sciquest_logo_highres.png" alt="SciQuest Heroes" class="w-full h-full object-contain">
                         </div>
-                        <span class="font-fredoka text-2xl font-black text-white">SciQuest Heroes</span>
+                        <span class="font-fredoka text-2xl font-black text-slate-800">SciQuest Heroes</span>
                     </div>
-                    <p class="text-white/70 text-lg font-bold">
+                    <p class="text-slate-600 text-base font-semibold">
                         Making science magical through curiosity.
                     </p>
-                    
-                    <!-- QR Code in Footer -->
-                    <div class="mt-6">
-                        <p class="text-white/90 font-bold mb-2">Scan to try on mobile:</p>
-                        <div class="qr-code-box bg-white">
-                            <canvas id="qrCodeFooter" width="120" height="120"></canvas>
-                        </div>
-                    </div>
                 </div>
                 <div>
-                    <h4 class="font-fredoka font-black text-white mb-6 text-xl">Product</h4>
-                    <ul class="space-y-3 text-white/70 font-bold text-lg">
-                        <li><a href="#for-parents" class="hover:text-white transition">For Parents</a></li>
-                        <li><a href="#for-teachers" class="hover:text-white transition">For Teachers</a></li>
-                        <li><a href="stories/index.html" class="hover:text-white transition">Stories</a></li>
-                        <li><a href="#" class="hover:text-white transition">Pricing</a></li>
+                    <h4 class="font-fredoka font-black text-slate-800 mb-6 text-lg">Product</h4>
+                    <ul class="space-y-3 text-slate-600 font-semibold text-base">
+                        <li><a href="#for-parents" class="hover:text-purple-600 transition">For Parents</a></li>
+                        <li><a href="#for-teachers" class="hover:text-purple-600 transition">For Teachers</a></li>
+                        <li><a href="stories/index.html" class="hover:text-purple-600 transition">Stories</a></li>
+                        <li><a href="#" class="hover:text-purple-600 transition">Pricing</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-fredoka font-black text-white mb-6 text-xl">Company</h4>
-                    <ul class="space-y-3 text-white/70 font-bold text-lg">
-                        <li><a href="#" class="hover:text-white transition">About</a></li>
-                        <li><a href="#" class="hover:text-white transition">Research</a></li>
-                        <li><a href="#" class="hover:text-white transition">Contact</a></li>
+                    <h4 class="font-fredoka font-black text-slate-800 mb-6 text-lg">Company</h4>
+                    <ul class="space-y-3 text-slate-600 font-semibold text-base">
+                        <li><a href="#" class="hover:text-purple-600 transition">About</a></li>
+                        <li><a href="#" class="hover:text-purple-600 transition">Contact</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-fredoka font-black text-white mb-6 text-xl">Legal</h4>
-                    <ul class="space-y-3 text-white/70 font-bold text-lg">
-                        <li><a href="#" class="hover:text-white transition">Privacy</a></li>
-                        <li><a href="#" class="hover:text-white transition">Terms</a></li>
-                        <li><a href="#" class="hover:text-white transition">COPPA</a></li>
+                    <h4 class="font-fredoka font-black text-slate-800 mb-6 text-lg">Legal</h4>
+                    <ul class="space-y-3 text-slate-600 font-semibold text-base">
+                        <li><a href="#" class="hover:text-purple-600 transition">Privacy</a></li>
+                        <li><a href="#" class="hover:text-purple-600 transition">Terms</a></li>
+                        <li><a href="#" class="hover:text-purple-600 transition">COPPA</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-white/10 pt-8 text-center text-white/70 font-bold text-lg">
-                <p>© 2025 SciQuest Heroes. Where every child becomes a science superhero! 🚀✨</p>
+            <div class="border-t border-slate-200 pt-8 text-center text-slate-600 font-semibold text-base">
+                <p>© 2025 SciQuest Heroes. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -1090,49 +636,11 @@
     <!-- SCRIPTS -->
     <!-- ============================================ -->
     <script>
-        // Generate QR Codes
-        function generateQRCode(canvasId, text) {
-            if (typeof QRCode !== 'undefined') {
-                QRCode.toCanvas(document.getElementById(canvasId), text, {
-                    width: document.getElementById(canvasId).width,
-                    margin: 2,
-                    color: {
-                        dark: '#000000',
-                        light: '#FFFFFF'
-                    }
-                }, function (error) {
-                    if (error) console.error('QR Code generation error:', error);
-                });
-            }
-        }
-
-        // Generate QR codes on page load
+        // Initialize on page load
         window.addEventListener('DOMContentLoaded', () => {
-            const currentUrl = window.location.origin;
-            generateQRCode('qrCodeCanvas', currentUrl);
-            generateQRCode('qrCodeFooter', currentUrl);
-            
-            // Initialize particles
-            initParticles();
-            
             // Initialize reveal animations
             initReveal();
         });
-
-        // Particles animation
-        function initParticles() {
-            const container = document.getElementById('heroParticles');
-            if (!container) return;
-            
-            for (let i = 0; i < 30; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 15 + 's';
-                particle.style.animationDuration = (10 + Math.random() * 10) + 's';
-                container.appendChild(particle);
-            }
-        }
 
         // Reveal animation on scroll
         function initReveal() {
@@ -1150,27 +658,6 @@
             revealOnScroll(); // Initial check
         }
 
-        // Waitlist form submission
-        document.getElementById('waitlistForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('waitlistEmail').value;
-            const userType = document.getElementById('waitlistType').value;
-            
-            // TODO: Implement waitlist API call
-            alert(`Thank you! We'll send early access info to ${email}`);
-            
-            // Reset form
-            document.getElementById('waitlistForm').reset();
-        });
-
-        // Scroll to waitlist
-        function scrollToWaitlist() {
-            document.querySelector('.waitlist-box').scrollIntoView({ 
-                behavior: 'smooth',
-                block: 'center'
-            });
-            document.getElementById('waitlistEmail').focus();
-        }
 
         // FAQ Toggle
         function toggleFAQ(element) {
@@ -1188,10 +675,6 @@
             }
         }
 
-        // Demo Modal (placeholder)
-        function openDemoModal() {
-            alert('Teacher demo scheduling coming soon! For now, please contact us at teachers@sciquestheroes.com');
-        }
     </script>
 
     <script type="module" src="auth/index-auth.js"></script>
