@@ -12,7 +12,7 @@
  */
 
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
-import { createSupabaseClientAsync } from '../config.js';
+import { createSupabaseClientAsync, getEnvVarAsync, configReady, getEnvVar } from '../config.js';
 
 // ============================================================================
 // Configuration
@@ -30,9 +30,16 @@ async function getSupabaseClient() {
   return supabaseClient;
 }
 
-// API Keys from .env (must have VITE_ prefix to be exposed to frontend)
-const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
-const FAL_API_KEY = import.meta.env.VITE_FAL_API_KEY;
+// Use runtime config system (from Netlify function)
+// Initialize with build-time fallback, will be updated after config is ready
+let OPENAI_API_KEY = getEnvVar('VITE_OPENAI_API_KEY');
+let FAL_API_KEY = getEnvVar('VITE_FAL_API_KEY');
+
+// Update environment variables after Netlify config is ready
+configReady.then(async () => {
+  OPENAI_API_KEY = await getEnvVarAsync('VITE_OPENAI_API_KEY');
+  FAL_API_KEY = await getEnvVarAsync('VITE_FAL_API_KEY');
+});
 
 // Fal.ai endpoint for Flux-pro/kontext/multi
 const FAL_KONTEXT_MULTI_URL = 'https://fal.run/fal-ai/flux-pro/kontext/multi';
@@ -624,13 +631,17 @@ function validateForm() {
 async function generatePanels() {
   if (!validateForm()) return;
 
-  // Validate API keys
-  if (!OPENAI_API_KEY) {
-    alert('Missing VITE_OPENAI_API_KEY in .env file');
+  // Validate API keys (wait for runtime config to ensure we have latest values)
+  await configReady;
+  const openaiKey = await getEnvVarAsync('VITE_OPENAI_API_KEY');
+  const falKey = await getEnvVarAsync('VITE_FAL_API_KEY');
+  
+  if (!openaiKey) {
+    alert('Missing VITE_OPENAI_API_KEY. Please set it in Netlify environment variables.');
     return;
   }
-  if (!FAL_API_KEY) {
-    alert('Missing VITE_FAL_API_KEY in .env file');
+  if (!falKey) {
+    alert('Missing VITE_FAL_API_KEY. Please set it in Netlify environment variables.');
     return;
   }
 
@@ -818,6 +829,13 @@ async function generatePanels() {
  * Generate image prompts using GPT-4o (direct API call)
  */
 async function generatePromptsWithGPT(topic, gradeLevel, panelCount, guideCharacter, studentCharacter) {
+  // Get latest API key from runtime config
+  await configReady;
+  const openaiKey = await getEnvVarAsync('VITE_OPENAI_API_KEY');
+  if (!openaiKey) {
+    throw new Error('OpenAI API key not configured. Please set VITE_OPENAI_API_KEY in Netlify environment variables.');
+  }
+
   const template = SCENE_TEMPLATES[topic]?.[gradeLevel];
   if (!template) {
     throw new Error(`No template found for topic: ${topic}, grade: ${gradeLevel}`);
@@ -864,7 +882,7 @@ Return your response as a JSON object with two arrays:
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${OPENAI_API_KEY}`,
+      'Authorization': `Bearer ${openaiKey}`,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
@@ -897,6 +915,13 @@ Return your response as a JSON object with two arrays:
  * Generate image using Fal.ai Flux-pro/kontext/multi (direct API call)
  */
 async function generateImageWithFal(prompt, guideImageUrl, avatarImageUrl, panelIndex) {
+  // Get latest API key from runtime config
+  await configReady;
+  const falKey = await getEnvVarAsync('VITE_FAL_API_KEY');
+  if (!falKey) {
+    throw new Error('Fal.ai API key not configured. Please set VITE_FAL_API_KEY in Netlify environment variables.');
+  }
+
   // Filter to only include valid publicly accessible URLs
   // Local paths (starting with /) won't work with Fal.ai - they need http/https URLs
   const validUrls = [guideImageUrl, avatarImageUrl].filter(url => {
@@ -927,7 +952,7 @@ async function generateImageWithFal(prompt, guideImageUrl, avatarImageUrl, panel
   const response = await fetch(FAL_KONTEXT_MULTI_URL, {
     method: 'POST',
     headers: {
-      'Authorization': `Key ${FAL_API_KEY}`,
+      'Authorization': `Key ${falKey}`,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(requestBody)
@@ -1035,7 +1060,9 @@ async function savePanelToStorage(topic, gradeLevel, panelIndex, imageUrl) {
  * @returns {Promise<string[]>} Array of glossary term strings
  */
 async function generateGlossaryTerms(narrations, topic, gradeLevel) {
-  if (!OPENAI_API_KEY) {
+  await configReady;
+  const openaiKey = await getEnvVarAsync('VITE_OPENAI_API_KEY');
+  if (!openaiKey) {
     console.warn('OpenAI API key not available, skipping glossary generation');
     return [];
   }
@@ -1062,7 +1089,7 @@ Example format: ["photosynthesis", "chlorophyll", "carbon dioxide", "oxygen"]`;
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        'Authorization': `Bearer ${openaiKey}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -1111,7 +1138,9 @@ Example format: ["photosynthesis", "chlorophyll", "carbon dioxide", "oxygen"]`;
  * @returns {Promise<Object>} Object mapping term to definition { term: definition }
  */
 async function generateGlossaryDefinitions(terms, topic, gradeLevel) {
-  if (!OPENAI_API_KEY || terms.length === 0) {
+  await configReady;
+  const openaiKey = await getEnvVarAsync('VITE_OPENAI_API_KEY');
+  if (!openaiKey || terms.length === 0) {
     return {};
   }
 
@@ -1142,7 +1171,7 @@ Make sure definitions are perfect for ${gradeLevel} students!`;
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        'Authorization': `Bearer ${openaiKey}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -2036,6 +2065,11 @@ async function loadStoryForEditing(storyId) {
   try {
     log('Loading story for editing...', 'info');
     log(`  Looking for story ID: ${storyId}`, 'info');
+    
+    const supabase = await getSupabaseClient();
+    if (!supabase) {
+      throw new Error('Supabase not configured. Cannot load story.');
+    }
     
     // Try ai_stories table first (new table)
     let { data: story, error } = await supabase

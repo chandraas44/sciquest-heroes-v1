@@ -25,6 +25,27 @@ let fetchPromise = null;
 let fetchStarted = false;
 
 /**
+ * Safely decode base64-encoded value
+ * If decoding fails (not base64), returns original value
+ * @param {string} value - The value to decode
+ * @returns {string} - Decoded value or original if not base64
+ */
+function safeBase64Decode(value) {
+  if (!value || typeof value !== 'string') {
+    return value;
+  }
+  
+  try {
+    // Try to decode - if it fails, it's not base64 encoded
+    const decoded = atob(value);
+    return decoded;
+  } catch (error) {
+    // Not base64 encoded, return original value
+    return value;
+  }
+}
+
+/**
  * Fetch environment variables from Netlify function
  * Caches the result for the session
  */
@@ -62,8 +83,13 @@ async function fetchEnvFromNetlify() {
       if (response.ok) {
         const data = await response.json();
         if (data.success && data.env) {
-          cachedEnvVars = data.env;
-          console.log('[config] ✅ Loaded environment variables from Netlify function');
+          // Decode base64-encoded values (if they are encoded)
+          const decodedEnv = {};
+          for (const key in data.env) {
+            decodedEnv[key] = safeBase64Decode(data.env[key]);
+          }
+          cachedEnvVars = decodedEnv;
+          console.log('[config] ✅ Loaded environment variables from Netlify function (decoded base64 if encoded)');
           return cachedEnvVars;
         }
       }
@@ -89,19 +115,22 @@ async function fetchEnvFromNetlify() {
  */
 export function getEnvVar(key) {
   // First, try cached runtime variables from Netlify function
+  // (These are already decoded in fetchEnvFromNetlify)
   if (cachedEnvVars && cachedEnvVars[key]) {
     return cachedEnvVars[key];
   }
 
   // Fallback to build-time VITE_ variables (for local dev and build-time)
+  // Decode if base64 encoded (for consistency)
   // This ensures immediate availability even if fetch hasn't completed
   if (import.meta.env && import.meta.env[key]) {
-    return import.meta.env[key];
+    return safeBase64Decode(import.meta.env[key]);
   }
 
   // Try process.env for Node.js environments
+  // Decode if base64 encoded (for consistency)
   if (typeof process !== 'undefined' && process.env && process.env[key]) {
-    return process.env[key];
+    return safeBase64Decode(process.env[key]);
   }
 
   return undefined;
