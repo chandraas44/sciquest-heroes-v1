@@ -1,5 +1,5 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
-import { supabaseConfig, createSupabaseClientAsync, getEnvVarAsync, configReady, getEnvVar } from '../config.js';
+import { createSupabaseClientAsync, getEnvVarAsync, configReady, getEnvVar } from '../config.js';
 
 // Use runtime config system (from Netlify function)
 // Initialize with build-time fallback, will be updated after config is ready
@@ -21,10 +21,6 @@ configReady.then(async () => {
   USE_STORY_MOCKS = (USE_STORY_MOCKS_RAW ?? 'true') === 'true';
 });
 
-async function hasSupabaseConfig() {
-  const config = await supabaseConfig.ready().catch(() => ({ url: null, anonKey: null }));
-  return Boolean(config?.url && config?.anonKey);
-}
 
 export async function getSupabaseClient() {
   if (!supabaseClient) {
@@ -35,10 +31,7 @@ export async function getSupabaseClient() {
 
 async function shouldUseMockData() {
   const useMocksRaw = await getEnvVarAsync('VITE_USE_STORY_MOCKS');
-  const useMocks = (useMocksRaw ?? 'true') === 'true';
-  if (useMocks) return true;
-  // Check sync config (has build-time fallback)
-  return !(supabaseConfig?.url && supabaseConfig?.anonKey);
+  return (useMocksRaw ?? 'true') === 'true';
 }
 
 async function loadMockStories() {
