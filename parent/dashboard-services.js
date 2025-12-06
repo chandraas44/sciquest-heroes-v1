@@ -641,7 +641,7 @@ export async function logAnalyticsEvent(eventName, eventData = {}) {
 
 
 export async function getAvatars() {
-  const client = getSupabaseClient();
+  const client = await getSupabaseClient();
   if (!client) return [];
 
   try {
@@ -726,7 +726,7 @@ export async function createChildAccount(childData) {
     }
 
     const childUserId = authData.user.id;
-    const client = getSupabaseClient(); // Parent's client
+    const client = await getSupabaseClient(); // Parent's client
 
     // 2. Create user profile linked to parent
     const { error: profileError } = await client
@@ -757,7 +757,7 @@ export async function createChildAccount(childData) {
 }
 
 export async function signOutUser() {
-  const client = getSupabaseClient();
+  const client = await getSupabaseClient();
   if (!client) return { error: 'No client' };
   return await client.auth.signOut();
 }
