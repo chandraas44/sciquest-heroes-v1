@@ -62,6 +62,20 @@ function wireButtons(panels, progress) {
   resumeBtn.addEventListener('click', () => goToReader(resumePanel));
 
   const currentPanelTopic = panels[resumePanel]?.chatTopicId || panels[0]?.chatTopicId;
+  
+  // Update chat button label with character name
+  (async () => {
+    if (currentPanelTopic && openChatBtn) {
+      try {
+        const { getChatButtonLabel } = await import('./topic-characters.js');
+        openChatBtn.textContent = getChatButtonLabel(currentPanelTopic);
+      } catch (error) {
+        console.warn('[story-detail] Failed to load character name:', error);
+        openChatBtn.textContent = 'Launch Topic Chat';
+      }
+    }
+  })();
+  
   openChatBtn.addEventListener('click', () => {
     const chatUrl = new URL('../chat/index.html', window.location.origin);
     if (currentPanelTopic) chatUrl.searchParams.set('topicId', currentPanelTopic);

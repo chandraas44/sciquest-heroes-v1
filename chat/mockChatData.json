@@ -10,6 +10,66 @@
         "What is photosynthesis?",
         "Why do plants need sunlight?"
       ]
+    },
+    {
+      "id": "solar-system",
+      "name": "Solar System",
+      "description": "Journey through space and learn about planets",
+      "icon": "🪐",
+      "quickPrompts": [
+        "How many planets are there?",
+        "What is the biggest planet?",
+        "Why is Earth special?",
+        "How does the sun work?"
+      ]
+    },
+    {
+      "id": "water-cycle",
+      "name": "Water Cycle",
+      "description": "Explore the amazing journey of water on Earth",
+      "icon": "💧",
+      "quickPrompts": [
+        "How does water move in nature?",
+        "What is evaporation?",
+        "Why does it rain?",
+        "Where does water come from?"
+      ]
+    },
+    {
+      "id": "human-body",
+      "name": "Human Body",
+      "description": "Learn about the amazing systems inside your body",
+      "icon": "🫀",
+      "quickPrompts": [
+        "How does my heart work?",
+        "Why do I need to breathe?",
+        "What does my brain do?",
+        "How do my muscles work?"
+      ]
+    },
+    {
+      "id": "electricity",
+      "name": "Electricity",
+      "description": "Discover the power of electricity and how it works",
+      "icon": "⚡",
+      "quickPrompts": [
+        "What is electricity?",
+        "How does a light bulb work?",
+        "Why do we need electricity?",
+        "How is electricity made?"
+      ]
+    },
+    {
+      "id": "magnetism",
+      "name": "Magnetism",
+      "description": "Explore the invisible force of magnets",
+      "icon": "🧲",
+      "quickPrompts": [
+        "What is a magnet?",
+        "How do magnets work?",
+        "Why do magnets stick to metal?",
+        "What can magnets do?"
+      ]
     }
   ],
   "responses": {

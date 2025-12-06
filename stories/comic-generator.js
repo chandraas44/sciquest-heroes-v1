@@ -738,7 +738,7 @@ async function generatePanels() {
         savedPanels.push({
           panelId: `panel-${String(panel.index + 1).padStart(2, '0')}`,
           imageUrl: publicUrl,
-          narration: panel.description,
+          narration: panel.description || '', // Ensure narration is always a string, never undefined
           storagePath
         });
 
@@ -1432,14 +1432,37 @@ async function saveAsStory() {
       reading_level: getReadingLevel(state.gradeLevel), // Formatted reading level
       estimated_time: `${Math.ceil(state.generatedPanels.length * 1.5)} min`,
       summary: `An AI-generated adventure about ${formatTopicName(state.topic)} for ${state.gradeLevel} learners.`,
-      panels: state.generatedPanels.map((panel) => ({
-        panelId: panel.panelId,
-        imageUrl: panel.imageUrl,
-        narration: panel.narration,
-        glossaryTerms: panel.glossaryTerms || [],
-        chatTopicId: state.topic,
-        ctaLabel: `Ask about ${formatTopicName(state.topic)}`
-      })),
+      panels: state.generatedPanels.map((panel) => {
+        // Get character name for chat button label
+        let ctaLabel = `Ask about ${formatTopicName(state.topic)}`;
+        try {
+          // Try to get character name (will be available after topic-characters.js is loaded)
+          // For now, use a simple mapping
+          const characterMap = {
+            'photosynthesis': 'Mr. Chloro',
+            'solar-system': 'Solaris',
+            'water-cycle': 'Water Wizard',
+            'human-body': 'Dr. Body',
+            'electricity': 'Sparky',
+            'magnetism': 'Magno'
+          };
+          const characterName = characterMap[state.topic] || null;
+          if (characterName) {
+            ctaLabel = `Ask ${characterName}`;
+          }
+        } catch (e) {
+          // Fallback to default if character mapping fails
+        }
+        
+        return {
+          panelId: panel.panelId,
+          imageUrl: panel.imageUrl,
+          narration: panel.narration || '', // Ensure narration is always a string, never undefined
+          glossaryTerms: panel.glossaryTerms || [],
+          chatTopicId: state.topic,
+          ctaLabel: ctaLabel
+        };
+      }),
       enabled: false, // Draft - not published yet
       created_by: session.user.id,
       created_at: timestamp
@@ -1733,6 +1756,15 @@ async function publishStory(publishTopic = null, publishGrade = null) {
       }
     }
 
+    // Create topic in topics table if it doesn't exist
+    log('Creating/verifying topic in database...', 'info');
+    const topicCreated = await createTopicIfNotExists(finalTopic, topicTag, TOPIC_DESCRIPTIONS[finalTopic] || `Learn about ${topicTag}`);
+    if (topicCreated) {
+      log(`✓ Topic "${topicTag}" is ready for chat`, 'success');
+    } else {
+      log('⚠️ Topic creation failed, but story is published', 'warning');
+    }
+
     state.isPublished = true;
     updatePublishButtonState();
 
@@ -1815,6 +1847,140 @@ function getReadingLevel(gradeLevel) {
     '5-6': 'Ages 10-11'
   };
   return levels[gradeLevel] || gradeLevel;
+}
+
+// ============================================================================
+// Topic Management Functions
+// ============================================================================
+
+/**
+ * Topic display names mapping
+ */
+const TOPIC_DISPLAY_NAMES = {
+  'photosynthesis': 'Photosynthesis',
+  'solar-system': 'Solar System',
+  'water-cycle': 'Water Cycle',
+  'human-body': 'Human Body',
+  'electricity': 'Electricity',
+  'magnetism': 'Magnetism'
+};
+
+/**
+ * Topic descriptions mapping
+ */
+const TOPIC_DESCRIPTIONS = {
+  'photosynthesis': 'Discover how plants make food from sunlight',
+  'solar-system': 'Journey through space and learn about planets',
+  'water-cycle': 'Explore the amazing journey of water on Earth',
+  'human-body': 'Learn about the amazing systems inside your body',
+  'electricity': 'Discover the power of electricity and how it works',
+  'magnetism': 'Explore the invisible force of magnets'
+};
+
+/**
+ * Create a topic in the topics table if it doesn't exist
+ * @param {string} topicId - Topic identifier (e.g., "photosynthesis")
+ * @param {string} topicName - Display name (e.g., "Photosynthesis")
+ * @param {string} description - Topic description (optional)
+ * @returns {Promise<boolean>} True if topic was created or already exists
+ */
+async function createTopicIfNotExists(topicId, topicName, description = null) {
+  if (!topicId || !topicName) {
+    console.warn('[comic-generator] Cannot create topic: missing topicId or topicName');
+    return false;
+  }
+
+  try {
+    // Check if topic already exists
+    const { data: existingTopic, error: checkError } = await supabase
+      .from('topics')
+      .select('id, name')
+      .eq('name', topicName)
+      .maybeSingle();
+
+    if (checkError && checkError.code !== 'PGRST116') { // PGRST116 = not found, which is OK
+      console.error('[comic-generator] Error checking topic existence:', checkError);
+      return false;
+    }
+
+    if (existingTopic) {
+      console.log(`[comic-generator] Topic "${topicName}" already exists`);
+      return true;
+    }
+
+    // Create topic
+    const topicData = {
+      name: topicName,
+      description: description || TOPIC_DESCRIPTIONS[topicId] || `Learn about ${topicName}`,
+      enabled: true
+    };
+
+    const { error: insertError } = await supabase
+      .from('topics')
+      .insert([topicData]);
+
+    if (insertError) {
+      // If it's a unique constraint violation, topic already exists (race condition)
+      if (insertError.code === '23505') {
+        console.log(`[comic-generator] Topic "${topicName}" was created by another process`);
+        return true;
+      }
+      console.error('[comic-generator] Error creating topic:', insertError);
+      return false;
+    }
+
+    console.log(`[comic-generator] ✓ Created topic: "${topicName}"`);
+    return true;
+  } catch (error) {
+    console.error('[comic-generator] Exception creating topic:', error);
+    return false;
+  }
+}
+
+/**
+ * Ensure all predefined topics exist in the topics table
+ * This should be called on initialization or as a one-time migration
+ */
+async function ensureAllTopicsExist() {
+  const topicsToCreate = [
+    { id: 'photosynthesis', name: 'Photosynthesis', description: TOPIC_DESCRIPTIONS['photosynthesis'] },
+    { id: 'solar-system', name: 'Solar System', description: TOPIC_DESCRIPTIONS['solar-system'] },
+    { id: 'water-cycle', name: 'Water Cycle', description: TOPIC_DESCRIPTIONS['water-cycle'] },
+    { id: 'human-body', name: 'Human Body', description: TOPIC_DESCRIPTIONS['human-body'] },
+    { id: 'electricity', name: 'Electricity', description: TOPIC_DESCRIPTIONS['electricity'] },
+    { id: 'magnetism', name: 'Magnetism', description: TOPIC_DESCRIPTIONS['magnetism'] }
+  ];
+
+  log('Ensuring all topics exist in database...', 'info');
+  
+  let createdCount = 0;
+  let existingCount = 0;
+
+  for (const topic of topicsToCreate) {
+    const result = await createTopicIfNotExists(topic.id, topic.name, topic.description);
+    if (result) {
+      // Check if it was newly created or already existed
+      const { data: checkTopic } = await supabase
+        .from('topics')
+        .select('created_at')
+        .eq('name', topic.name)
+        .maybeSingle();
+      
+      // If created_at is very recent (within last second), it was just created
+      if (checkTopic) {
+        const createdTime = new Date(checkTopic.created_at).getTime();
+        const now = Date.now();
+        if (now - createdTime < 1000) {
+          createdCount++;
+        } else {
+          existingCount++;
+        }
+      }
+    }
+  }
+
+  log(`✓ Topics check complete: ${createdCount} created, ${existingCount} already existed`, 'success');
+  return { created: createdCount, existing: existingCount };
 }
 
 // ============================================================================
@@ -1915,6 +2081,14 @@ async function init() {
   
   // Load student avatars from Supabase storage
   await loadAvatars();
+  
+  // Ensure all topics exist in database (for chat functionality)
+  try {
+    await ensureAllTopicsExist();
+  } catch (error) {
+    console.warn('[comic-generator] Failed to ensure topics exist:', error);
+    // Don't block initialization if this fails
+  }
   
   // Initialize publish button state
   updatePublishButtonState();
@@ -2122,7 +2296,7 @@ async function loadStoryForEditing(storyId) {
     state.generatedPanels = panels.map((panel, index) => ({
       panelId: panel.panelId || `panel-${String(index + 1).padStart(2, '0')}`,
       imageUrl: panel.imageUrl,
-      narration: panel.narration,
+      narration: panel.narration || '', // Ensure narration is always a string, never undefined
       glossaryTerms: panel.glossaryTerms || [],
       storagePath: null // We don't have this for loaded stories
     }));
@@ -2199,6 +2373,16 @@ async function quickPublishStory(storyId) {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) throw new Error('Not authenticated');
 
+    // First, get the story to find its topic
+    const { data: story, error: storyError } = await supabase
+      .from('ai_stories')
+      .select('topic, topic_tag')
+      .eq('id', storyId)
+      .maybeSingle();
+
+    if (storyError) throw storyError;
+    if (!story) throw new Error('Story not found');
+
     const timestamp = new Date().toISOString();
 
     // Update story to published in ai_stories table
@@ -2213,6 +2397,12 @@ async function quickPublishStory(storyId) {
       .eq('id', storyId);
 
     if (dbError) throw dbError;
+
+    // Create topic in topics table if it doesn't exist
+    if (story.topic && story.topic_tag) {
+      log('Creating/verifying topic in database...', 'info');
+      await createTopicIfNotExists(story.topic, story.topic_tag, TOPIC_DESCRIPTIONS[story.topic] || `Learn about ${story.topic_tag}`);
+    }
 
     log('✓ Story published successfully!', 'success');
     alert('Story published! It will now appear on the Stories page.');

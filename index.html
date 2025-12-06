@@ -100,9 +100,9 @@
             background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
             border: 4px solid #1e293b;
             border-radius: 60px;
-            padding: 20px 50px;
+            padding: 16px 40px;
             font-weight: 800;
-            font-size: 22px;
+            font-size: 18px;
             color: #1e293b;
             box-shadow: 0 8px 0 #92400e, 0 12px 30px rgba(0, 0, 0, 0.3);
             transition: all 0.2s ease;
@@ -112,6 +112,23 @@
             letter-spacing: 1px;
             display: inline-block;
             text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-3d::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-3d:hover::before {
+            left: 100%;
         }
 
         .btn-3d:hover {
@@ -210,8 +227,8 @@
         /* Responsive */
         @media (max-width: 768px) {
             .btn-3d {
-                font-size: 18px;
-                padding: 16px 32px;
+                font-size: 16px;
+                padding: 14px 28px;
             }
         }
     </style>
@@ -248,11 +265,11 @@
                 <div class="flex flex-wrap gap-4 justify-center mb-8">
                     <div class="trust-badge">
                         <i class="fas fa-shield-alt"></i>
-                        <span>COPPA Safe</span>
+                        <span>COPPA Compliant</span>
                     </div>
                     <div class="trust-badge">
                         <i class="fas fa-check-circle"></i>
-                        <span>100% Safe</span>
+                        <span>Kid-Safe & Secure</span>
                     </div>
                 </div>
 
@@ -273,7 +290,7 @@
     <!-- ============================================ -->
     <!-- 2. HOW WE HELP - Solution -->
     <!-- ============================================ -->
-    <section class="relative py-20 bg-gradient-to-br from-purple-50 to-pink-50">
+    <section id="how-it-works" class="relative py-20 bg-gradient-to-br from-purple-50 to-pink-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 reveal">
                 <h2 class="font-fredoka text-4xl md:text-5xl font-black text-slate-800 mb-4">
@@ -350,10 +367,10 @@
     <!-- ============================================ -->
     <!-- 4. FOR TEACHERS SECTION -->
     <!-- ============================================ -->
-    <section id="for-teachers" class="relative py-20 bg-gradient-to-br from-green-50 to-emerald-50">
+    <section id="for-teachers" class="relative py-20 bg-gradient-to-br from-purple-50 to-pink-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 reveal">
-                <div class="inline-block bg-gradient-to-r from-green-500 to-emerald-500 px-8 py-3 rounded-full mb-6">
+                <div class="inline-block bg-gradient-to-r from-purple-500 to-pink-500 px-8 py-3 rounded-full mb-6">
                     <span class="font-fredoka font-black text-white text-xl">FOR TEACHERS</span>
                 </div>
                 <h2 class="font-fredoka text-4xl md:text-5xl font-black text-slate-800 mb-4">
@@ -384,13 +401,13 @@
 
             <!-- Teacher CTA -->
             <div class="max-w-2xl mx-auto reveal">
-                <div class="bg-gradient-to-r from-green-500 to-emerald-500 rounded-3xl p-10 text-center text-white">
+                <div class="bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl p-10 text-center text-white">
                     <h3 class="font-fredoka text-3xl font-black mb-4">Try it FREE with your class</h3>
                     <p class="text-lg font-bold mb-6 opacity-90">
                         Free for first 30 students
                     </p>
                     <a href="auth/account-type-selection.html" 
-                        class="bg-white text-green-600 border-4 border-white rounded-full px-10 py-5 font-fredoka font-black text-xl hover:bg-green-50 transition inline-block">
+                        class="bg-white text-purple-600 border-4 border-white rounded-full px-10 py-5 font-fredoka font-black text-xl hover:bg-purple-50 transition inline-block">
                         Get Teacher Account
                     </a>
                 </div>
@@ -462,14 +479,14 @@
 
             <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                 <!-- Free Tier -->
-                <div class="bg-white rounded-3xl p-10 border-4 border-slate-300 reveal">
+                <div class="bg-white rounded-3xl p-10 border-4 border-slate-300 reveal flex flex-col">
                     <h3 class="font-fredoka text-3xl font-black text-slate-800 mb-4">Try It FREE</h3>
                     <div class="mb-6">
                         <span class="font-fredoka text-6xl font-black text-slate-800">$0</span>
                     </div>
                     <p class="text-slate-600 font-bold text-base mb-8">Try 3 stories, no credit card needed</p>
                     
-                    <ul class="space-y-3 mb-10">
+                    <ul class="space-y-3 mb-10 flex-grow">
                         <li class="flex items-start gap-3">
                             <i class="fas fa-check-circle text-green-500 text-xl mt-1"></i>
                             <span class="text-slate-700 font-semibold text-base">3 Complete Stories</span>
@@ -484,13 +501,13 @@
                         </li>
                     </ul>
 
-                    <a href="auth/account-type-selection.html" class="btn-3d w-full text-center block">
+                    <a href="auth/account-type-selection.html" class="btn-3d w-full text-center block mt-auto">
                         Start Free Trial
                     </a>
                 </div>
 
                 <!-- Paid Tier -->
-                <div class="bg-white rounded-3xl p-10 border-4 border-yellow-400 relative transform scale-105 reveal">
+                <div class="bg-white rounded-3xl p-10 border-4 border-yellow-400 relative transform scale-105 reveal flex flex-col">
                     <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-yellow-400 border-4 border-slate-800 rounded-full px-6 py-2">
                         <span class="font-fredoka font-black text-slate-800 text-base">BEST VALUE</span>
                     </div>
@@ -502,7 +519,7 @@
                     </div>
                     <p class="text-slate-600 font-bold text-base mb-8">Everything, unlimited</p>
                     
-                    <ul class="space-y-3 mb-10">
+                    <ul class="space-y-3 mb-10 flex-grow">
                         <li class="flex items-start gap-3">
                             <i class="fas fa-check-circle text-green-500 text-xl mt-1"></i>
                             <span class="text-slate-700 font-semibold text-base">Unlimited Stories</span>
@@ -521,10 +538,12 @@
                         </li>
                     </ul>
 
-                    <a href="auth/account-type-selection.html" class="btn-3d w-full text-center block">
-                        Start Free Trial
-                    </a>
-                    <p class="text-center text-slate-600 font-semibold mt-4 text-sm">Start with free trial, upgrade anytime</p>
+                    <div class="mt-auto">
+                        <p class="text-center text-slate-600 font-semibold mb-4 text-sm">Start with free trial, upgrade anytime</p>
+                        <a href="auth/account-type-selection.html" class="btn-3d w-full text-center block">
+                            Start Free Trial
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -607,22 +626,24 @@
                         <li><a href="#for-parents" class="hover:text-purple-600 transition">For Parents</a></li>
                         <li><a href="#for-teachers" class="hover:text-purple-600 transition">For Teachers</a></li>
                         <li><a href="stories/index.html" class="hover:text-purple-600 transition">Stories</a></li>
-                        <li><a href="#" class="hover:text-purple-600 transition">Pricing</a></li>
+                        <li><a href="pricing.html" class="hover:text-purple-600 transition">Pricing</a></li>
+                        <li><a href="topics.html" class="hover:text-purple-600 transition">Topics</a></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="font-fredoka font-black text-slate-800 mb-6 text-lg">Company</h4>
                     <ul class="space-y-3 text-slate-600 font-semibold text-base">
-                        <li><a href="#" class="hover:text-purple-600 transition">About</a></li>
-                        <li><a href="#" class="hover:text-purple-600 transition">Contact</a></li>
+                        <li><a href="about.html" class="hover:text-purple-600 transition">About</a></li>
+                        <li><a href="blog.html" class="hover:text-purple-600 transition">Blog</a></li>
+                        <li><a href="contact.html" class="hover:text-purple-600 transition">Contact</a></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="font-fredoka font-black text-slate-800 mb-6 text-lg">Legal</h4>
                     <ul class="space-y-3 text-slate-600 font-semibold text-base">
-                        <li><a href="#" class="hover:text-purple-600 transition">Privacy</a></li>
-                        <li><a href="#" class="hover:text-purple-600 transition">Terms</a></li>
-                        <li><a href="#" class="hover:text-purple-600 transition">COPPA</a></li>
+                        <li><a href="privacy.html" class="hover:text-purple-600 transition">Privacy</a></li>
+                        <li><a href="terms.html" class="hover:text-purple-600 transition">Terms</a></li>
+                        <li><a href="coppa.html" class="hover:text-purple-600 transition">COPPA</a></li>
                     </ul>
                 </div>
             </div>
