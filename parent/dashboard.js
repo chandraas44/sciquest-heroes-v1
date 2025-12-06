@@ -865,10 +865,6 @@ function validateStep1() {
     showAddChildError('Passwords do not match');
     return false;
   }
-  if (!age) {
-    showAddChildError('Age is required');
-    return false;
-  }
 
   return true;
 }
