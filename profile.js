@@ -177,42 +177,6 @@ async function loadUserProfile(userId, sessionEmail) {
     }
 }
 
-userMenuTrigger.addEventListener('click', (e) => {
-    e.stopPropagation();
-    dropdownMenu.classList.toggle('show');
-});
-
-document.addEventListener('click', (e) => {
-    if (!userMenuTrigger.contains(e.target) && !dropdownMenu.contains(e.target)) {
-        dropdownMenu.classList.remove('show');
-    }
-});
-
-logoutBtn.addEventListener('click', async () => {
-    try {
-        const supabase = await getSupabaseClient();
-        if (!supabase) {
-            localStorage.clear();
-            sessionStorage.clear();
-            window.location.href = 'auth/auth.html';
-            return;
-        }
-        const { error } = await supabase.auth.signOut();
-        if (error) throw error;
-
-        localStorage.clear();
-        sessionStorage.clear();
-
-        localStorage.clear();
-        sessionStorage.clear();
-
-        window.location.href = 'auth/auth.html';
-    } catch (error) {
-        console.error('Logout error:', error);
-        alert('Failed to logout. Please try again.');
-    }
-});
-
 profileForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     hideMessages();
