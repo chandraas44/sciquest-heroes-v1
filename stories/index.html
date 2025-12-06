@@ -126,32 +126,28 @@
   <script type="module" src="./stories-list.js"></script>
   <script type="module" src="../shared/logo-handler.js"></script>
   <script type="module">
-    // Logout functionality
-    const handleLogout = async () => {
-      try {
-        // Try Supabase logout if available
-        const { createSupabaseClientAsync } = await import('../config.js');
-        const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm');
+    // Authentication check - must be logged in to access stories
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
+    import { createSupabaseClientAsync } from '../config.js';
 
-        const supabase = await createSupabaseClientAsync(createClient);
-        if (supabase) {
-          const { error } = await supabase.auth.signOut();
-          if (error) throw error;
-        }
-      } catch (error) {
-        console.log('Supabase logout skipped (mock mode)');
+    async function checkAuth() {
+      const supabase = await createSupabaseClientAsync(createClient);
+      if (!supabase) {
+        window.location.href = '/auth/auth.html?mode=login';
+        return;
       }
 
-      // Clear all storage
-      localStorage.clear();
-      sessionStorage.clear();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        window.location.href = '/auth/auth.html?mode=login';
+        return;
+      }
 
-      // Redirect to auth page
-      window.location.href = '../auth/auth.html';
-    };
+      console.log('[stories/index] Authenticated user:', session.user.email);
+    }
 
-    document.getElementById('logoutBtn')?.addEventListener('click', handleLogout);
-    document.getElementById('logoutBtnMobile')?.addEventListener('click', handleLogout);
+    // Run auth check immediately
+    checkAuth();
   </script>
 </body>
 
