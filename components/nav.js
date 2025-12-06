@@ -133,6 +133,10 @@ function getCurrentPage() {
     return 'badges';
   }
 
+  if (path.includes('/games/curiosity-lab')) {
+    return 'curiosity-lab';
+  }
+
   if (path === '/' || path.includes('/index.html')) {
     return 'home';
   }
@@ -249,6 +253,7 @@ function buildNavLinks(isAuthenticated, basePath, currentPage, profile) {
     const storiesActive = currentPage === 'stories' || currentPage === 'stories-reader' || currentPage === 'stories-detail' ? 'text-purple-600 font-bold' : 'text-slate-700 hover:text-purple-600 transition font-bold';
     const chatActive = currentPage === 'chat' ? 'text-purple-600 font-bold' : 'text-slate-700 hover:text-purple-600 transition font-bold';
     const badgesActive = currentPage === 'badges' ? 'text-purple-600 font-bold' : 'text-slate-700 hover:text-purple-600 transition font-bold';
+    const curiosityLabActive = currentPage === 'curiosity-lab' ? 'text-purple-600 font-bold' : 'text-slate-700 hover:text-purple-600 transition font-bold';
 
     // Determine Home link based on account type
     let homeLink = `${basePath}index.html`; // Default fallback
@@ -286,8 +291,15 @@ function buildNavLinks(isAuthenticated, basePath, currentPage, profile) {
         </a>
         <a href="${basePath}badges/badges.html" class="font-fredoka ${badgesActive}">
           Badges
-        </a>
-      `;
+        </a>`;
+
+      // Add Curiosity Lab link for students
+      if (profile?.account_type === 'student') {
+        navItems += `
+        <a href="${basePath}games/curiosity-lab-preview.html" class="font-fredoka ${curiosityLabActive}">
+          Curiosity Lab
+        </a>`;
+      }
 
       links.push(navItems);
     }

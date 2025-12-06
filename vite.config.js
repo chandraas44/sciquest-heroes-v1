@@ -109,7 +109,15 @@ export default defineConfig({
         storyReader: resolve(__dirname, 'stories/reader.html'),
         chat: resolve(__dirname, 'chat/index.html'),
         parentDashboard: resolve(__dirname, 'parent/dashboard.html'),
-        badges: resolve(__dirname, 'badges/badges.html')
+        badges: resolve(__dirname, 'badges/badges.html'),
+        topics: resolve(__dirname, 'topics.html'),
+        pricing: resolve(__dirname, 'pricing.html'),
+        about: resolve(__dirname, 'about.html'),
+        blog: resolve(__dirname, 'blog.html'),
+        contact: resolve(__dirname, 'contact.html'),
+        privacy: resolve(__dirname, 'privacy.html'),
+        terms: resolve(__dirname, 'terms.html'),
+        coppa: resolve(__dirname, 'coppa.html')
       }
     }
   },

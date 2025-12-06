@@ -1221,7 +1221,15 @@ async function updatePanelUI() {
   helperTitleEl.textContent = panel.ctaLabel || 'Ask a question';
   helperTextEl.textContent = 'Use the chat companion to dig deeper into this scene.';
   progressSummaryEl.textContent = `Panel ${state.currentPanelIndex + 1}/${state.panelCount}`;
-  chatCtaBtn.textContent = panel.ctaLabel || 'Ask Mr.Chloro about Photosynthesis';
+  
+  // Update chat button label with character name
+  let chatButtonLabel = panel.ctaLabel;
+  if (!chatButtonLabel && panel.chatTopicId) {
+    // Import topic-characters dynamically to avoid circular dependencies
+    const { getChatButtonLabel } = await import('./topic-characters.js');
+    chatButtonLabel = getChatButtonLabel(panel.chatTopicId);
+  }
+  chatCtaBtn.textContent = chatButtonLabel || 'Ask the AI';
 
   chatCtaBtn.onclick = () => {
     const chatUrl = new URL('../chat/index.html', window.location.origin);

@@ -15,6 +15,11 @@ import {
 import {
   showBadgeCelebration
 } from '/shared/badge-celebration.js';
+import {
+  formatChatMessage
+} from './chat-message-formatter.js';
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
+import { supabaseConfig } from '/config.js';
 
 const params = new URLSearchParams(window.location.search);
 const topicId = params.get('topicId');
@@ -95,13 +100,25 @@ function renderMessage(message, isLoading = false) {
       </div>
     `;
   } else {
+    // Format AI messages with bullet points on separate lines
+    const messageContent = !isUser && message.content 
+      ? formatChatMessage(message.content)
+      : escapeHtml(message.content);
+    
     messageEl.innerHTML = `
       <div class="max-w-[80%] ${isUser ? 'bg-gradient-to-br from-purple-500 to-pink-500 text-white font-bold' : 'bg-[#E8D9FF] border-2 border-[#C8AFFF] text-slate-800'} rounded-3xl px-5 py-3 shadow-lg">
-        <p class="text-sm leading-relaxed">${message.content}</p>
+        <div class="text-sm leading-relaxed">${messageContent}</div>
       </div>
     `;
   }
   return messageEl;
+}
+
+function escapeHtml(text) {
+  if (typeof text !== 'string') return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
 }
 
 function renderMessages() {
@@ -251,7 +268,7 @@ async function initChatSession() {
   chatSessionEl.classList.remove('hidden');
 
   const topic = await getTopicById(topicId);
-  if (!topic) {
+  if (!topic || !topic.name) {
     chatWindowEl.innerHTML = `
       <div class="text-center py-12">
         <p class="text-slate-700 text-lg mb-4">Topic not found. Please go back and select a topic.</p>
@@ -266,15 +283,17 @@ async function initChatSession() {
   state.topicId = topicId;
   state.topic = topic;
   state.sessionId = generateSessionId();
-  topicNameEl.textContent = topic.name;
+  topicNameEl.textContent = topic.name || topicId;
 
   const savedTranscript = loadTranscript(state.sessionId);
   if (savedTranscript && savedTranscript.messages) {
     state.messages = savedTranscript.messages;
   } else {
+    // Get icon from topic or use default
+    const topicIcon = topic.icon || '🔬';
     const welcomeMessage = {
       role: 'ai',
-      content: `Hi! I'm here to help you learn about ${topic.name}! ${topic.icon} What would you like to know?`,
+      content: `Hi! I'm here to help you learn about ${topic.name}! ${topicIcon} What would you like to know?`,
       timestamp: new Date().toISOString()
     };
     state.messages = [welcomeMessage];
@@ -337,5 +356,58 @@ escalationBtnEl.addEventListener('click', () => {
 // window.addEventListener('online', showOfflineBannerIfNeeded);
 // window.addEventListener('offline', showOfflineBannerIfNeeded);
 
-initChatSession();
+/**
+ * Check if user is authenticated before allowing access to chat
+ */
+async function checkAuth() {
+  try {
+    const supabaseUrl = supabaseConfig.url;
+    const supabaseAnonKey = supabaseConfig.anonKey;
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.warn('[chat] Supabase config not available, skipping auth check');
+      return true; // Allow access if config not available (for development)
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (!session) {
+      window.location.href = '../auth/auth.html?mode=login';
+      return false;
+    }
+
+    // Verify user profile exists
+    const { data: profile, error } = await supabase
+      .from('user_profiles')
+      .select('*')
+      .eq('id', session.user.id)
+      .maybeSingle();
+
+    if (error) {
+      console.error('[chat] Error loading profile:', error);
+      // Still allow access if there's an error, but log it
+      return true;
+    }
+
+    if (!profile) {
+      window.location.href = '../auth/auth.html?mode=login';
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('[chat] Auth check failed:', error);
+    // In case of error, redirect to auth for safety
+    window.location.href = '../auth/auth.html?mode=login';
+    return false;
+  }
+}
+
+// Check authentication before initializing chat
+checkAuth().then((isAuthenticated) => {
+  if (isAuthenticated) {
+    initChatSession();
+  }
+});
 

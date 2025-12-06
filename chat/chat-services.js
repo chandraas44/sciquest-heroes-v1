@@ -85,13 +85,88 @@ export async function getTopicCatalog() {
       .order('name');
 
     if (error) throw error;
-    return data || [];
+    
+    // Add quick prompts and icons to topics from database
+    const topicsWithPrompts = (data || []).map(topic => {
+      // Find the topic identifier by matching name
+      const topicId = Object.keys(TOPIC_ID_TO_NAME).find(
+        id => TOPIC_ID_TO_NAME[id] === topic.name
+      ) || topic.name.toLowerCase().replace(/\s+/g, '-');
+      
+      return {
+        ...topic,
+        id: topicId, // Use string identifier instead of UUID
+        quickPrompts: topic.quick_prompts || TOPIC_QUICK_PROMPTS[topicId] || [],
+        icon: topic.icon || TOPIC_ICONS[topicId] || '🔬'
+      };
+    });
+    
+    return topicsWithPrompts;
   } catch (error) {
     console.warn('[chat] Supabase topics fetch failed, reverting to mock data', error);
     const data = await loadMockChatData();
     return data.topics || [];
   }
 }
+
+// Map topic identifiers to display names
+const TOPIC_ID_TO_NAME = {
+  'photosynthesis': 'Photosynthesis',
+  'solar-system': 'Solar System',
+  'water-cycle': 'Water Cycle',
+  'human-body': 'Human Body',
+  'electricity': 'Electricity',
+  'magnetism': 'Magnetism'
+};
+
+// Map topic identifiers to quick prompts
+const TOPIC_QUICK_PROMPTS = {
+  'photosynthesis': [
+    'How do plants make food?',
+    'What is photosynthesis?',
+    'Why do plants need sunlight?'
+  ],
+  'solar-system': [
+    'How many planets are there?',
+    'What is the biggest planet?',
+    'Why is Earth special?',
+    'How does the sun work?'
+  ],
+  'water-cycle': [
+    'How does water move in nature?',
+    'What is evaporation?',
+    'Why does it rain?',
+    'Where does water come from?'
+  ],
+  'human-body': [
+    'How does my heart work?',
+    'Why do I need to breathe?',
+    'What does my brain do?',
+    'How do my muscles work?'
+  ],
+  'electricity': [
+    'What is electricity?',
+    'How does a light bulb work?',
+    'Why do we need electricity?',
+    'How is electricity made?'
+  ],
+  'magnetism': [
+    'What is a magnet?',
+    'How do magnets work?',
+    'Why do magnets stick to metal?',
+    'What can magnets do?'
+  ]
+};
+
+// Map topic identifiers to icons
+const TOPIC_ICONS = {
+  'photosynthesis': '🌱',
+  'solar-system': '🪐',
+  'water-cycle': '💧',
+  'human-body': '🫀',
+  'electricity': '⚡',
+  'magnetism': '🧲'
+};
 
 export async function getTopicById(topicId) {
   if (!topicId) throw new Error('topicId is required');
@@ -107,11 +182,31 @@ export async function getTopicById(topicId) {
   }
 
   try {
-    const { data, error } = await client
+    // First, try to query by name (mapping topicId to display name)
+    // The topics table uses UUID for id, but we use string identifiers
+    const topicName = TOPIC_ID_TO_NAME[topicId] || topicId;
+    
+    let { data, error } = await client
       .from('topics')
       .select('*')
-      .eq('id', topicId)
+      .eq('name', topicName)
       .maybeSingle();
+
+    // If not found by name, try by id (in case it's a UUID)
+    if (!data && !error) {
+      const { data: dataById, error: errorById } = await client
+        .from('topics')
+        .select('*')
+        .eq('id', topicId)
+        .maybeSingle();
+      
+      if (dataById) {
+        data = dataById;
+        error = null;
+      } else if (errorById) {
+        error = errorById;
+      }
+    }
 
     if (error) {
       console.warn('[chat] Supabase topic query error:', error.message || error);
@@ -121,12 +216,71 @@ export async function getTopicById(topicId) {
     }
     
     if (!data) {
-      // Topic not found in Supabase, try mock data
+      // Topic not found in Supabase, try to create it
+      console.log(`[chat] Topic "${topicName}" not found, attempting to create...`);
+      
+      // Get description from mapping
+      const topicDescriptions = {
+        'Photosynthesis': 'Discover how plants make food from sunlight',
+        'Solar System': 'Journey through space and learn about planets',
+        'Water Cycle': 'Explore the amazing journey of water on Earth',
+        'Human Body': 'Learn about the amazing systems inside your body',
+        'Electricity': 'Discover the power of electricity and how it works',
+        'Magnetism': 'Explore the invisible force of magnets'
+      };
+      
+      // Try to create the topic
+      const topicData = {
+        name: topicName,
+        description: topicDescriptions[topicName] || `Learn about ${topicName}`,
+        enabled: true
+      };
+      
+      const { data: newTopic, error: createError } = await client
+        .from('topics')
+        .insert([topicData])
+        .select()
+        .single();
+      
+      if (newTopic && !createError) {
+        console.log(`[chat] ✓ Created topic "${topicName}"`);
+        return {
+          ...newTopic,
+          id: topicId, // Use the string identifier
+          identifier: topicId,
+          quickPrompts: TOPIC_QUICK_PROMPTS[topicId] || [],
+          icon: TOPIC_ICONS[topicId] || '🔬'
+        };
+      }
+      
+      // If creation failed, try mock data
       const mockData = await loadMockChatData();
-      return mockData.topics.find((topic) => topic.id === topicId) || null;
+      const mockTopic = mockData.topics.find((topic) => topic.id === topicId);
+      if (mockTopic) {
+        console.log(`[chat] Using mock topic for "${topicId}"`);
+        return mockTopic;
+      }
+      
+      // Last resort: return a basic topic object with quick prompts
+      console.warn(`[chat] Topic "${topicId}" not found, using fallback`);
+      return {
+        id: topicId,
+        name: topicName,
+        description: `Learn about ${topicName}`,
+        enabled: true,
+        quickPrompts: TOPIC_QUICK_PROMPTS[topicId] || [],
+        icon: TOPIC_ICONS[topicId] || '🔬'
+      };
     }
     
-    return data;
+    // Add the identifier, quick prompts, and icon to the returned topic object
+    return {
+      ...data,
+      id: topicId, // Use the string identifier, not the UUID
+      identifier: topicId,
+      quickPrompts: data.quick_prompts || TOPIC_QUICK_PROMPTS[topicId] || [],
+      icon: data.icon || TOPIC_ICONS[topicId] || '🔬'
+    };
   } catch (error) {
     console.warn('[chat] Supabase topic fetch failed, reverting to mock data', error);
     const data = await loadMockChatData();
