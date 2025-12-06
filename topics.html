@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Explore science topics aligned with NGSS Standards for K-6 grades. Learn about photosynthesis, solar system, water cycle, human body, electricity, and more.">
+    <title>Science Topics - NGSS Aligned | SciQuest Heroes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fredoka:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #fafafa;
+            color: #1e293b;
+        }
+
+        .font-fredoka {
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .topic-card {
+            background: white;
+            border: 3px solid #e2e8f0;
+            border-radius: 24px;
+            padding: 32px;
+            transition: all 0.3s ease;
+        }
+
+        .topic-card:hover {
+            transform: translateY(-8px);
+            border-color: #8b5cf6;
+            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.2);
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .btn-3d {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            border: 4px solid #1e293b;
+            border-radius: 60px;
+            padding: 20px 50px;
+            font-weight: 800;
+            font-size: 22px;
+            color: #1e293b;
+            box-shadow: 0 8px 0 #92400e, 0 12px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            font-family: 'Fredoka', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .btn-3d:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 13px 0 #92400e, 0 17px 40px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Shared Navigation -->
+    <div id="nav-container"></div>
+    <script type="module" src="/components/nav.js"></script>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient pt-32 pb-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="font-fredoka text-5xl md:text-7xl font-black text-white leading-tight mb-6 drop-shadow-2xl">
+                    Science Topics for<br>
+                    <span class="bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-300 bg-clip-text text-transparent">
+                        Curious Minds
+                    </span>
+                </h1>
+                <p class="text-xl md:text-2xl text-white font-bold mb-8 leading-relaxed max-w-3xl mx-auto">
+                    Aligned with Next Generation Science Standards (NGSS) for grades K-6
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Introduction -->
+    <section class="py-16 bg-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 reveal">
+                <h2 class="font-fredoka text-3xl md:text-4xl font-black text-slate-800 mb-4">
+                    NGSS-Aligned Learning
+                </h2>
+                <p class="text-lg text-slate-600 font-semibold leading-relaxed">
+                    All our science topics are carefully aligned with Next Generation Science Standards (NGSS) 
+                    to ensure your child learns the concepts they need for their grade level. Each topic is 
+                    designed to build curiosity, critical thinking, and a love for science.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Topics by Grade Level -->
+    <section class="py-20 bg-gradient-to-br from-purple-50 to-pink-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- K-2 Topics -->
+            <div class="mb-16 reveal">
+                <div class="text-center mb-12">
+                    <h2 class="font-fredoka text-4xl md:text-5xl font-black text-slate-800 mb-4">
+                        Grades K-2
+                    </h2>
+                    <p class="text-xl text-slate-600 font-bold">
+                        Building Foundations: Structure, Function, and Patterns
+                    </p>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="topic-card">
+                        <div class="text-5xl mb-4 text-center">🌱</div>
+                        <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-3">Photosynthesis</h3>
+                        <p class="text-slate-600 font-semibold mb-4">
+                            <strong>NGSS:</strong> K-LS1-1, 1-LS1-1<br>
+                            <strong>Domain:</strong> Life Science
+                        </p>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            Discover how plants make food from sunlight! Kids learn that plants need sunlight, 
+                            water, and air to grow, and that leaves are special parts that help plants make food.
+                        </p>
+                        <p class="text-purple-600 font-bold text-sm">
+                            Kids will learn: Plant needs, sunlight's role, basic plant parts
+                        </p>
+                    </div>
+
+                    <div class="topic-card">
+                        <div class="text-5xl mb-4 text-center">🪐</div>
+                        <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-3">Solar System</h3>
+                        <p class="text-slate-600 font-semibold mb-4">
+                            <strong>NGSS:</strong> 1-ESS1-1, 1-ESS1-2<br>
+                            <strong>Domain:</strong> Earth & Space Science
+                        </p>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            Explore our amazing solar system! Learn about the Sun, planets, and how Earth 
+                            moves around the Sun. Discover why we have day and night.
+                        </p>
+                        <p class="text-purple-600 font-bold text-sm">
+                            Kids will learn: Sun, planets, Earth's rotation, day and night
+                        </p>
+                    </div>
+
+                    <div class="topic-card">
+                        <div class="text-5xl mb-4 text-center">💧</div>
+                        <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-3">Water Cycle</h3>
+                        <p class="text-slate-600 font-semibold mb-4">
+                            <strong>NGSS:</strong> K-ESS2-1, 2-ESS2-3<br>
+                            <strong>Domain:</strong> Earth & Space Science
+                        </p>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            Follow water's amazing journey! Learn how water moves from clouds to rain, 
+                            from puddles to clouds, in a never-ending cycle.
+                        </p>
+                        <p class="text-purple-600 font-bold text-sm">
+                            Kids will learn: Rain, clouds, evaporation basics, water movement
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3-4 Topics -->
+            <div class="mb-16 reveal">
+                <div class="text-center mb-12">
+                    <h2 class="font-fredoka text-4xl md:text-5xl font-black text-slate-800 mb-4">
+                        Grades 3-4
+                    </h2>
+                    <p class="text-xl text-slate-600 font-bold">
+                        Exploring Systems: Energy, Matter, and Interactions
+                    </p>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="topic-card">
+                        <div class="text-5xl mb-4 text-center">🌱</div>
+                        <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-3">Photosynthesis</h3>
+                        <p class="text-slate-600 font-semibold mb-4">
+                            <strong>NGSS:</strong> 3-LS1-1, 4-LS1-1<br>
+                            <strong>Domain:</strong> Life Science
+                        </p>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            Dive deeper into how plants make food! Learn about chlorophyll, carbon dioxide, 
+                            and oxygen. Understand the amazing process that keeps our planet alive.
+                        </p>
+                        <p class="text-purple-600 font-bold text-sm">
+                            Kids will learn: Chlorophyll, CO2, oxygen production, plant energy
+                        </p>
+                    </div>
+
+                    <div class="topic-card">
+                        <div class="text-5xl mb-4 text-center">🪐</div>
+                        <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-3">Solar System</h3>
+                        <p class="text-slate-600 font-semibold mb-4">
+                            <strong>NGSS:</strong> 3-ESS2-1, 4-ESS1-1<br>
+                            <strong>Domain:</strong> Earth & Space Science
+                        </p>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            Journey through space! Learn about planets, their orbits, gravity, and what makes 
+                            each planet unique. Explore asteroids, comets, and more!
+                        </p>
+                        <p class="text-purple-600 font-bold text-sm">
+                            Kids will learn: Planet characteristics, orbits, gravity, space objects
+                        </p>
+                    </div>
+
+                    <div class="topic-card">
+                        <div class="text-5xl mb-4 text-center">💧</div>
+                        <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-3">Water Cycle</h3>
+                        <p class="text-slate-600 font-semibold mb-4">
+                            <strong>NGSS:</strong> 3-ESS2-1, 4-ESS2-1<br>
+                            <strong>Domain:</strong> Earth & Space Science
+                        </p>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            Understand the complete water cycle! Learn about evaporation, condensation, 
+                            precipitation, and collection. See how water moves through our environment.
+                        </p>
+                        <p class="text-purple-600 font-bold text-sm">
+                            Kids will learn: Evaporation, condensation, precipitation, water systems
+                        </p>
+                    </div>
+
+                    <div class="topic-card">
+                        <div class="text-5xl mb-4 text-center">🫀</div>
+                        <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-3">Human Body</h3>
+                        <p class="text-slate-600 font-semibold mb-4">
+                            <strong>NGSS:</strong> 3-LS1-1, 4-LS1-1<br>
+                            <strong>Domain:</strong> Life Science
+                        </p>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            Explore the amazing systems inside your body! Learn about the heart, lungs, 
+                            brain, and how they work together to keep you healthy and active.
+                        </p>
+                        <p class="text-purple-600 font-bold text-sm">
+                            Kids will learn: Body systems, organs, how systems work together
+                        </p>
+                    </div>
+
+                    <div class="topic-card">
+                        <div class="text-5xl mb-4 text-center">⚡</div>
+                        <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-3">Electricity</h3>
+                        <p class="text-slate-600 font-semibold mb-4">
+                            <strong>NGSS:</strong> 3-PS2-3, 4-PS3-2<br>
+                            <strong>Domain:</strong> Physical Science
+                        </p>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            Discover the power of electricity! Learn how circuits work, what conductors 
+                            and insulators are, and how electricity powers our world safely.
+                        </p>
+                        <p class="text-purple-600 font-bold text-sm">
+                            Kids will learn: Circuits, conductors, insulators, electrical safety
+                        </p>
+                    </div>
+
+                    <div class="topic-card">
+                        <div class="text-5xl mb-4 text-center">🧲</div>
+                        <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-3">Magnetism</h3>
+                        <p class="text-slate-600 font-semibold mb-4">
+                            <strong>NGSS:</strong> 3-PS2-3, 3-PS2-4<br>
+                            <strong>Domain:</strong> Physical Science
+                        </p>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            Explore the invisible force of magnets! Learn about magnetic fields, poles, 
+                            and how magnets attract and repel. Discover where magnets are used in daily life.
+                        </p>
+                        <p class="text-purple-600 font-bold text-sm">
+                            Kids will learn: Magnetic fields, poles, attraction, repulsion, uses
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5-6 Topics -->
+            <div class="mb-16 reveal">
+                <div class="text-center mb-12">
+                    <h2 class="font-fredoka text-4xl md:text-5xl font-black text-slate-800 mb-4">
+                        Grades 5-6
+                    </h2>
+                    <p class="text-xl text-slate-600 font-bold">
+                        Advanced Concepts: Matter, Energy, and Complex Systems
+                    </p>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="topic-card">
+                        <div class="text-5xl mb-4 text-center">🌱</div>
+                        <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-3">Photosynthesis</h3>
+                        <p class="text-slate-600 font-semibold mb-4">
+                            <strong>NGSS:</strong> 5-LS1-1, 5-LS2-1, MS-LS1-5<br>
+                            <strong>Domain:</strong> Life Science
+                        </p>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            Master the science of photosynthesis! Learn about chloroplasts, light and dark 
+                            reactions, ATP production, and the Calvin cycle. Understand how this process 
+                            sustains life on Earth.
+                        </p>
+                        <p class="text-purple-600 font-bold text-sm">
+                            Kids will learn: Chloroplasts, light reactions, ATP, glucose production
+                        </p>
+                    </div>
+
+                    <div class="topic-card">
+                        <div class="text-5xl mb-4 text-center">🪐</div>
+                        <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-3">Solar System</h3>
+                        <p class="text-slate-600 font-semibold mb-4">
+                            <strong>NGSS:</strong> 5-ESS1-1, 5-ESS1-2, MS-ESS1-2<br>
+                            <strong>Domain:</strong> Earth & Space Science
+                        </p>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            Deep space exploration! Learn about planetary formation, scale of the solar system, 
+                            astronomical units, and the differences between terrestrial and gas giant planets.
+                        </p>
+                        <p class="text-purple-600 font-bold text-sm">
+                            Kids will learn: Solar system formation, scale, planet types, space exploration
+                        </p>
+                    </div>
+
+                    <div class="topic-card">
+                        <div class="text-5xl mb-4 text-center">💧</div>
+                        <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-3">Water Cycle</h3>
+                        <p class="text-slate-600 font-semibold mb-4">
+                            <strong>NGSS:</strong> 5-ESS2-1, MS-ESS2-4<br>
+                            <strong>Domain:</strong> Earth & Space Science
+                        </p>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            Master the complex water cycle! Learn about transpiration, aquifers, watersheds, 
+                            and how human activities affect the water cycle. Understand the global water system.
+                        </p>
+                        <p class="text-purple-600 font-bold text-sm">
+                            Kids will learn: Transpiration, groundwater, watersheds, human impact
+                        </p>
+                    </div>
+
+                    <div class="topic-card">
+                        <div class="text-5xl mb-4 text-center">🫀</div>
+                        <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-3">Human Body</h3>
+                        <p class="text-slate-600 font-semibold mb-4">
+                            <strong>NGSS:</strong> MS-LS1-3, MS-LS1-7<br>
+                            <strong>Domain:</strong> Life Science
+                        </p>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            Explore advanced body systems! Learn about cellular respiration, homeostasis, 
+                            how systems interact, and the complex processes that keep your body functioning.
+                        </p>
+                        <p class="text-purple-600 font-bold text-sm">
+                            Kids will learn: Cellular processes, homeostasis, system interactions, metabolism
+                        </p>
+                    </div>
+
+                    <div class="topic-card">
+                        <div class="text-5xl mb-4 text-center">⚡</div>
+                        <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-3">Electricity</h3>
+                        <p class="text-slate-600 font-semibold mb-4">
+                            <strong>NGSS:</strong> 4-PS3-2, MS-PS2-3<br>
+                            <strong>Domain:</strong> Physical Science
+                        </p>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            Advanced electrical concepts! Learn about voltage, current, resistance, Ohm's Law, 
+                            static vs. current electricity, and how generators create electrical power.
+                        </p>
+                        <p class="text-purple-600 font-bold text-sm">
+                            Kids will learn: Voltage, current, resistance, Ohm's Law, power generation
+                        </p>
+                    </div>
+
+                    <div class="topic-card">
+                        <div class="text-5xl mb-4 text-center">🧲</div>
+                        <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-3">Magnetism</h3>
+                        <p class="text-slate-600 font-semibold mb-4">
+                            <strong>NGSS:</strong> 3-PS2-3, MS-PS2-3<br>
+                            <strong>Domain:</strong> Physical Science
+                        </p>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            Advanced magnetic concepts! Learn about electromagnetic fields, how electricity 
+                            and magnetism are connected, and how magnets are used in technology and everyday life.
+                        </p>
+                        <p class="text-purple-600 font-bold text-sm">
+                            Kids will learn: Electromagnetism, magnetic fields, technology applications
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-gradient-to-br from-purple-600 via-pink-600 to-orange-600">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="font-fredoka text-4xl md:text-5xl font-black text-white mb-6 drop-shadow-2xl">
+                Ready to Explore These Topics?
+            </h2>
+            <p class="text-xl text-white font-bold mb-8 opacity-90">
+                Start your free trial and let your child explore science through personalized comics!
+            </p>
+            <a href="auth/account-type-selection.html" class="btn-3d">
+                <i class="fas fa-rocket mr-3"></i>Start Free Trial
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white py-16 border-t-4 border-purple-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <div>
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center overflow-hidden">
+                            <img src="/images/Sciquest_logo_highres.png" alt="SciQuest Heroes" class="w-full h-full object-contain">
+                        </div>
+                        <span class="font-fredoka text-2xl font-black text-slate-800">SciQuest Heroes</span>
+                    </div>
+                    <p class="text-slate-600 text-base font-semibold">
+                        Making science magical through curiosity.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-fredoka font-black text-slate-800 mb-6 text-lg">Product</h4>
+                    <ul class="space-y-3 text-slate-600 font-semibold text-base">
+                        <li><a href="index.html#for-parents" class="hover:text-purple-600 transition">For Parents</a></li>
+                        <li><a href="index.html#for-teachers" class="hover:text-purple-600 transition">For Teachers</a></li>
+                        <li><a href="stories/index.html" class="hover:text-purple-600 transition">Stories</a></li>
+                        <li><a href="pricing.html" class="hover:text-purple-600 transition">Pricing</a></li>
+                        <li><a href="topics.html" class="hover:text-purple-600 transition">Topics</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-fredoka font-black text-slate-800 mb-6 text-lg">Company</h4>
+                    <ul class="space-y-3 text-slate-600 font-semibold text-base">
+                        <li><a href="about.html" class="hover:text-purple-600 transition">About</a></li>
+                        <li><a href="blog.html" class="hover:text-purple-600 transition">Blog</a></li>
+                        <li><a href="contact.html" class="hover:text-purple-600 transition">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-fredoka font-black text-slate-800 mb-6 text-lg">Legal</h4>
+                    <ul class="space-y-3 text-slate-600 font-semibold text-base">
+                        <li><a href="privacy.html" class="hover:text-purple-600 transition">Privacy</a></li>
+                        <li><a href="terms.html" class="hover:text-purple-600 transition">Terms</a></li>
+                        <li><a href="coppa.html" class="hover:text-purple-600 transition">COPPA</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-slate-200 pt-8 text-center text-slate-600 font-semibold text-base">
+                <p>© 2025 SciQuest Heroes. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Reveal animation on scroll
+        function initReveal() {
+            const reveals = document.querySelectorAll('.reveal');
+            const revealOnScroll = () => {
+                reveals.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const windowHeight = window.innerHeight;
+                    if (elementTop < windowHeight - 150) {
+                        element.classList.add('active');
+                    }
+                });
+            };
+            window.addEventListener('scroll', revealOnScroll);
+            revealOnScroll(); // Initial check
+        }
+
+        window.addEventListener('DOMContentLoaded', initReveal);
+    </script>
+</body>
+
+</html>
+

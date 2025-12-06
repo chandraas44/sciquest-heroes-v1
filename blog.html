@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Learn how to use SciQuest Heroes' chat feature, explore personalized comics, and get tips for getting the most out of science learning.">
+    <title>Blog - Tips & Guides | SciQuest Heroes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fredoka:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #fafafa;
+            color: #1e293b;
+        }
+
+        .font-fredoka {
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .blog-card {
+            background: white;
+            border: 3px solid #e2e8f0;
+            border-radius: 24px;
+            padding: 40px;
+            transition: all 0.3s ease;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-8px);
+            border-color: #8b5cf6;
+            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.2);
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .btn-3d {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            border: 4px solid #1e293b;
+            border-radius: 60px;
+            padding: 20px 50px;
+            font-weight: 800;
+            font-size: 22px;
+            color: #1e293b;
+            box-shadow: 0 8px 0 #92400e, 0 12px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            font-family: 'Fredoka', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .btn-3d:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 13px 0 #92400e, 0 17px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .blog-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .blog-card.expanded .blog-content {
+            max-height: 2000px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Shared Navigation -->
+    <div id="nav-container"></div>
+    <script type="module" src="/components/nav.js"></script>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient pt-32 pb-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="font-fredoka text-5xl md:text-7xl font-black text-white leading-tight mb-6 drop-shadow-2xl">
+                    SciQuest Heroes<br>
+                    <span class="bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-300 bg-clip-text text-transparent">
+                        Blog
+                    </span>
+                </h1>
+                <p class="text-xl md:text-2xl text-white font-bold mb-8 leading-relaxed max-w-3xl mx-auto">
+                    Tips, guides, and insights to help your child get the most out of science learning
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Posts -->
+    <section class="py-20 bg-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Post 1 -->
+            <div class="blog-card reveal mb-8">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="text-purple-600 font-bold text-sm">FEATURES</span>
+                    <span class="text-slate-400">•</span>
+                    <span class="text-slate-600 font-semibold text-sm">January 15, 2025</span>
+                </div>
+                <h2 class="font-fredoka text-3xl md:text-4xl font-black text-slate-800 mb-4">
+                    How to Use Chat in SciQuest Heroes
+                </h2>
+                <p class="text-slate-600 font-semibold text-lg mb-6 leading-relaxed">
+                    The chat feature is one of the most powerful tools in SciQuest Heroes. Here's everything you need 
+                    to know to help your child get the most out of interactive learning conversations.
+                </p>
+                
+                <div class="blog-content">
+                    <div class="space-y-6 text-slate-700 font-semibold text-base leading-relaxed">
+                        <div>
+                            <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-3">What is the Chat Feature?</h3>
+                            <p>
+                                The chat feature lets your child have interactive conversations with AI character guides 
+                                about science topics. Instead of just reading or watching, kids can ask questions, get 
+                                explanations, and explore topics at their own pace. Each topic has its own character guide:
+                            </p>
+                            <ul class="list-disc list-inside mt-3 space-y-2 ml-4">
+                                <li><strong>Mr. Chloro</strong> - Your guide to Photosynthesis</li>
+                                <li><strong>Solaris</strong> - Explore the Solar System</li>
+                                <li><strong>Aqua</strong> - Learn about the Water Cycle</li>
+                                <li><strong>Dr. Pulse</strong> - Discover the Human Body</li>
+                                <li><strong>Sparky</strong> - Understand Electricity</li>
+                                <li><strong>Magno</strong> - Explore Magnetism</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-3">How to Ask Questions</h3>
+                            <p>
+                                Asking questions is simple! When your child opens a topic chat, they'll see quick prompt 
+                                questions they can click, or they can type their own questions. The AI character will 
+                                respond in a friendly, age-appropriate way that matches your child's grade level.
+                            </p>
+                            <p class="mt-3">
+                                <strong>Example questions:</strong>
+                            </p>
+                            <ul class="list-disc list-inside mt-2 space-y-2 ml-4">
+                                <li>"How do plants make food?"</li>
+                                <li>"Why is the sky blue?"</li>
+                                <li>"What happens to water when it rains?"</li>
+                                <li>"How does my heart work?"</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-3">Character Guides</h3>
+                            <p>
+                                Each character has their own personality and expertise. Mr. Chloro loves talking about 
+                                plants and photosynthesis. Solaris knows everything about planets and space. These characters 
+                                make learning feel like a conversation with a friend, not a lecture from a textbook.
+                            </p>
+                            <p class="mt-3">
+                                Characters respond in character, using language that's appropriate for your child's grade level. 
+                                A 5-year-old will get simple explanations, while a 12-year-old will get more detailed, 
+                                scientific answers.
+                            </p>
+                        </div>
+
+                        <div>
+                            <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-3">Tips for Getting the Most Out of Chat</h3>
+                            <ul class="list-disc list-inside space-y-3 ml-4">
+                                <li><strong>Encourage curiosity:</strong> Let your child ask whatever questions come to mind. 
+                                There are no wrong questions!</li>
+                                <li><strong>Follow up:</strong> If your child asks "Why?", encourage them to ask "Why?" again. 
+                                Deep questions lead to deep understanding.</li>
+                                <li><strong>Review together:</strong> Check the chat history in your parent dashboard. You can 
+                                see what your child is curious about and continue the conversation at home.</li>
+                                <li><strong>Use quick prompts:</strong> The quick prompt questions are great starting points. 
+                                They're designed to spark curiosity and lead to deeper exploration.</li>
+                                <li><strong>Connect to stories:</strong> After reading a comic story, encourage your child to 
+                                chat about it. They can ask questions about what they saw or learned.</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-3">Safety and Monitoring</h3>
+                            <p>
+                                All chat conversations are monitored and reviewable in your parent dashboard. We use AI 
+                                moderation to ensure all conversations are safe, age-appropriate, and educational. You can 
+                                review your child's chat history at any time to see what they're learning and curious about.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="toggleBlogPost(this)" class="mt-6 text-purple-600 font-bold text-lg hover:text-purple-800 transition">
+                    <span class="read-more">Read More <i class="fas fa-chevron-down ml-2"></i></span>
+                    <span class="read-less hidden">Read Less <i class="fas fa-chevron-up ml-2"></i></span>
+                </button>
+            </div>
+
+            <!-- Post 2 -->
+            <div class="blog-card reveal mb-8">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="text-pink-600 font-bold text-sm">LEARNING</span>
+                    <span class="text-slate-400">•</span>
+                    <span class="text-slate-600 font-semibold text-sm">January 10, 2025</span>
+                </div>
+                <h2 class="font-fredoka text-3xl md:text-4xl font-black text-slate-800 mb-4">
+                    Exploring Science Through Personalized Comics
+                </h2>
+                <p class="text-slate-600 font-semibold text-lg mb-6 leading-relaxed">
+                    Personalized comics are at the heart of SciQuest Heroes. Learn how they work, why they're effective, 
+                    and how to navigate the stories page to find the perfect learning adventure for your child.
+                </p>
+                
+                <div class="blog-content">
+                    <div class="space-y-6 text-slate-700 font-semibold text-base leading-relaxed">
+                        <div>
+                            <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-3">How Personalized Comics Work</h3>
+                            <p>
+                                When your child asks a question or selects a topic, our AI creates a unique comic story where 
+                                your child is the hero. The story is generated specifically for them, using their name, grade 
+                                level, and the topic they're curious about. Each story includes:
+                            </p>
+                            <ul class="list-disc list-inside mt-3 space-y-2 ml-4">
+                                <li><strong>Personalized panels:</strong> Your child appears as the main character, exploring 
+                                science concepts in an engaging visual story.</li>
+                                <li><strong>Voice narration:</strong> Stories are narrated with your child's name, making the 
+                                experience feel truly personal.</li>
+                                <li><strong>Age-appropriate content:</strong> The complexity and language automatically adjust 
+                                to your child's grade level.</li>
+                                <li><strong>Interactive elements:</strong> Each panel can be clicked to learn more or start a 
+                                chat conversation.</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-3">Benefits of Story-Driven Learning</h3>
+                            <p>
+                                Research shows that story-driven learning is more engaging and memorable than traditional methods. 
+                                When children see themselves as the hero of a story, they:
+                            </p>
+                            <ul class="list-disc list-inside mt-3 space-y-2 ml-4">
+                                <li><strong>Remember better:</strong> Stories create emotional connections that help information 
+                                stick in memory.</li>
+                                <li><strong>Engage more:</strong> Personalized content captures attention and maintains interest 
+                                longer than generic materials.</li>
+                                <li><strong>Understand deeper:</strong> Visual storytelling helps children understand abstract 
+                                concepts by making them concrete and relatable.</li>
+                                <li><strong>Feel empowered:</strong> Being the hero of their own learning story builds confidence 
+                                and curiosity.</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-3">How to Navigate the Stories Page</h3>
+                            <p>
+                                The Stories page is your child's library of science adventures. Here's how to use it:
+                            </p>
+                            <ul class="list-disc list-inside mt-3 space-y-2 ml-4">
+                                <li><strong>Browse by topic:</strong> Filter stories by science topics like Photosynthesis, 
+                                Solar System, Water Cycle, and more.</li>
+                                <li><strong>View story details:</strong> Click on any story to see a preview, read the full 
+                                story, or download it as a PDF.</li>
+                                <li><strong>Launch topic chat:</strong> Each story has a "Launch Topic Chat" button that takes 
+                                your child to an interactive conversation about that topic.</li>
+                                <li><strong>Create new stories:</strong> Use the comic generator to create new personalized 
+                                stories based on your child's questions.</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-3">Making the Most of Each Story</h3>
+                            <p>
+                                To maximize learning from each comic story:
+                            </p>
+                            <ul class="list-disc list-inside mt-3 space-y-2 ml-4">
+                                <li><strong>Read together:</strong> Especially for younger children, reading stories together 
+                                creates bonding time and allows for discussion.</li>
+                                <li><strong>Ask follow-up questions:</strong> After reading, encourage your child to ask 
+                                questions in the chat feature.</li>
+                                <li><strong>Connect to real life:</strong> Help your child see connections between the story 
+                                and things they observe in daily life.</li>
+                                <li><strong>Download and save:</strong> PDF downloads let you keep favorite stories and 
+                                revisit them anytime.</li>
+                                <li><strong>Explore related topics:</strong> Stories often spark curiosity about related 
+                                topics. Follow that curiosity!</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="font-fredoka text-2xl font-black text-slate-800 mb-3">NGSS Alignment</h3>
+                            <p>
+                                All our stories are aligned with Next Generation Science Standards (NGSS) for grades K-6. 
+                                This means your child is learning the same concepts they'll encounter in school, but in a 
+                                fun, engaging way. You can see which NGSS standards each story covers in the story details.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="toggleBlogPost(this)" class="mt-6 text-purple-600 font-bold text-lg hover:text-purple-800 transition">
+                    <span class="read-more">Read More <i class="fas fa-chevron-down ml-2"></i></span>
+                    <span class="read-less hidden">Read Less <i class="fas fa-chevron-up ml-2"></i></span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-gradient-to-br from-purple-600 via-pink-600 to-orange-600">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="font-fredoka text-4xl md:text-5xl font-black text-white mb-6 drop-shadow-2xl">
+                Ready to Start Learning?
+            </h2>
+            <p class="text-xl text-white font-bold mb-8 opacity-90">
+                Try personalized science comics and interactive chat today!
+            </p>
+            <a href="auth/account-type-selection.html" class="btn-3d">
+                <i class="fas fa-rocket mr-3"></i>Start Free Trial
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white py-16 border-t-4 border-purple-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <div>
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center overflow-hidden">
+                            <img src="/images/Sciquest_logo_highres.png" alt="SciQuest Heroes" class="w-full h-full object-contain">
+                        </div>
+                        <span class="font-fredoka text-2xl font-black text-slate-800">SciQuest Heroes</span>
+                    </div>
+                    <p class="text-slate-600 text-base font-semibold">
+                        Making science magical through curiosity.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-fredoka font-black text-slate-800 mb-6 text-lg">Product</h4>
+                    <ul class="space-y-3 text-slate-600 font-semibold text-base">
+                        <li><a href="index.html#for-parents" class="hover:text-purple-600 transition">For Parents</a></li>
+                        <li><a href="index.html#for-teachers" class="hover:text-purple-600 transition">For Teachers</a></li>
+                        <li><a href="stories/index.html" class="hover:text-purple-600 transition">Stories</a></li>
+                        <li><a href="pricing.html" class="hover:text-purple-600 transition">Pricing</a></li>
+                        <li><a href="topics.html" class="hover:text-purple-600 transition">Topics</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-fredoka font-black text-slate-800 mb-6 text-lg">Company</h4>
+                    <ul class="space-y-3 text-slate-600 font-semibold text-base">
+                        <li><a href="about.html" class="hover:text-purple-600 transition">About</a></li>
+                        <li><a href="blog.html" class="hover:text-purple-600 transition">Blog</a></li>
+                        <li><a href="contact.html" class="hover:text-purple-600 transition">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-fredoka font-black text-slate-800 mb-6 text-lg">Legal</h4>
+                    <ul class="space-y-3 text-slate-600 font-semibold text-base">
+                        <li><a href="privacy.html" class="hover:text-purple-600 transition">Privacy</a></li>
+                        <li><a href="terms.html" class="hover:text-purple-600 transition">Terms</a></li>
+                        <li><a href="coppa.html" class="hover:text-purple-600 transition">COPPA</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-slate-200 pt-8 text-center text-slate-600 font-semibold text-base">
+                <p>© 2025 SciQuest Heroes. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleBlogPost(button) {
+            const card = button.closest('.blog-card');
+            const readMore = button.querySelector('.read-more');
+            const readLess = button.querySelector('.read-less');
+            
+            card.classList.toggle('expanded');
+            
+            if (card.classList.contains('expanded')) {
+                readMore.classList.add('hidden');
+                readLess.classList.remove('hidden');
+            } else {
+                readMore.classList.remove('hidden');
+                readLess.classList.add('hidden');
+            }
+        }
+
+        // Reveal animation on scroll
+        function initReveal() {
+            const reveals = document.querySelectorAll('.reveal');
+            const revealOnScroll = () => {
+                reveals.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const windowHeight = window.innerHeight;
+                    if (elementTop < windowHeight - 150) {
+                        element.classList.add('active');
+                    }
+                });
+            };
+            window.addEventListener('scroll', revealOnScroll);
+            revealOnScroll(); // Initial check
+        }
+
+        window.addEventListener('DOMContentLoaded', initReveal);
+    </script>
+</body>
+
+</html>
+
