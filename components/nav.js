@@ -306,6 +306,9 @@ function buildNavLinks(isAuthenticated, basePath, currentPage, profile) {
       <a href="/index.html#for-parents" class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold text-lg">
         For Parents
       </a>
+      <a href="/index.html#for-teachers" class="font-fredoka text-slate-700 hover:text-purple-600 transition font-bold text-lg">
+        For Teachers
+      </a>
       <button class="btn-3d mr-4" onclick="window.location.href='${basePath}auth/auth.html?type=parent&mode=signup'">
         Join For Free
       </button>
